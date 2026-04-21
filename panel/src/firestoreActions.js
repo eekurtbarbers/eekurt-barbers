@@ -41,11 +41,8 @@ export async function createWalkIn({ name, email, phone, date, time, service, ba
   if (ap === 'AM' && h === 12) h = 0;
   const startTime = new Date(parseInt(parts[2]), months[parts[1]], parseInt(parts[0]), h, m, 0);
   const durationMap = {
-    "i-cut-royal":60,"i-cut-deluxe":50,"full-skinfade-beard-luxury":40,"full-experience":30,
-    "senior-full-experience":30,"skin-fade":30,"scissor-cut":30,"classic-sbs":20,
-    "hot-towel-shave":15,"clipper-cut":15,"senior-haircut":20,"young-gents":20,
-    "young-gents-skin-fade":25,"full-facial":10,"beard-dyeing":20,"face-mask":10,
-    "face-steam":10,"threading":5,"waxing":10,"shape-up-clean-up":15,"wash-hot-towel":10
+    "hair-cut":25,"skin-fade":25,"childrens-hair":25,"children-skin-fade":25,
+    "shape-up":25,"beard-trim":25,"hair-beard":30,"skin-fade-beard":30,"eekurt-special":45
   };
   const duration = durationMap[service] || 30;
   const endTime = new Date(startTime.getTime() + duration * 60 * 1000);
@@ -112,11 +109,8 @@ export async function editBooking({ bookingId, name, email, phone, date, time, s
   if (ap === 'AM' && h === 12) h = 0;
   const startTime = new Date(parseInt(parts[2]), months[parts[1]], parseInt(parts[0]), h, m, 0);
   const durationMap = {
-    "i-cut-royal":60,"i-cut-deluxe":50,"full-skinfade-beard-luxury":40,"full-experience":30,
-    "senior-full-experience":30,"skin-fade":30,"scissor-cut":30,"classic-sbs":20,
-    "hot-towel-shave":15,"clipper-cut":15,"senior-haircut":20,"young-gents":20,
-    "young-gents-skin-fade":25,"full-facial":10,"beard-dyeing":20,"face-mask":10,
-    "face-steam":10,"threading":5,"waxing":10,"shape-up-clean-up":15,"wash-hot-towel":10
+    "hair-cut":25,"skin-fade":25,"childrens-hair":25,"children-skin-fade":25,
+    "shape-up":25,"beard-trim":25,"hair-beard":30,"skin-fade-beard":30,"eekurt-special":45
   };
   const duration = durationMap[service] || 30;
   const endTime = new Date(startTime.getTime() + duration * 60 * 1000);

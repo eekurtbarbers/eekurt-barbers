@@ -40,30 +40,15 @@ const config = {
 
   // Services
   services: [
-  // Exclusive Bundles
-  { id: 'i-cut-royal', name: 'I CUT Royal', price: 65, duration: 60 },
-  { id: 'i-cut-deluxe', name: 'I CUT Deluxe', price: 55, duration: 50 },
-  { id: 'full-skinfade-beard-luxury', name: 'Full Skin Fade & Beard Luxury', price: 48, duration: 40 },
-  { id: 'full-experience', name: 'The Full Experience', price: 40, duration: 30 },
-  { id: 'senior-full-experience', name: 'Senior Full Experience (65+)', price: 35, duration: 30 },
-  // Standard
-  { id: 'skin-fade', name: 'Skin Fade Cut', price: 32, duration: 30 },
-  { id: 'scissor-cut', name: 'Scissor Cut', price: 30, duration: 30 },
-  { id: 'classic-sbs', name: 'Classic Short Back & Sides', price: 28, duration: 20 },
-  { id: 'hot-towel-shave', name: 'Hot Towel Shave', price: 22, duration: 15 },
-  { id: 'clipper-cut', name: 'Clipper Cut', price: 22, duration: 15 },
-  { id: 'senior-haircut', name: 'Senior Haircut (65+)', price: 23, duration: 20 },
-  { id: 'young-gents', name: 'Young Gents (0-12)', price: 20, duration: 20 },
-  { id: 'young-gents-skin-fade', name: 'Young Gents Skin Fade (4-12)', price: 24, duration: 25 },
-  // Extras
-  { id: 'full-facial', name: 'Full Facial Treatment', price: 24, duration: 20 },
-  { id: 'beard-dyeing', name: 'Beard Dyeing', price: 24, duration: 20 },
-  { id: 'face-mask', name: 'Face Mask', price: 12, duration: 15 },
-  { id: 'face-steam', name: 'Face Steam', price: 12, duration: 15 },
-  { id: 'threading', name: 'Threading', price: 10, duration: 10 },
-  { id: 'waxing', name: 'Waxing (Nose & Ears)', price: 10, duration: 10 },
-  { id: 'shape-up-clean-up', name: 'Shape Up & Clean Up', price: 20, duration: 15 },
-  { id: 'wash-hot-towel', name: 'Wash, Style & Hot Towel', price: 10, duration: 10 },
+  { id: 'hair-cut', name: 'Hair Cut', price: 21, duration: 25 },
+  { id: 'skin-fade', name: 'Skin Fade', price: 24, duration: 25 },
+  { id: 'childrens-hair', name: 'Childrens Hair', price: 16, duration: 25 },
+  { id: 'children-skin-fade', name: 'Children Skin Fade', price: 18, duration: 25 },
+  { id: 'shape-up', name: 'Shape Up', price: 16, duration: 25 },
+  { id: 'beard-trim', name: 'Beard Trim', price: 16, duration: 25 },
+  { id: 'hair-beard', name: 'Hair & Beard', price: 32, duration: 30 },
+  { id: 'skin-fade-beard', name: 'Skin fade & Beard', price: 34, duration: 30 },
+  { id: 'eekurt-special', name: 'EEkurtSpecial', price: 40, duration: 45 },
 ],
 };
 
