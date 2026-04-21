@@ -19,8 +19,6 @@ const config = {
   // Apps Script URL
   scriptUrl: 'https://script.google.com/macros/s/AKfycbymASCa4MN7LMPoPa6fYwfeu2OCYfxKlLvoIBlauXhe_o7BDMF5DFgrrpBtUIrZAZi_/exec',
   
-  // Admin password (change this!)
-  adminPassword: 'icut2026',
   // Opening hours
   hours: {
     Monday: { open: '09:00', close: '19:00', closed: false },

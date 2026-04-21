@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth } from './firebase';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import Bookings from './pages/Bookings';
@@ -10,14 +12,10 @@ import Clients from './pages/Clients';
 import Reports from './pages/Reports';
 import './App.css';
 
-const ADMIN_SESSION_KEY = 'eekurt_admin_logged_in';
-
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem(ADMIN_SESSION_KEY) === 'true');
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
   const [activePage, setActivePage] = useState('dashboard');
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
-
-  // New state to control the symbol look
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
@@ -26,10 +24,32 @@ function App() {
   }, [theme]);
 
   useEffect(() => {
-    localStorage.setItem(ADMIN_SESSION_KEY, isLoggedIn ? 'true' : 'false');
-  }, [isLoggedIn]);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+    });
+    return unsubscribe;
+  }, []);
 
   const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark');
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    setIsLoggedIn(false);
+  };
+
+  if (isLoggedIn === null) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'var(--bg)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <div style={{ color: 'var(--muted)' }}>Loading...</div>
+      </div>
+    );
+  }
 
   if (!isLoggedIn) {
     return <Login onLogin={() => setIsLoggedIn(true)} />;
@@ -50,21 +70,16 @@ function App() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: theme === 'light' ? '#f5f5f0' : '#0a0a0a' }}>
-      {/* Sidebar gets the toggle state and function */}
       <Sidebar
         activePage={activePage}
         setActivePage={setActivePage}
-        onLogout={() => {
-          localStorage.removeItem(ADMIN_SESSION_KEY);
-          setIsLoggedIn(false);
-        }}
+        onLogout={handleLogout}
         theme={theme}
         onToggleTheme={toggleTheme}
         isCollapsed={isCollapsed}
         setIsCollapsed={setIsCollapsed}
       />
 
-      {/* The main margin now changes based on the sidebar width */}
       <main style={{
         flex: 1,
         marginLeft: isCollapsed ? '80px' : '240px',

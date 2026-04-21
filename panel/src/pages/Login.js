@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
-import config from '../config';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
 
 function Login({ onLogin }) {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     setLoading(true);
-    setTimeout(() => {
-      if (password === config.adminPassword) {
-        onLogin();
-      } else {
-        setError('Incorrect password. Please try again.');
-        setLoading(false);
-      }
-    }, 600);
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      onLogin();
+    } catch (err) {
+      setError('Invalid email or password');
+      setPassword('');
+      setLoading(false);
+    }
   };
 
   return (
@@ -64,7 +68,7 @@ function Login({ onLogin }) {
             textTransform: 'uppercase',
             marginBottom: '6px',
           }}>
-            {config.shopName}
+            EE KURT BARBERS
           </h1>
           <p style={{ fontSize: '0.78rem', color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase' }}>
             Admin Panel
@@ -81,13 +85,14 @@ function Login({ onLogin }) {
               textTransform: 'uppercase',
               marginBottom: '8px',
             }}>
-              Password
+              Email
             </label>
             <input
-              type="password"
-              value={password}
-              onChange={e => { setPassword(e.target.value); setError(''); }}
-              placeholder="Enter admin password"
+              type="email"
+              value={email}
+              onChange={e => { setEmail(e.target.value); setError(''); }}
+              placeholder="Enter your email"
+              disabled={loading}
               style={{
                 width: '100%',
                 padding: '14px 16px',
@@ -103,6 +108,39 @@ function Login({ onLogin }) {
               onBlur={e => e.target.style.borderColor = error ? '#ff5252' : 'var(--border)'}
               autoFocus
             />
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '0.75rem',
+              color: 'var(--muted)',
+              letterSpacing: '1px',
+              textTransform: 'uppercase',
+              marginBottom: '8px',
+            }}>
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={e => { setPassword(e.target.value); setError(''); }}
+              placeholder="Enter password"
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: '14px 16px',
+                background: 'var(--card2)',
+                border: `1px solid ${error ? '#ff5252' : 'var(--border)'}`,
+                borderRadius: '8px',
+                color: 'var(--text)',
+                fontSize: '0.95rem',
+                outline: 'none',
+                transition: 'border-color 0.2s',
+              }}
+              onFocus={e => e.target.style.borderColor = '#d4af37'}
+              onBlur={e => e.target.style.borderColor = error ? '#ff5252' : 'var(--border)'}
+            />
             {error && (
               <p style={{ color: '#ff5252', fontSize: '0.78rem', marginTop: '8px' }}>{error}</p>
             )}
@@ -110,7 +148,7 @@ function Login({ onLogin }) {
 
           <button
             type="submit"
-            disabled={loading || !password}
+            disabled={loading || !email || !password}
             style={{
               width: '100%',
               padding: '14px',
@@ -126,7 +164,7 @@ function Login({ onLogin }) {
               transition: 'all 0.2s',
             }}
           >
-            {loading ? '...' : 'Sign In'}
+            {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
       </div>
