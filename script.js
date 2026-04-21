@@ -1,11 +1,14 @@
 const modal = document.getElementById("bookingModal");
 const btn = document.getElementById("menuToggle");
+const emblem = document.getElementById("emblemBtn");
+const bookNow = document.getElementById("bookNowBtn");
 const span = document.getElementsByClassName("close-btn")[0];
 
-// Butona tıklayınca modalı aç
-btn.onclick = function() {
-    modal.style.display = "block";
-}
+function openModal() { modal.style.display = "block"; }
+
+btn.onclick = openModal;
+emblem.onclick = openModal;
+bookNow.onclick = function(e) { e.preventDefault(); openModal(); };
 
 // (X) butonuna tıklayınca modalı kapat
 span.onclick = function() {

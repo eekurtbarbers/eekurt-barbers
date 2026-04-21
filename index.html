@@ -10,10 +10,7 @@
 <body>
 
     <nav>
-        <div class="logo-area">
-            <img src="logo.png" alt="EE KURT Logo" class="nav-logo">
-            <span>EE KURT BARBERS</span>
-        </div>
+        <div class="nav-brand">EE KURT BARBERS</div>
         <div class="nav-actions">
             <button id="menuToggle" class="booking-button">
                 <i class="fas fa-calendar-check"></i> MANAGE BOOKING
@@ -23,9 +20,13 @@
 
     <main class="hero">
         <div class="hero-content">
-            <h1>FAST AND SECURE BOOKING</h1>
+            <div class="emblem-wrap" id="emblemBtn" title="Book Now">
+                <div class="emblem-ring"></div>
+                <img src="img/logo.png" alt="EE KURT Logo" class="hero-logo">
+            </div>
+            <h1>EE KURT BARBERS</h1>
             <p>Traditional Grooming, Modern Excellence.</p>
-            <a href="#" class="cta-btn">BOOK NOW</a>
+            <a href="#" class="cta-btn" id="bookNowBtn">BOOK NOW</a>
         </div>
     </main>
 
@@ -33,7 +34,7 @@
         <div class="modal-content">
             <span class="close-btn">&times;</span>
             <div class="modal-header">
-                <img src="logo.png" alt="Logo" class="modal-logo">
+                <img src="img/logo.png" alt="Logo" class="modal-logo">
                 <h3>MANAGE YOUR APPOINTMENT</h3>
             </div>
             <div class="modal-options">
