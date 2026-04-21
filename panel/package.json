@@ -1,6 +1,7 @@
 {
   "name": "barber-panel",
   "version": "0.1.0",
+  "homepage": "/barberpanel",
   "private": true,
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",

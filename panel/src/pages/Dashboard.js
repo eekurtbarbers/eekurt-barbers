@@ -47,7 +47,7 @@ function minsToLabel(mins) {
 }
 function getBColor(barber, barbers) {
   if (barbers) { const f = barbers.find(b => b.name.toLowerCase() === (barber||'').toLowerCase()); if (f) return f.color; }
-  return { alex:'#d4af37', arda:'#4caf50' }[(barber||'').toLowerCase()] || '#7a7260';
+  return { tunc:'#d4af37', manoc:'#4caf50' }[(barber||'').toLowerCase()] || '#7a7260';
 }
 function getBookingName(booking) {
   const firstLast = [booking?.firstName, booking?.lastName].filter(Boolean).join(' ').trim();

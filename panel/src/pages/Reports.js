@@ -4,7 +4,7 @@ import { db } from '../firebase';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 function getBColor(barber, barbers) {
   if (barbers) { const f = barbers.find(b => b.name.toLowerCase() === (barber || '').toLowerCase()); if (f) return f.color; }
-  return { alex: '#d4af37', arda: '#4caf50', manoj: '#9c27b0' }[(barber || '').toLowerCase()] || '#7a7260';
+  return { tunc: '#d4af37', manoc: '#4caf50' }[(barber || '').toLowerCase()] || '#7a7260';
 }
 
 function parsePrice(val) {

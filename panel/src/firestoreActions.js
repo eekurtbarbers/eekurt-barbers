@@ -141,8 +141,8 @@ export async function deleteBooking(bookingId) {
 }
 export async function seedBarbers() {
   const barbers = [
-    { id: 'alex', name: 'Alex', color: '#d4af37', active: true, order: 1 },
-    { id: 'arda', name: 'Arda', color: '#4caf50', active: true, order: 2 },
+    { id: 'tunc', name: 'Tunc', color: '#d4af37', active: true, order: 1 },
+    { id: 'manoc', name: 'Manoc', color: '#4caf50', active: true, order: 2 },
   ];
   for (const barber of barbers) {
     await setDoc(doc(db, 'tenants/eekurt/barbers', barber.id), barber);

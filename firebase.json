@@ -4,7 +4,15 @@
     "runtime": "nodejs20"
   },
   "hosting": {
-    "public": ".",
+    "public": "hosting",
+    "predeploy": [
+      "npm --prefix panel run build",
+      "rm -rf hosting",
+      "mkdir -p hosting/barberpanel",
+      "cp index.html script.js style.css hosting/",
+      "cp -R img hosting/img",
+      "cp -R panel/build/* hosting/barberpanel/"
+    ],
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -13,6 +21,14 @@
       "panel/**"
     ],
     "rewrites": [
+      {
+        "source": "barberpanel",
+        "destination": "/barberpanel/index.html"
+      },
+      {
+        "source": "barberpanel/**",
+        "destination": "/barberpanel/index.html"
+      },
       {
         "source": "**",
         "destination": "/index.html"

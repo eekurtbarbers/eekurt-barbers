@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Raleway:wght@300;400;600;700&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -5,52 +7,62 @@
 }
 
 body {
-  background: #0a0a0a;
-  color: #e8e0cc;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #080808;
+  color: #f0f0f0;
+  font-family: 'Raleway', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+}
+
 :root {
-  --gold: #d4af37;
-  --gold-light: #f5e17a;
-  --gold-dark: #8b6914;
-  --bg: #0a0a0a;
-  --dark: #111111;
-  --card: #161610;
-  --card2: #0f0f0a;
-  --border: rgba(212,175,55,0.15);
-  --border-hover: rgba(212,175,55,0.35);
-  --text: #e8e0cc;
-  --muted: #7a7260;
+  --gold: #c8c8c8;
+  --gold-light: #e8e8e8;
+  --gold-dark: #888888;
+  --bg: #080808;
+  --dark: #101010;
+  --card: #111111;
+  --card2: #0d0d0d;
+  --border: rgba(200,200,200,0.15);
+  --border-hover: rgba(200,200,200,0.35);
+  --text: #f0f0f0;
+  --muted: #888888;
   --success: #4caf50;
   --danger: #ff5252;
   --warning: #ff9800;
-  --grid-bg: #161610;
+  --grid-bg: #111111;
   --slot-bg: transparent;
-  --slot-hover: rgba(212,175,55,0.04);
+  --slot-hover: rgba(200,200,200,0.06);
   --slot-past: rgba(0,0,0,0.12);
   --time-color: #444;
 }
 body.light {
-  background: #f0efe8;
-  color: #1a1a14;
-  --bg: #f0efe8;
-  --dark: #e8e7e0;
+  background: #f3f3f3;
+  color: #1a1a1a;
+  --bg: #f3f3f3;
+  --dark: #e5e5e5;
   --card: #ffffff;
-  --card2: #f5f4ee;
-  --border: rgba(139,105,20,0.18);
-  --border-hover: rgba(139,105,20,0.35);
-  --text: #1a1a14;
-  --muted: #6b6050;
+  --card2: #fafafa;
+  --border: rgba(120,120,120,0.2);
+  --border-hover: rgba(120,120,120,0.4);
+  --text: #1a1a1a;
+  --muted: #666666;
   --grid-bg: #ffffff;
   --slot-bg: transparent;
-  --slot-hover: rgba(212,175,55,0.06);
+  --slot-hover: rgba(120,120,120,0.08);
   --slot-past: rgba(0,0,0,0.04);
   --time-color: #999;
 }
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--dark); }
-::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: rgba(200,200,200,0.4); border-radius: 3px; }
 
 input, select, textarea { font-family: inherit; }

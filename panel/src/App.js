@@ -10,8 +10,10 @@ import Clients from './pages/Clients';
 import Reports from './pages/Reports';
 import './App.css';
 
+const ADMIN_SESSION_KEY = 'eekurt_admin_logged_in';
+
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem(ADMIN_SESSION_KEY) === 'true');
   const [activePage, setActivePage] = useState('dashboard');
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
 
@@ -22,6 +24,10 @@ function App() {
     document.body.classList.toggle('light', theme === 'light');
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem(ADMIN_SESSION_KEY, isLoggedIn ? 'true' : 'false');
+  }, [isLoggedIn]);
 
   const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark');
 
@@ -48,7 +54,10 @@ function App() {
       <Sidebar
         activePage={activePage}
         setActivePage={setActivePage}
-        onLogout={() => setIsLoggedIn(false)}
+        onLogout={() => {
+          localStorage.removeItem(ADMIN_SESSION_KEY);
+          setIsLoggedIn(false);
+        }}
         theme={theme}
         onToggleTheme={toggleTheme}
         isCollapsed={isCollapsed}
