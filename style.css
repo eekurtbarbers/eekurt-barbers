@@ -107,7 +107,7 @@ nav {
 .hero-logo {
     width: 300px;
     height: 300px;
-    object-fit: contain;
+    object-fit: cover;
     border-radius: 50%;
     background: rgba(10,10,10,0.6);
     padding: 12px;
