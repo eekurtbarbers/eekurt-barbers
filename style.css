@@ -81,9 +81,9 @@ nav {
 /* Emblem */
 .emblem-wrap {
     position: relative;
-    width: 330px;
-    height: 330px;
-    margin: 0 auto 24px;
+    width: 260px;
+    height: 240px;
+    margin: 0 auto 15px;
     cursor: pointer;
     display: flex;
     align-items: center;
