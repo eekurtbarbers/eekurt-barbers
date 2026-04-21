@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EE KURT BARBERS | Book Your Appointment</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <nav>
+        <div class="nav-brand">EE KURT BARBERS</div>
+        <div class="nav-actions">
+            <button id="menuToggle" class="booking-button">
+                <i class="fas fa-calendar-check"></i> MANAGE BOOKING
+            </button>
+        </div>
+    </nav>
+
+    <!-- ── HERO ── -->
+    <main class="hero">
+        <div class="hero-content">
+            <div class="emblem-wrap" id="emblemBtn" title="Book Now">
+                <div class="emblem-ring"></div>
+                <img src="img/logo.png" alt="EE KURT Logo" class="hero-logo">
+            </div>
+            <h1>EE KURT BARBERS</h1>
+            <p>Traditional Grooming, Modern Excellence.</p>
+            <a href="#booking" class="cta-btn" id="bookNowBtn">BOOK NOW</a>
+        </div>
+    </main>
+
+    <!-- ── BOOKING SECTION ── -->
+    <section id="booking" class="booking-section">
+        <div class="booking-inner">
+            <h2 class="section-title">BOOK YOUR APPOINTMENT</h2>
+            <p class="section-sub">Fast &middot; Secure &middot; No Payment Required Online</p>
+
+            <form id="bookingForm" class="booking-form" novalidate>
+
+                <div class="form-row">
+                    <input type="text" id="name" name="name" placeholder="Full Name" required class="input-field">
+                </div>
+                <div class="form-row two-col">
+                    <input type="email" id="email" name="email" placeholder="Email Address" required class="input-field">
+                    <input type="tel" id="phone" name="phone" placeholder="+44 7XXX XXXXXX" required class="input-field">
+                </div>
+
+                <div class="form-row">
+                    <label class="field-label">SELECT SERVICE</label>
+                    <select id="service" name="service" required class="input-field">
+                        <option value="" disabled selected>Choose a service...</option>
+                        <optgroup label="── Exclusive Packages ──">
+                            <option value="i-cut-royal">I CUT Royal – £65</option>
+                            <option value="i-cut-deluxe">I CUT Deluxe – £55</option>
+                            <option value="full-skinfade-beard-luxury">Full Skin Fade &amp; Beard Luxury – £48</option>
+                            <option value="full-experience">The Full Experience – £40</option>
+                            <option value="senior-full-experience">Senior Full Experience (65+) – £35</option>
+                        </optgroup>
+                        <optgroup label="── Standard ──">
+                            <option value="skin-fade">Skin Fade Cut – £32</option>
+                            <option value="scissor-cut">Scissor Cut – £30</option>
+                            <option value="classic-sbs">Classic Short Back &amp; Sides – £28</option>
+                            <option value="hot-towel-shave">Hot Towel Shave – £22</option>
+                            <option value="clipper-cut">Clipper Cut – £22</option>
+                            <option value="senior-haircut">Senior Haircut (65+) – £23</option>
+                            <option value="young-gents">Young Gents (0–12) – £20</option>
+                            <option value="young-gents-skin-fade">Young Gents Skin Fade (4–12) – £24</option>
+                        </optgroup>
+                        <optgroup label="── Extras ──">
+                            <option value="full-facial">Full Facial Treatment – £24</option>
+                            <option value="beard-dyeing">Beard Dyeing – £24</option>
+                            <option value="face-mask">Face Mask – £12</option>
+                            <option value="face-steam">Face Steam – £12</option>
+                            <option value="threading">Threading – £10</option>
+                            <option value="waxing">Waxing (Nose &amp; Ears) – £10</option>
+                            <option value="shape-up-clean-up">Shape Up &amp; Clean Up – £20</option>
+                            <option value="wash-hot-towel">Wash, Style &amp; Hot Towel – £10</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label class="field-label">SELECT BARBER</label>
+                    <div class="barber-grid">
+                        <button type="button" class="barber-btn selected" data-value="no-preference">
+                            <span class="barber-icon">⭐</span>
+                            <span class="barber-name">No Preference</span>
+                        </button>
+                        <button type="button" class="barber-btn" data-value="tunc">
+                            <span class="barber-icon">✂️</span>
+                            <span class="barber-name">Tunc</span>
+                        </button>
+                        <button type="button" class="barber-btn" data-value="manoc">
+                            <span class="barber-icon">✂️</span>
+                            <span class="barber-name">Manoc</span>
+                        </button>
+                    </div>
+                    <input type="hidden" id="barber" name="barber" value="no-preference">
+                </div>
+
+                <div class="form-row">
+                    <label class="field-label">SELECT DATE</label>
+                    <input type="date" id="date" name="date" required class="input-field">
+                </div>
+
+                <div class="form-row" id="timeSlotsWrap" style="display:none;">
+                    <label class="field-label">SELECT TIME</label>
+                    <div id="timeSlots" class="time-slots-grid"></div>
+                    <input type="hidden" id="time" name="time">
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    ✂ BOOK MY APPOINTMENT
+                </button>
+
+            </form>
+
+            <!-- Hours Widget -->
+            <div class="hours-widget">
+                <div class="hours-status" id="hoursStatus"></div>
+                <div class="hours-grid" id="hoursGrid"></div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ── MANAGE BOOKING MODAL ── -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModalBtn">&times;</span>
+            <div class="modal-header">
+                <img src="img/logo.png" alt="Logo" class="modal-logo">
+                <h3>MANAGE YOUR APPOINTMENT</h3>
+            </div>
+            <div class="modal-options">
+                <button class="opt-btn cancel"><i class="fas fa-times"></i> CANCEL BOOKING</button>
+                <button class="opt-btn reschedule"><i class="fas fa-clock"></i> RESCHEDULE BOOKING</button>
+                <a href="tel:02078331525" class="opt-btn call"><i class="fas fa-phone"></i> CALL US</a>
+            </div>
+            <p class="manage-note">To cancel or reschedule, please call us on <strong>020 7833 1525</strong></p>
+        </div>
+    </div>
+
+    <!-- ── SUCCESS POPUP ── -->
+    <div id="successPopup" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.92);z-index:999999;justify-content:center;align-items:center;">
+        <div style="background:linear-gradient(160deg,#141414,#0d0d0d);border:1px solid rgba(200,200,200,0.15);padding:40px 36px;max-width:440px;width:90%;text-align:center;position:relative;border-radius:4px;">
+            <button onclick="document.getElementById('successPopup').style.display='none'" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#888;font-size:1.4rem;cursor:pointer;line-height:1;">×</button>
+            <div id="popup-icon" style="font-size:3rem;margin-bottom:16px;">✂️</div>
+            <h3 id="popup-title" style="font-family:'Cinzel',serif;font-size:1.2rem;color:#c8c8c8;letter-spacing:3px;margin-bottom:12px;"></h3>
+            <p id="popup-text" style="color:#888;font-size:0.9rem;line-height:1.7;"></p>
+            <p id="popup-id" style="color:#555;font-size:0.75rem;margin-top:16px;font-family:monospace;letter-spacing:1px;"></p>
+        </div>
+    </div>
+
+    <!-- Firebase v10 modular via CDN -->
+    <script type="module" src="script.js"></script>
+</body>
+</html>
