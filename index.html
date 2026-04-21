@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EE KURT BARBERS | Fast & Secure Booking</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <nav>
+        <div class="logo-area">
+            <img src="logo.png" alt="EE KURT Logo" class="nav-logo">
+            <span>EE KURT BARBERS</span>
+        </div>
+        <div class="nav-actions">
+            <button id="menuToggle" class="booking-button">
+                <i class="fas fa-calendar-check"></i> MANAGE BOOKING
+            </button>
+        </div>
+    </nav>
+
+    <main class="hero">
+        <div class="hero-content">
+            <h1>FAST AND SECURE BOOKING</h1>
+            <p>Traditional Grooming, Modern Excellence.</p>
+            <a href="#" class="cta-btn">BOOK NOW</a>
+        </div>
+    </main>
+
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div class="modal-header">
+                <img src="logo.png" alt="Logo" class="modal-logo">
+                <h3>MANAGE YOUR APPOINTMENT</h3>
+            </div>
+            <div class="modal-options">
+                <button class="opt-btn cancel"><i class="fas fa-times"></i> CANCEL BOOKING</button>
+                <button class="opt-btn reschedule"><i class="fas fa-clock"></i> RESCHEDULE BOOKING</button>
+                <a href="tel:+902121234567" class="opt-btn call"><i class="fas fa-phone"></i> CALL US</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

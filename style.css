@@ -1,0 +1,153 @@
+:root {
+    --bg-color: #0a0a0a;
+    --card-bg: #1a1a1a;
+    --accent-color: #c5a059; /* Gold/Silver detay rengi */
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+}
+
+/* Navigasyon */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 5%;
+    border-bottom: 1px solid #333;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-logo {
+    height: 50px;
+    filter: drop-shadow(0 0 5px var(--accent-color));
+}
+
+.logo-area span {
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.booking-button {
+    background: transparent;
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.booking-button:hover {
+    background: var(--accent-color);
+    color: #000;
+}
+
+/* Hero Section */
+.hero {
+    height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1500&q=80');
+    background-size: cover;
+    background-position: center;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    letter-spacing: 5px;
+}
+
+.cta-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 15px 40px;
+    background: var(--accent-color);
+    color: #000;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 4px;
+}
+
+/* Pop-up / Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.85);
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    margin: 10% auto;
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    border: 1px solid var(--accent-color);
+    position: relative;
+    text-align: center;
+}
+
+.close-btn {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.modal-logo {
+    height: 80px;
+    margin-bottom: 15px;
+}
+
+.modal-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.opt-btn {
+    padding: 15px;
+    border: 1px solid #444;
+    background: #222;
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: 0.3s;
+}
+
+.opt-btn:hover {
+    background: #333;
+    border-color: var(--accent-color);
+}
+
+.opt-btn.cancel:hover { color: #ff4d4d; }
