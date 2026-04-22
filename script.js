@@ -1,6 +1,6 @@
 // ─── Firebase CDN imports ────────────────────────────────────────────────────
 import { initializeApp }                from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, collection, addDoc, query, where, getDocs, Timestamp, onSnapshot, runTransaction, doc }
+import { getFirestore, collection, addDoc, query, where, getDocs, Timestamp, onSnapshot }
     from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 // ─── Firebase config (same project, new tenant) ───────────────────────────────
@@ -181,6 +181,54 @@ async function getBusySlots(dateStr) {
         });
     });
     return busy;
+}
+
+async function createPendingBooking(data) {
+    const bookingId = 'EEK-' + Date.now();
+    const match = data.time.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    let h = parseInt(match[1], 10), m = parseInt(match[2], 10);
+    const ap = match[3].toUpperCase();
+    if (ap === 'PM' && h !== 12) h += 12;
+    if (ap === 'AM' && h === 12) h = 0;
+
+    const startTime = getLocalDate(data.date, h, m);
+    const duration = DURATION_MAP[data.service] || 30;
+    const endTime = new Date(startTime.getTime() + duration * 60 * 1000);
+
+    const q = query(
+        collection(db, `tenants/${TENANT}/bookings`),
+        where('barberId', '==', data.barber),
+        where('startTime', '>=', Timestamp.fromDate(getLocalDate(data.date, 0, 0))),
+        where('startTime', '<=', Timestamp.fromDate(getLocalDate(data.date, 23, 59)))
+    );
+    const snap = await getDocs(q);
+    const hasOverlap = snap.docs.some((bookingDoc) => {
+        const booking = bookingDoc.data();
+        if (booking.status === 'CANCELLED') return false;
+        return startTime.getTime() < booking.endTime.toMillis() && endTime.getTime() > booking.startTime.toMillis();
+    });
+
+    if (hasOverlap) {
+        throw new Error('SLOT_TAKEN');
+    }
+
+    await addDoc(collection(db, `tenants/${TENANT}/bookings`), {
+        bookingId,
+        tenantId: TENANT,
+        clientName: data.name,
+        clientEmail: data.email,
+        clientPhone: data.phone,
+        barberId: data.barber,
+        serviceId: data.service,
+        startTime: Timestamp.fromDate(startTime),
+        endTime: Timestamp.fromDate(endTime),
+        status: 'PENDING',
+        paymentType: 'PAY_IN_SHOP',
+        source: 'website',
+        createdAt: Timestamp.fromDate(new Date()),
+    });
+
+    return { bookingId };
 }
 
 // ─── Hours widget ─────────────────────────────────────────────────────────────
@@ -426,51 +474,22 @@ document.getElementById('bookingForm').addEventListener('submit', async function
         barberId = resolveBarberForSlot(selectedBarber, busyListNow, startTime.getTime(), endTime.getTime());
     }
 
-    if (!barberId || barberId === 'no-preference') {
-        throw new Error('SLOT_TAKEN');
-    }
-
     try {
-        // FIXED: Use runTransaction for atomic booking check-and-write
-        await runTransaction(db, async (transaction) => {
-            // Re-verify availability inside the transaction
-            const q = query(
-                collection(db, `tenants/${TENANT}/bookings`),
-                where('barberId', '==', barberId),
-                where('startTime', '>=', Timestamp.fromDate(getLocalDate(date, 0, 0))),
-                where('startTime', '<=', Timestamp.fromDate(getLocalDate(date, 23, 59)))
-            );
-            const snap = await getDocs(q);
-            const hasOverlap = snap.docs.some(doc => {
-                const d = doc.data();
-                if (d.status === 'CANCELLED') return false;
-                return startTime.getTime() < d.endTime.toMillis() && endTime.getTime() > d.startTime.toMillis();
-            });
+        if (!barberId || barberId === 'no-preference') {
+            throw new Error('SLOT_TAKEN');
+        }
 
-            if (hasOverlap) throw new Error('SLOT_TAKEN');
-
-            const bookingId = 'EEK-' + Date.now();
-            const newDocRef = doc(collection(db, `tenants/${TENANT}/bookings`));
-            
-            transaction.set(newDocRef, {
-                bookingId,
-                tenantId: TENANT,
-                clientName: name,
-                clientEmail: email,
-                clientPhone: phone,
-                barberId: barberId,
-                serviceId: service,
-                startTime: Timestamp.fromDate(startTime),
-                endTime: Timestamp.fromDate(endTime),
-                status: 'PENDING',
-                paymentType: 'PAY_IN_SHOP',
-                source: 'website',
-                createdAt: Timestamp.fromDate(new Date()),
-            });
-            
-            // Show success after transaction succeeds
-            showSuccess(name, date, hiddenTime.value, bookingId);
+        const { bookingId } = await createPendingBooking({
+            name,
+            email,
+            phone,
+            date,
+            time: hiddenTime.value,
+            service,
+            barber: barberId,
         });
+
+        showSuccess(name, date, hiddenTime.value, bookingId);
 
         this.reset();
         document.getElementById('timeSlotsWrap').style.display = 'none';
