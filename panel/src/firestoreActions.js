@@ -72,7 +72,6 @@ async function checkOverlap(transaction, { barberId, startTime, endTime, exclude
 
   const q = query(
     bookingsRef,
-    where('barberId', '==', barberId),
     where('startTime', '>=', Timestamp.fromDate(dayStart)),
     where('startTime', '<=', Timestamp.fromDate(dayEnd))
   );
@@ -82,7 +81,9 @@ async function checkOverlap(transaction, { barberId, startTime, endTime, exclude
   const hasOverlap = snap.docs.some(doc => {
     if (excludeDocId && doc.id === excludeDocId) return false;
     const data = doc.data();
+    if (data.barberId !== barberId) return false;
     if (data.status === 'CANCELLED') return false;
+    if (!data.startTime || !data.endTime) return false;
 
     const existingStart = data.startTime.toMillis();
     const existingEnd = data.endTime.toMillis();
