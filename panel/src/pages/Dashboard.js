@@ -80,6 +80,9 @@ function getResolvedBarber(barber, barbers) {
   return (barbers || []).find(b => String(b.id || '').toLowerCase() === key || String(b.name || '').toLowerCase() === key) || null;
 }
 function getBookingName(booking) {
+  if (booking?.status === 'BLOCKED' || booking?.source === 'block') {
+    return 'Blocked';
+  }
   const firstLast = [booking?.firstName, booking?.lastName].filter(Boolean).join(' ').trim();
   const raw = booking?.name || booking?.customerName || booking?.clientName || booking?.fullName || booking?.customer || firstLast;
   return String(raw || '').trim() || 'Walk-in';
@@ -1419,7 +1422,7 @@ useEffect(() => {
         }).toUpperCase() : '';
         return {
           ...d,
-          name: d.clientName || 'Walk-in',
+          name: d.status === 'BLOCKED' || d.source === 'block' ? 'Blocked' : (d.clientName || 'Walk-in'),
           email: d.clientEmail || '',
           phone: d.clientPhone || '',
           barber: d.barberId || '',

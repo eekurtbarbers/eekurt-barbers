@@ -115,6 +115,7 @@ export async function blockTime({ date, startTime, endTime, barber, note }) {
   const st = parseT(startTime), et = parseT(endTime);
   const start = new Date(parseInt(parts[2]), months[parts[1]], parseInt(parts[0]), st.h, st.min, 0);
   const end = new Date(parseInt(parts[2]), months[parts[1]], parseInt(parts[0]), et.h, et.min, 0);
+  await assertBookingSlotAvailable({ barber, startTime: start, endTime: end });
   await addDoc(collection(db, `${TENANT}/bookings`), {
     bookingId: blockId,
     tenantId: 'eekurt',
