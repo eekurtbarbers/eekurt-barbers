@@ -198,7 +198,6 @@ async function createPendingBooking(data) {
 
     const q = query(
         collection(db, `tenants/${TENANT}/bookings`),
-        where('barberId', '==', data.barber),
         where('startTime', '>=', Timestamp.fromDate(getLocalDate(data.date, 0, 0))),
         where('startTime', '<=', Timestamp.fromDate(getLocalDate(data.date, 23, 59)))
     );
@@ -206,6 +205,7 @@ async function createPendingBooking(data) {
     const hasOverlap = snap.docs.some((bookingDoc) => {
         const booking = bookingDoc.data();
         if (booking.status === 'CANCELLED') return false;
+        if (booking.barberId !== data.barber) return false;
         if (!booking.startTime || !booking.endTime) return false; // skip entries missing timestamps
         return startTime.getTime() < booking.endTime.toMillis() && endTime.getTime() > booking.startTime.toMillis();
     });
