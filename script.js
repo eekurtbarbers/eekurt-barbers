@@ -19,13 +19,9 @@ const TENANT = 'eekurt';
 
 // ─── Duration map (minutes) ───────────────────────────────────────────────────
 const DURATION_MAP = {
-    "i-cut-royal": 60, "i-cut-deluxe": 50, "full-skinfade-beard-luxury": 40,
-    "full-experience": 30, "senior-full-experience": 30, "skin-fade": 30,
-    "scissor-cut": 30, "classic-sbs": 20, "hot-towel-shave": 15,
-    "clipper-cut": 15, "senior-haircut": 20, "young-gents": 20,
-    "young-gents-skin-fade": 25, "full-facial": 20, "beard-dyeing": 20,
-    "face-mask": 15, "face-steam": 15, "threading": 10,
-    "waxing": 10, "shape-up-clean-up": 15, "wash-hot-towel": 10
+    "hair-cut": 25, "skin-fade": 25, "childrens-hair": 25,
+    "children-skin-fade": 25, "shape-up": 25, "beard-trim": 25,
+    "hair-beard": 30, "skin-fade-beard": 30, "eekurt-special": 45
 };
 
 // ─── Opening hours ────────────────────────────────────────────────────────────
