@@ -37,6 +37,40 @@ body::before {
     opacity: 0.4;
 }
 
+.whatsapp-floater {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #25d366, #128c4a);
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    box-shadow: 0 18px 40px rgba(18, 140, 74, 0.35);
+    z-index: 1100;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.whatsapp-floater i {
+    font-size: 1.3rem;
+}
+
+.whatsapp-floater:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 22px 46px rgba(18, 140, 74, 0.45);
+    filter: brightness(1.03);
+}
+
+.whatsapp-floater:focus-visible {
+    outline: 2px solid rgba(255,255,255,0.7);
+    outline-offset: 3px;
+}
+
 /* Navigasyon */
 nav {
     display: flex;
@@ -459,6 +493,7 @@ nav {
     width: 100%;
     transition: border-color 0.25s;
     border-radius: 2px;
+    appearance: none;
     -webkit-appearance: none;
 }
 
@@ -646,6 +681,16 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cur
    RESPONSIVE
 ══════════════════════════════════════════ */
 @media (max-width: 600px) {
+    .whatsapp-floater {
+        right: 14px;
+        bottom: 14px;
+        padding: 13px 15px;
+    }
+
+    .whatsapp-floater span {
+        display: none;
+    }
+
     .hero-content h1 { font-size: 1.8rem; letter-spacing: 5px; }
     .nav-brand { font-size: 0.85rem; letter-spacing: 3px; }
     .emblem-wrap { width: 230px; height: 230px; }
