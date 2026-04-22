@@ -2,6 +2,14 @@
   "projects": {
     "default": "havuz-44f70"
   },
-  "targets": {},
+  "targets": {
+    "havuz-44f70": {
+      "hosting": {
+        "admin": [
+          "havuz-44f70-admin"
+        ]
+      }
+    }
+  },
   "etags": {}
 }

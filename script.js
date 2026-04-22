@@ -1,8 +1,7 @@
 // ─── Firebase CDN imports ────────────────────────────────────────────────────
 import { initializeApp }                from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, collection, addDoc, query, where, getDocs, Timestamp }
+import { getFirestore, collection, addDoc, query, where, getDocs, Timestamp, onSnapshot, runTransaction, doc }
     from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import { onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 // ─── Firebase config (same project, new tenant) ───────────────────────────────
 const firebaseConfig = {
@@ -17,7 +16,7 @@ const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
 const TENANT = 'eekurt';
-const WEBSITE_BUILD = '20260422b';
+const WEBSITE_BUILD = '20260422b-FIXED-FULL';
 let ACTIVE_BARBERS = [];
 
 console.info('EE KURT website build', WEBSITE_BUILD);
@@ -41,6 +40,33 @@ const SCHEDULE = [
 ];
 // JS getDay(): 0=Sun,1=Mon,...,6=Sat → map to SCHEDULE index
 const JS_TO_SCHEDULE = [6, 0, 1, 2, 3, 4, 5];
+
+/**
+ * FIXED: Unify Date Parsing to avoid local timezone drift.
+ * Returns a local date object at the start of the specified time.
+ */
+function getLocalDate(dateStr, h = 0, m = 0) {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day, h, m, 0, 0);
+}
+
+function hasOverlapInWindow(slotStartMs, slotEndMs, busyItem) {
+    return slotStartMs < busyItem.end && slotEndMs > busyItem.start;
+}
+
+function resolveBarberForSlot(selectedBarber, busyList, slotStart, slotEnd) {
+    if (selectedBarber && selectedBarber !== 'no-preference') {
+        return selectedBarber;
+    }
+
+    const freeBarber = ACTIVE_BARBERS.find((barber) => {
+        return !busyList
+            .filter(item => item.barberId === barber.id)
+            .some(item => hasOverlapInWindow(slotStart, slotEnd, item));
+    });
+
+    return freeBarber ? freeBarber.id : null;
+}
 
 function timeMins(t) { const [h, m] = t.split(':').map(Number); return h * 60 + m; }
 function fmt12(t) {
@@ -134,55 +160,27 @@ function startBarberRealtimeSync() {
 }
 
 // ─── Firestore helpers ────────────────────────────────────────────────────────
-async function getBusySlots(date, barber) {
-    const start = new Date(date + 'T00:00:00');
-    const end   = new Date(date + 'T23:59:59');
-    const snap  = await getDocs(query(
+async function getBusySlots(dateStr) {
+    const start = getLocalDate(dateStr, 0, 0);
+    const end   = getLocalDate(dateStr, 23, 59);
+    
+    const snap = await getDocs(query(
         collection(db, `tenants/${TENANT}/bookings`),
         where('startTime', '>=', Timestamp.fromDate(start)),
         where('startTime', '<=', Timestamp.fromDate(end))
     ));
+    
     const busy = [];
     snap.forEach(doc => {
         const d = doc.data();
         if (d.status === 'CANCELLED') return;
-        if (barber !== 'no-preference' && d.barberId !== barber) return;
-        busy.push({ start: d.startTime.toMillis(), end: d.endTime.toMillis(), barberId: d.barberId });
+        busy.push({ 
+            start: d.startTime.toMillis(), 
+            end: d.endTime.toMillis(), 
+            barberId: d.barberId 
+        });
     });
     return busy;
-}
-
-async function createPendingBooking(data) {
-    const bookingId = 'EEK-' + Date.now();
-    const match = data.time.match(/(\d+):(\d+)\s*(AM|PM)/i);
-    let h = parseInt(match[1]), m = parseInt(match[2]);
-    const ap = match[3].toUpperCase();
-    if (ap === 'PM' && h !== 12) h += 12;
-    if (ap === 'AM' && h === 12) h = 0;
-
-    const startTime = new Date(data.date + 'T00:00:00');
-    startTime.setHours(h, m, 0, 0);
-    const duration = DURATION_MAP[data.service] || 30;
-    const endTime  = new Date(startTime.getTime() + duration * 60 * 1000);
-
-    const booking = {
-        bookingId,
-        tenantId:    TENANT,
-        clientName:  data.name,
-        clientEmail: data.email,
-        clientPhone: data.phone,
-        barberId:    data.barber,
-        serviceId:   data.service,
-        startTime:   Timestamp.fromDate(startTime),
-        endTime:     Timestamp.fromDate(endTime),
-        status:      'PENDING',
-        paymentType: 'PAY_IN_SHOP',
-        source:      'website',
-        createdAt:   Timestamp.fromDate(new Date()),
-    };
-
-    const ref = await addDoc(collection(db, `tenants/${TENANT}/bookings`), booking);
-    return { bookingId, docId: ref.id };
 }
 
 // ─── Hours widget ─────────────────────────────────────────────────────────────
@@ -213,6 +211,7 @@ function initHoursWidget() {
 
     const grid = document.getElementById('hoursGrid');
     if (grid) {
+        grid.innerHTML = ''; // Clear previous grid
         SCHEDULE.forEach((item, idx) => {
             const isToday = idx === todayIdx;
             const row = document.createElement('div');
@@ -240,7 +239,7 @@ async function checkAvailability(date) {
     hiddenTime.value = '';
 
     const duration  = DURATION_MAP[service] || 30;
-    const selDate   = new Date(date + 'T00:00:00');
+    const selDate   = getLocalDate(date);
     const dayIdx    = JS_TO_SCHEDULE[selDate.getDay()];
     const dayConfig = SCHEDULE[dayIdx];
 
@@ -256,15 +255,18 @@ async function checkAvailability(date) {
 
     const openH  = parseInt(dayConfig.open.split(':')[0]);
     const closeH = parseInt(dayConfig.close.split(':')[0]);
+    const closeMins = timeMins(dayConfig.close);
     const slots  = [];
 
     for (let h = openH; h < closeH; h++) {
         for (const m of [0, 30]) {
             const slotMins = h * 60 + m;
-            if (isToday && slotMins <= nowMins) continue;
+            if (isToday && slotMins <= nowMins + 15) continue; 
+            if (slotMins + duration > closeMins) continue;
+
             const hour12 = h % 12 || 12;
             const ampm   = h >= 12 ? 'PM' : 'AM';
-            slots.push({ label: `${hour12}:${String(m).padStart(2, '0')} ${ampm}`, h, m });
+            slots.push({ h, m, label: `${hour12}:${String(m).padStart(2, '0')} ${ampm}` });
         }
     }
 
@@ -274,35 +276,45 @@ async function checkAvailability(date) {
     }
 
     let busyList = [];
-    try { busyList = await getBusySlots(date, barber); } catch (e) { console.warn('Availability fetch failed:', e); }
+    try { busyList = await getBusySlots(date); } catch (e) { console.warn('Availability fetch failed:', e); }
 
     timeSlotsGrid.innerHTML = '';
-    hiddenTime.value = '';
-
+    
     slots.forEach(slot => {
-        const slotMs  = new Date(date + 'T00:00:00');
-        slotMs.setHours(slot.h, slot.m, 0, 0);
+        const slotMs  = getLocalDate(date, slot.h, slot.m);
         const slotEnd = slotMs.getTime() + duration * 60 * 1000;
-        const isBusy  = busyList.some(b => slotMs.getTime() < b.end && slotEnd > b.start);
+        
+        let isBusy = false;
+        let assignedBarberId = barber;
+
+        if (barber === 'no-preference') {
+            // FIXED: Only busy if ALL active barbers are busy for this slot
+            const freeBarber = ACTIVE_BARBERS.find(b => {
+                return !busyList
+                    .filter(item => item.barberId === b.id)
+                    .some(item => slotMs.getTime() < item.end && slotEnd > item.start);
+            });
+            if (freeBarber) {
+                assignedBarberId = freeBarber.id;
+                isBusy = false;
+            } else {
+                isBusy = true;
+            }
+        } else {
+            // Specific barber check
+            isBusy = busyList
+                .filter(item => item.barberId === barber)
+                .some(item => slotMs.getTime() < item.end && slotEnd > item.start);
+        }
 
         const btn = document.createElement('button');
         btn.type      = 'button';
         btn.textContent = slot.label;
         btn.className = 'time-slot-btn' + (isBusy ? ' unavailable' : '');
         btn.disabled  = isBusy;
-        btn.dataset.assignedBarber = '';
+        btn.dataset.assignedBarber = assignedBarberId;
 
         if (!isBusy) {
-            // auto-assign barber for no-preference
-            if (barber === 'no-preference') {
-                const firstFree = ACTIVE_BARBERS.find(b => {
-                    return !busyList
-                        .filter(item => item.barberId === b.id)
-                        .some(item => slotMs.getTime() < item.end && slotEnd > item.start);
-                });
-                btn.dataset.assignedBarber = firstFree?.id || 'no-preference';
-            }
-
             btn.addEventListener('click', () => {
                 timeSlotsGrid.querySelectorAll('.time-slot-btn').forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
@@ -320,14 +332,15 @@ function initManageModal() {
     const openBtn     = document.getElementById('menuToggle');
     const closeBtn    = document.getElementById('closeModalBtn');
 
-    openBtn.addEventListener('click', () => { modal.style.display = 'flex'; });
+    if (openBtn) openBtn.addEventListener('click', () => { modal.style.display = 'flex'; });
     if (closeBtn) closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
-    modal.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
+    if (modal) modal.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
 }
 
 // ─── Success popup ────────────────────────────────────────────────────────────
 function showSuccess(name, date, time, bookingId) {
     const popup = document.getElementById('successPopup');
+    if (!popup) return;
     document.getElementById('popup-icon').textContent  = '✂️';
     document.getElementById('popup-title').textContent = `You're booked, ${name.split(' ')[0]}!`;
     document.getElementById('popup-text').textContent  =
@@ -336,16 +349,15 @@ function showSuccess(name, date, time, bookingId) {
     popup.style.display = 'flex';
 }
 
-// ─── BOOK NOW button → scroll ─────────────────────────────────────────────────
-document.getElementById('bookNowBtn').addEventListener('click', e => {
+// ─── UI Listeners ─────────────────────────────────────────────────────────────
+document.getElementById('bookNowBtn')?.addEventListener('click', e => {
     e.preventDefault();
     document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
 });
-document.getElementById('emblemBtn').addEventListener('click', () => {
+document.getElementById('emblemBtn')?.addEventListener('click', () => {
     document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
 });
 
-// ─── Date & service change → refresh slots ────────────────────────────────────
 document.getElementById('date').addEventListener('change', function () {
     checkAvailability(this.value);
 });
@@ -354,7 +366,7 @@ document.getElementById('service').addEventListener('change', function () {
     if (d) checkAvailability(d);
 });
 
-// ─── Phone validation ─────────────────────────────────────────────────────────
+// ─── Validation ───────────────────────────────────────────────────────────────
 document.getElementById('phone').addEventListener('input', function () {
     let v = this.value.replace(/[^0-9+\s]/g, '');
     if (v && !v.startsWith('+')) v = '+' + v;
@@ -370,6 +382,7 @@ document.getElementById('email').addEventListener('blur', function () {
 // ─── Date bounds ──────────────────────────────────────────────────────────────
 (function () {
     const dateInput = document.getElementById('date');
+    if (!dateInput) return;
     const now       = new Date();
     const todayStr  = now.toISOString().split('T')[0];
     dateInput.setAttribute('min', todayStr);
@@ -386,57 +399,92 @@ document.getElementById('bookingForm').addEventListener('submit', async function
     const phone   = document.getElementById('phone').value.trim();
     const date    = document.getElementById('date').value;
     const service = document.getElementById('service').value;
-    const barberEl = document.getElementById('barber');
     const hiddenTime = document.getElementById('time');
 
-    if (!name || !email || !phone || !date || !service) {
-        alert('Please fill in all fields.');
+    if (!name || !email || !phone || !date || !service || !hiddenTime.value) {
+        alert('Please fill in all fields and select a time slot.');
         return;
     }
-    if (!hiddenTime.value) {
-        alert('Please select a time slot.');
-        return;
-    }
-
-    const barver = barberEl.value === 'no-preference'
-        ? (hiddenTime.dataset.assignedBarber || 'no-preference')
-        : barberEl.value;
-
-    // Duplicate check
-    try {
-        const start = new Date(date + 'T00:00:00');
-        const end   = new Date(date + 'T23:59:59');
-        const snap  = await getDocs(query(
-            collection(db, `tenants/${TENANT}/bookings`),
-            where('clientPhone', '==', phone),
-            where('startTime', '>=', Timestamp.fromDate(start)),
-            where('startTime', '<=', Timestamp.fromDate(end)),
-            where('status', '==', 'CONFIRMED')
-        ));
-        if (!snap.empty && !confirm('⚠️ You already have a booking on this date. Book again?')) return;
-    } catch { /* non-blocking */ }
 
     const submitBtn = document.getElementById('submitBtn');
     submitBtn.disabled = true;
     submitBtn.textContent = 'Securing your slot…';
 
+    const timeMatch = hiddenTime.value.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    let h = parseInt(timeMatch[1]), m = parseInt(timeMatch[2]);
+    if (timeMatch[3].toUpperCase() === 'PM' && h !== 12) h += 12;
+    if (timeMatch[3].toUpperCase() === 'AM' && h === 12) h = 0;
+    
+    const startTime = getLocalDate(date, h, m);
+    const duration = DURATION_MAP[service] || 30;
+    const endTime = new Date(startTime.getTime() + duration * 60 * 1000);
+    const selectedBarber = document.getElementById('barber').value || 'no-preference';
+    let barberId = hiddenTime.dataset.assignedBarber || selectedBarber;
+
+    if (!barberId || barberId === 'no-preference') {
+        const busyListNow = await getBusySlots(date);
+        barberId = resolveBarberForSlot(selectedBarber, busyListNow, startTime.getTime(), endTime.getTime());
+    }
+
+    if (!barberId || barberId === 'no-preference') {
+        throw new Error('SLOT_TAKEN');
+    }
+
     try {
-        const { bookingId } = await createPendingBooking({
-            name, email, phone, date,
-            time:    hiddenTime.value,
-            service,
-            barber:  barver,
+        // FIXED: Use runTransaction for atomic booking check-and-write
+        await runTransaction(db, async (transaction) => {
+            // Re-verify availability inside the transaction
+            const q = query(
+                collection(db, `tenants/${TENANT}/bookings`),
+                where('barberId', '==', barberId),
+                where('startTime', '>=', Timestamp.fromDate(getLocalDate(date, 0, 0))),
+                where('startTime', '<=', Timestamp.fromDate(getLocalDate(date, 23, 59)))
+            );
+            const snap = await getDocs(q);
+            const hasOverlap = snap.docs.some(doc => {
+                const d = doc.data();
+                if (d.status === 'CANCELLED') return false;
+                return startTime.getTime() < d.endTime.toMillis() && endTime.getTime() > d.startTime.toMillis();
+            });
+
+            if (hasOverlap) throw new Error('SLOT_TAKEN');
+
+            const bookingId = 'EEK-' + Date.now();
+            const newDocRef = doc(collection(db, `tenants/${TENANT}/bookings`));
+            
+            transaction.set(newDocRef, {
+                bookingId,
+                tenantId: TENANT,
+                clientName: name,
+                clientEmail: email,
+                clientPhone: phone,
+                barberId: barberId,
+                serviceId: service,
+                startTime: Timestamp.fromDate(startTime),
+                endTime: Timestamp.fromDate(endTime),
+                status: 'PENDING',
+                paymentType: 'PAY_IN_SHOP',
+                source: 'website',
+                createdAt: Timestamp.fromDate(new Date()),
+            });
+            
+            // Show success after transaction succeeds
+            showSuccess(name, date, hiddenTime.value, bookingId);
         });
-        showSuccess(name, date, hiddenTime.value, bookingId);
+
         this.reset();
         document.getElementById('timeSlotsWrap').style.display = 'none';
-        document.querySelectorAll('.barber-btn').forEach((b, i) => {
-            b.classList.toggle('selected', i === 0); // reset to No Preference
-        });
-        barberEl.value = 'no-preference';
+        document.querySelectorAll('.barber-btn').forEach((b, i) => b.classList.toggle('selected', i === 0));
+        document.getElementById('barber').value = 'no-preference';
+
     } catch (err) {
         console.error('Booking error:', err);
-        alert('Something went wrong. Please try again or call us on 020 7833 1525.');
+        if (err.message === 'SLOT_TAKEN') {
+            alert('Sorry, this slot was just taken. Please pick another one.');
+            checkAvailability(date);
+        } else {
+            alert('Something went wrong. Please try again or call us.');
+        }
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = '✂ BOOK MY APPOINTMENT';

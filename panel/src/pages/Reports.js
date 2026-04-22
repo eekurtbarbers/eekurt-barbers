@@ -3,8 +3,12 @@ import config from '../config';
 import { db } from '../firebase';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 function getBColor(barber, barbers) {
-  if (barbers) { const f = barbers.find(b => b.name.toLowerCase() === (barber || '').toLowerCase()); if (f) return f.color; }
-  return { tunc: '#d4af37', manoc: '#4caf50' }[(barber || '').toLowerCase()] || '#7a7260';
+  if (barbers) {
+    const key = (barber || '').toLowerCase();
+    const f = barbers.find(b => String(b.id || '').toLowerCase() === key || String(b.name || '').toLowerCase() === key);
+    if (f) return f.color;
+  }
+  return '#7a7260';
 }
 
 function parsePrice(val) {

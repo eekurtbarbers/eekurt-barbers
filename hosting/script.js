@@ -42,6 +42,29 @@ const SCHEDULE = [
 // JS getDay(): 0=Sun,1=Mon,...,6=Sat → map to SCHEDULE index
 const JS_TO_SCHEDULE = [6, 0, 1, 2, 3, 4, 5];
 
+function getLocalDate(dateStr, h = 0, m = 0) {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day, h, m, 0, 0);
+}
+
+function hasOverlapInWindow(slotStartMs, slotEndMs, busyItem) {
+    return slotStartMs < busyItem.end && slotEndMs > busyItem.start;
+}
+
+function resolveBarberForSlot(selectedBarber, busyList, slotStart, slotEnd) {
+    if (selectedBarber && selectedBarber !== 'no-preference') {
+        return selectedBarber;
+    }
+
+    const freeBarber = ACTIVE_BARBERS.find((barber) => {
+        return !busyList
+            .filter(item => item.barberId === barber.id)
+            .some(item => hasOverlapInWindow(slotStart, slotEnd, item));
+    });
+
+    return freeBarber ? freeBarber.id : null;
+}
+
 function timeMins(t) { const [h, m] = t.split(':').map(Number); return h * 60 + m; }
 function fmt12(t) {
     const [h, m] = t.split(':').map(Number);
@@ -165,6 +188,23 @@ async function createPendingBooking(data) {
     const duration = DURATION_MAP[data.service] || 30;
     const endTime  = new Date(startTime.getTime() + duration * 60 * 1000);
 
+    const q = query(
+        collection(db, `tenants/${TENANT}/bookings`),
+        where('barberId', '==', data.barber),
+        where('startTime', '>=', Timestamp.fromDate(getLocalDate(data.date, 0, 0))),
+        where('startTime', '<=', Timestamp.fromDate(getLocalDate(data.date, 23, 59)))
+    );
+    const snap = await getDocs(q);
+    const hasOverlap = snap.docs.some((bookingDoc) => {
+        const booking = bookingDoc.data();
+        if (booking.status === 'CANCELLED') return false;
+        return startTime.getTime() < booking.endTime.toMillis() && endTime.getTime() > booking.startTime.toMillis();
+    });
+
+    if (hasOverlap) {
+        throw new Error('SLOT_TAKEN');
+    }
+
     const booking = {
         bookingId,
         tenantId:    TENANT,
@@ -181,8 +221,9 @@ async function createPendingBooking(data) {
         createdAt:   Timestamp.fromDate(new Date()),
     };
 
-    const ref = await addDoc(collection(db, `tenants/${TENANT}/bookings`), booking);
-    return { bookingId, docId: ref.id };
+    await addDoc(collection(db, `tenants/${TENANT}/bookings`), booking);
+
+    return { bookingId };
 }
 
 // ─── Hours widget ─────────────────────────────────────────────────────────────
@@ -398,9 +439,27 @@ document.getElementById('bookingForm').addEventListener('submit', async function
         return;
     }
 
-    const barver = barberEl.value === 'no-preference'
-        ? (hiddenTime.dataset.assignedBarber || 'no-preference')
-        : barberEl.value;
+    const selectedBarber = barberEl.value || 'no-preference';
+
+    const timeMatch = hiddenTime.value.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    let h = parseInt(timeMatch[1]), m = parseInt(timeMatch[2]);
+    if (timeMatch[3].toUpperCase() === 'PM' && h !== 12) h += 12;
+    if (timeMatch[3].toUpperCase() === 'AM' && h === 12) h = 0;
+    const startTime = getLocalDate(date, h, m);
+    const duration = DURATION_MAP[service] || 30;
+    const endTime = new Date(startTime.getTime() + duration * 60 * 1000);
+
+    let barber = hiddenTime.dataset.assignedBarber || selectedBarber;
+    if (!barber || barber === 'no-preference') {
+        const busyNow = await getBusySlots(date, 'no-preference');
+        barber = resolveBarberForSlot(selectedBarber, busyNow, startTime.getTime(), endTime.getTime());
+    }
+
+    if (!barber || barber === 'no-preference') {
+        alert('Sorry, this slot was just taken. Please pick another one.');
+        await checkAvailability(date);
+        return;
+    }
 
     // Duplicate check
     try {
@@ -425,7 +484,7 @@ document.getElementById('bookingForm').addEventListener('submit', async function
             name, email, phone, date,
             time:    hiddenTime.value,
             service,
-            barber:  barver,
+            barber,
         });
         showSuccess(name, date, hiddenTime.value, bookingId);
         this.reset();

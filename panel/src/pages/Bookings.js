@@ -25,7 +25,7 @@ function parsePrice(p) {
 
 export default function Bookings() {
   const [bookings, setBookings] = useState([]);
-  const [barbers, setBarbers] = useState(config.barbers || []);
+  const [barbers, setBarbers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -70,7 +70,7 @@ const fetchAll = async () => {
     setBookings(fetchedBookings);
 
     const fetchedBarbers = barbersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    if (fetchedBarbers.length > 0) setBarbers(fetchedBarbers);
+    setBarbers(fetchedBarbers);
 
   } catch (err) {
     console.error('fetchAll error:', err);

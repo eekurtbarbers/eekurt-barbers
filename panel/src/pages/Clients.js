@@ -3,9 +3,10 @@ import config from '../config';
 import { db } from '../firebase';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 
-function getBColor(barber) {
-  const map = { tunc: '#d4af37', manoc: '#4caf50', manoj: '#9c27b0' };
-  return map[(barber || '').toLowerCase()] || '#7a7260';
+function getBColor(barber, barbers) {
+  const key = (barber || '').toLowerCase();
+  const found = (barbers || []).find(b => String(b.id || '').toLowerCase() === key || String(b.name || '').toLowerCase() === key);
+  return found?.color || '#7a7260';
 }
 
 function formatDate(dateStr) {
@@ -204,7 +205,7 @@ export default function Clients() {
                       onMouseLeave={e => { if (!isSel) e.currentTarget.style.background = 'transparent'; }}>
                       <td style={{ padding: '12px 14px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: getBColor(favBarber?.[0]) + '22', border: '1px solid ' + getBColor(favBarber?.[0]) + '44', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.82rem', fontWeight: '700', color: getBColor(favBarber?.[0]), flexShrink: 0 }}>
+                          <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: getBColor(favBarber?.[0], barbers) + '22', border: '1px solid ' + getBColor(favBarber?.[0], barbers) + '44', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.82rem', fontWeight: '700', color: getBColor(favBarber?.[0], barbers), flexShrink: 0 }}>
                             {c.name[0].toUpperCase()}
                           </div>
                           <div>
@@ -224,7 +225,7 @@ export default function Clients() {
                       <td style={{ padding: '12px 14px', fontSize: '0.75rem', color: 'var(--muted)' }}>{c.lastVisit || '--'}</td>
                       <td style={{ padding: '12px 14px', fontSize: '0.72rem', color: 'var(--text)' }}>{favSvc ? getSvcLabel(favSvc[0]) : '--'}</td>
                       <td style={{ padding: '12px 14px' }}>
-                        {favBarber && <span style={{ fontSize: '0.68rem', color: getBColor(favBarber[0]), background: getBColor(favBarber[0]) + '18', padding: '2px 7px', borderRadius: '4px', fontWeight: '600' }}>{favBarber[0]?.toUpperCase()}</span>}
+                        {favBarber && <span style={{ fontSize: '0.68rem', color: getBColor(favBarber[0], barbers), background: getBColor(favBarber[0], barbers) + '18', padding: '2px 7px', borderRadius: '4px', fontWeight: '600' }}>{favBarber[0]?.toUpperCase()}</span>}
                       </td>
                       <td style={{ padding: '12px 14px' }}>
                         <div style={{ display: 'flex', gap: '4px' }}>

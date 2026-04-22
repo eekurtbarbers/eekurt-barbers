@@ -7,7 +7,7 @@ admin.initializeApp();
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 const TELEGRAM_TOKEN = '8756110813:AAEBFlDeofbJ_2g41sSZ8IakpGV-CESHxPE';
 const TELEGRAM_CHAT_ID = '1679287636';
-const GAS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbymASCa4MN7LMPoPa6fYwfeu2OCYfxKlLvoIBlauXhe_o7BDMF5DFgrrpBtUIrZAZi_/exec';
+const GAS_WEBHOOK_URL = '';
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 function sendTelegram(message) {
