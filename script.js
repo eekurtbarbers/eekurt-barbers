@@ -174,6 +174,7 @@ async function getBusySlots(dateStr) {
     snap.forEach(doc => {
         const d = doc.data();
         if (d.status === 'CANCELLED') return;
+        if (!d.startTime || !d.endTime) return; // skip entries missing timestamps
         busy.push({ 
             start: d.startTime.toMillis(), 
             end: d.endTime.toMillis(), 
@@ -205,6 +206,7 @@ async function createPendingBooking(data) {
     const hasOverlap = snap.docs.some((bookingDoc) => {
         const booking = bookingDoc.data();
         if (booking.status === 'CANCELLED') return false;
+        if (!booking.startTime || !booking.endTime) return false; // skip entries missing timestamps
         return startTime.getTime() < booking.endTime.toMillis() && endTime.getTime() > booking.startTime.toMillis();
     });
 
@@ -470,8 +472,12 @@ document.getElementById('bookingForm').addEventListener('submit', async function
     let barberId = hiddenTime.dataset.assignedBarber || selectedBarber;
 
     if (!barberId || barberId === 'no-preference') {
-        const busyListNow = await getBusySlots(date);
-        barberId = resolveBarberForSlot(selectedBarber, busyListNow, startTime.getTime(), endTime.getTime());
+        try {
+            const busyListNow = await getBusySlots(date);
+            barberId = resolveBarberForSlot(selectedBarber, busyListNow, startTime.getTime(), endTime.getTime());
+        } catch (e) {
+            console.warn('Barber resolution failed, will attempt booking anyway:', e);
+        }
     }
 
     try {
@@ -497,12 +503,12 @@ document.getElementById('bookingForm').addEventListener('submit', async function
         document.getElementById('barber').value = 'no-preference';
 
     } catch (err) {
-        console.error('Booking error:', err);
+        console.error('Booking error:', err.message, err);
         if (err.message === 'SLOT_TAKEN') {
             alert('Sorry, this slot was just taken. Please pick another one.');
             checkAvailability(date);
         } else {
-            alert('Something went wrong. Please try again or call us.');
+            alert('Something went wrong. Please try again or call us.\n\nIf this keeps happening, please call us directly.');
         }
     } finally {
         submitBtn.disabled = false;
