@@ -55,12 +55,14 @@ function normalizeBarberKey(value) {
 function overlapsRange(startA, endA, startB, endB) {
   return startA < endB && endA > startB;
 }
-function getBusyRangesForBooking(existingBookings, bookingDate, barber, excludeBookingId) {
+function getBusyRangesForBooking(existingBookings, bookingDate, barber, excludeBookingId, barbers) {
+  const targetBarberId = getResolvedBarber(barber, barbers)?.id || normalizeBarberKey(barber);
   return (existingBookings || []).filter(b => {
     if (b.status === 'CANCELLED') return false;
     if (excludeBookingId && b.bookingId === excludeBookingId) return false;
     if (b.date !== bookingDate) return false;
-    return normalizeBarberKey(b.barber) === normalizeBarberKey(barber);
+    const bookingBarberId = getResolvedBarber(b.barber, barbers)?.id || normalizeBarberKey(b.barber);
+    return bookingBarberId === targetBarberId;
   }).map(b => {
     const duration = getServiceDuration(b.service);
     const start = convertTo24(b.time);
@@ -613,7 +615,7 @@ function BookingForm({ preBarber, preHour, preMins, preDate, preBooking, barbers
       }
       return { name:preBooking.name||'', email:preBooking.email||'', phone:preBooking.phone||'', service:preBooking.service||(config.services?config.services[0].id:''), barber:(preBooking.barber||'').toLowerCase(), date:yr+'-'+mo+'-'+dy, time:preBooking.time||'9:00 AM', paymentType:preBooking.paymentType||'CASH', _countryCode:existingCode, _phoneLocal:existingLocal };
     }
-    return { name:'', email:'', phone:'', service:config.services?config.services[0].id:'', barber:preBarber?preBarber.name.toLowerCase():(barbers[0]?barbers[0].name.toLowerCase():''), date:preDate?preDate.toISOString().split('T')[0]:new Date().toISOString().split('T')[0], time:preHour!==undefined?minsToLabel(preHour*60+(preMins||0)):'9:00 AM', paymentType:'CASH', _countryCode:'+44', _phoneLocal:'' };
+    return { name:'', email:'', phone:'', service:config.services?config.services[0].id:'', barber:preBarber?preBarber.id:(barbers[0]?barbers[0].id:''), date:preDate?preDate.toISOString().split('T')[0]:new Date().toISOString().split('T')[0], time:preHour!==undefined?minsToLabel(preHour*60+(preMins||0)):'9:00 AM', paymentType:'CASH', _countryCode:'+44', _phoneLocal:'' };
   });
   const [saving, setSaving] = useState(false);
 
@@ -638,7 +640,7 @@ function BookingForm({ preBarber, preHour, preMins, preDate, preBooking, barbers
   const months2 = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const formDateStr = parseInt(dy2, 10) + ' ' + months2[parseInt(mo2, 10) - 1] + ' ' + yr2;
   const selectedDuration = getServiceDuration(form.service);
-  const busySlots = getBusyRangesForBooking(existingBookings, formDateStr, form.barber, isEdit ? preBooking?.bookingId : null);
+  const busySlots = getBusyRangesForBooking(existingBookings, formDateStr, form.barber, isEdit ? preBooking?.bookingId : null, barbers);
 
   const hours = [];
 for (let h = 9; h <= 19; h++) {
@@ -748,8 +750,8 @@ const handleSave = async (goCheckout = false) => {
           <label style={lbl}>Barber</label>
           <div style={{ display:'flex', gap:'6px' }}>
             {barbers.map(b=>(
-              <button key={b.id} onClick={()=>setForm({...form,barber:b.name.toLowerCase()})}
-                style={{ flex:1, padding:'9px', borderRadius:'8px', border:'1px solid '+(form.barber===b.name.toLowerCase()?b.color:'var(--border)'), background:form.barber===b.name.toLowerCase()?b.color+'20':'transparent', color:form.barber===b.name.toLowerCase()?b.color:'var(--muted)', cursor:'pointer', fontSize:'0.78rem', fontWeight:'600', transition:'all 0.2s', display:'flex', alignItems:'center', justifyContent:'center', gap:'5px' }}>
+              <button key={b.id} onClick={()=>setForm({...form,barber:b.id})}
+                style={{ flex:1, padding:'9px', borderRadius:'8px', border:'1px solid '+(form.barber===b.id?b.color:'var(--border)'), background:form.barber===b.id?b.color+'20':'transparent', color:form.barber===b.id?b.color:'var(--muted)', cursor:'pointer', fontSize:'0.78rem', fontWeight:'600', transition:'all 0.2s', display:'flex', alignItems:'center', justifyContent:'center', gap:'5px' }}>
                 <div style={{ width:'6px', height:'6px', borderRadius:'50%', background:b.color }} />{b.name}
               </button>
             ))}
@@ -811,7 +813,7 @@ function SlotPopup({ popup, onNewBooking, onWalkIn, onBlockTime, onClose }) {
   );
 }
 function BlockTimeForm({ preBarber, preHour, preDate, barbers, onClose, onSaved }) {
-  const [barber, setBarber] = useState(preBarber ? preBarber.name.toLowerCase() : (barbers[0] ? barbers[0].name.toLowerCase() : ''));
+  const [barber, setBarber] = useState(preBarber ? preBarber.id : (barbers[0] ? barbers[0].id : ''));
   const [saving, setSaving] = useState(false);
   const date = preDate ? (preDate.getDate() + ' ' + preDate.toLocaleDateString('en-GB', {month:'long'}) + ' ' + preDate.getFullYear()) : formatDateKey(new Date());
   const defaultTime = preHour !== undefined ? minsToLabel(preHour * 60) : '9:00 AM';
@@ -872,8 +874,8 @@ const handleSave = async () => {
           <label style={lbl}>Barber</label>
           <div style={{ display:'flex', gap:'6px' }}>
             {barbers.map(b => (
-              <button key={b.id} onClick={() => setBarber(b.name.toLowerCase())}
-                style={{ flex:1, padding:'9px', borderRadius:'8px', border:'1px solid '+(barber===b.name.toLowerCase()?b.color:'var(--border)'), background:barber===b.name.toLowerCase()?b.color+'20':'transparent', color:barber===b.name.toLowerCase()?b.color:'var(--muted)', cursor:'pointer', fontSize:'0.78rem', fontWeight:'600', transition:'all 0.2s', display:'flex', alignItems:'center', justifyContent:'center', gap:'5px' }}>
+              <button key={b.id} onClick={() => setBarber(b.id)}
+                style={{ flex:1, padding:'9px', borderRadius:'8px', border:'1px solid '+(barber===b.id?b.color:'var(--border)'), background:barber===b.id?b.color+'20':'transparent', color:barber===b.id?b.color:'var(--muted)', cursor:'pointer', fontSize:'0.78rem', fontWeight:'600', transition:'all 0.2s', display:'flex', alignItems:'center', justifyContent:'center', gap:'5px' }}>
                 <div style={{ width:'6px', height:'6px', borderRadius:'50%', background:b.color }} />{b.name}
               </button>
             ))}
@@ -914,7 +916,7 @@ function WalkInForm({ preBarber, preHour, preMins, preDate, barbers, existingBoo
   const [selectedClient, setSelectedClient] = useState(null);
   const [showClientList, setShowClientList] = useState(false);
   const [service, setService] = useState(config.services ? config.services[0].id : '');
-  const [barber, setBarber] = useState(preBarber ? preBarber.name.toLowerCase() : (barbers[0] ? barbers[0].name.toLowerCase() : ''));
+  const [barber, setBarber] = useState(preBarber ? preBarber.id : (barbers[0] ? barbers[0].id : ''));
   const [saving, setSaving] = useState(false);
 
   const now = new Date();
@@ -944,7 +946,7 @@ function WalkInForm({ preBarber, preHour, preMins, preDate, barbers, existingBoo
 
   const svc = config.services ? config.services.find(s => s.id === service) : null;
   const selectedDuration = getServiceDuration(service);
-  const busySlots = getBusyRangesForBooking(existingBookings, date, barber, null);
+  const busySlots = getBusyRangesForBooking(existingBookings, date, barber, null, barbers);
 
   const hours = [];
   for (let h = 9; h <= 19; h++) {
@@ -1062,8 +1064,8 @@ function WalkInForm({ preBarber, preHour, preMins, preDate, barbers, existingBoo
           <label style={lbl}>Barber</label>
           <div style={{ display:'flex', gap:'6px' }}>
             {barbers.map(b => (
-              <button key={b.id} onClick={() => setBarber(b.name.toLowerCase())}
-                style={{ flex:1, padding:'9px', borderRadius:'8px', border:'1px solid '+(barber===b.name.toLowerCase()?b.color:'var(--border)'), background:barber===b.name.toLowerCase()?b.color+'20':'transparent', color:barber===b.name.toLowerCase()?b.color:'var(--muted)', cursor:'pointer', fontSize:'0.78rem', fontWeight:'600', transition:'all 0.2s', display:'flex', alignItems:'center', justifyContent:'center', gap:'5px' }}>
+              <button key={b.id} onClick={() => setBarber(b.id)}
+                style={{ flex:1, padding:'9px', borderRadius:'8px', border:'1px solid '+(barber===b.id?b.color:'var(--border)'), background:barber===b.id?b.color+'20':'transparent', color:barber===b.id?b.color:'var(--muted)', cursor:'pointer', fontSize:'0.78rem', fontWeight:'600', transition:'all 0.2s', display:'flex', alignItems:'center', justifyContent:'center', gap:'5px' }}>
                 <div style={{ width:'6px', height:'6px', borderRadius:'50%', background:b.color }} />{b.name}
               </button>
             ))}
