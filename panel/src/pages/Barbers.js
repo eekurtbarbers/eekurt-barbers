@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import config from '../config';
 import { db } from '../firebase';
 import { collection, doc, getDocs, setDoc, deleteDoc } from 'firebase/firestore';
 
@@ -16,7 +15,6 @@ const defaultBarber = {
 };
 
 export default function Barbers() {
-  // config.barbers yerine boş dizi [] ile başlatıyoruz
   const [barbers, setBarbers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
@@ -24,16 +22,14 @@ export default function Barbers() {
   const [form, setForm] = useState(Object.assign({}, defaultBarber));
   const [saved, setSaved] = useState(false);
 
-  // Sayfa açıldığında verileri Cloud'dan (Sheets) çek
  const fetchBarbers = async function() {
   try {
     setLoading(true);
     const snap = await getDocs(collection(db, 'tenants/eekurt/barbers'));
     const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    if (list.length > 0) setBarbers(list);
-    else setBarbers(config.barbers);
+    setBarbers(list);
   } catch (err) {
-    setBarbers(config.barbers);
+    setBarbers([]);
   } finally {
     setLoading(false);
   }
@@ -121,7 +117,7 @@ const handleSave = async function() {
 
       {saved && (
         <div style={{ padding: '12px 16px', background: 'rgba(76,175,80,0.15)', border: '1px solid rgba(76,175,80,0.3)', borderRadius: '8px', color: '#4caf50', fontSize: '0.85rem' }}>
-          ✅ Changes saved successfully to Google Sheets
+          ✅ Changes saved successfully
         </div>
       )}
 
