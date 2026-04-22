@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Reschedule Booking | EE KURT Barbers</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #110e0a 50%, #0a0a0a 100%);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+        }
+
+        .wrap {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 36px 20px 80px;
+        }
+
+        .page-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 36px;
+        }
+        .back-link {
+            color: #c8a84b;
+            text-decoration: none;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .back-link:hover { color: #fff; }
+        .nav-logo { width: 46px; height: auto; }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .page-header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .page-header p {
+            color: #666;
+            font-size: 0.78rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #151510 0%, #0e0e0a 100%);
+            border: 1px solid rgba(200,168,75,0.4);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 0 30px rgba(200,168,75,0.12), inset 0 0 12px rgba(200,168,75,0.04);
+        }
+
+        .state { display: none; }
+        .state.active { display: block; }
+
+        .loading-center {
+            text-align: center;
+            padding: 32px 0;
+        }
+        .spinner {
+            display: inline-block;
+            width: 22px; height: 22px;
+            border: 2px solid rgba(200,168,75,0.3);
+            border-top-color: #c8a84b;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .lookup-note {
+            color: #777;
+            font-size: 0.84rem;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        .lookup-note strong { color: #aaa; }
+
+        .form-input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 12px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(200,168,75,0.35);
+            color: #fff;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #c8a84b;
+            box-shadow: 0 0 12px rgba(200,168,75,0.2);
+        }
+        .form-input::placeholder { color: #555; }
+
+        .btn-gold {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, #c8a84b, #9a7a1e);
+            color: #000;
+            font-family: 'Cinzel', serif;
+            font-size: 0.82rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-weight: 700;
+            transition: filter 0.2s;
+        }
+        .btn-gold:hover { filter: brightness(1.1); }
+        .btn-gold:disabled { opacity: 0.4; cursor: not-allowed; filter: none; }
+
+        .btn-outline {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            background: transparent;
+            color: #666;
+            font-size: 0.78rem;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 10px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #1e1e1a;
+            font-size: 0.88rem;
+        }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { color: #666; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; }
+        .detail-value { color: #ddd; font-weight: 600; text-align: right; }
+        .detail-value.gold { color: #c8a84b; }
+
+        .section-label {
+            color: #c8a84b;
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 22px 0 10px 0;
+        }
+
+        /* BARBER BUTTONS */
+        .barber-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 4px;
+        }
+        .barber-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 11px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(200,168,75,0.25);
+            background: rgba(0,0,0,0.35);
+            color: #777;
+            font-family: 'Cinzel', serif;
+            font-size: 0.78rem;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+        .barber-btn.selected {
+            border-color: #c8a84b;
+            background: rgba(200,168,75,0.12);
+            color: #c8a84b;
+        }
+
+        /* SLOTS */
+        .slots-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 8px;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+        .slot-btn {
+            padding: 10px 6px;
+            border-radius: 8px;
+            border: 1px solid rgba(200,168,75,0.25);
+            background: rgba(0,0,0,0.35);
+            color: #bbb;
+            font-size: 0.78rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .slot-btn:hover:not(:disabled) { border-color: #c8a84b; color: #c8a84b; }
+        .slot-btn.selected { border-color: #c8a84b; background: rgba(200,168,75,0.18); color: #c8a84b; font-weight: 700; }
+        .slot-btn:disabled { border-color: #222; color: #333; cursor: not-allowed; text-decoration: line-through; }
+
+        .slots-status {
+            text-align: center;
+            color: #666;
+            font-size: 0.8rem;
+            padding: 18px 0;
+        }
+
+        .error-msg {
+            color: #ff5252;
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* SUCCESS */
+        .success-icon { font-size: 3rem; margin-bottom: 14px; }
+        .success-title {
+            font-family: 'Cinzel', serif;
+            color: #c8a84b;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .new-booking-box {
+            background: rgba(76,175,80,0.08);
+            border: 1px dashed rgba(76,175,80,0.35);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+            text-align: left;
+            font-size: 0.85rem;
+            line-height: 1.9;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrap">
+
+    <nav class="page-nav">
+        <a href="cancel.html" class="back-link">← Cancel</a>
+        <img src="img/logo.png" alt="EE KURT Barbers" class="nav-logo">
+        <a href="index.html#booking" class="back-link">Book →</a>
+    </nav>
+
+    <div class="page-header">
+        <h1>Reschedule</h1>
+        <p>EE KURT Barbers · Exmouth Market</p>
+    </div>
+
+    <div class="card">
+
+        <!-- LOADING -->
+        <div class="state active" id="stateLoading">
+            <div class="loading-center">
+                <span class="spinner"></span>
+                <span style="color:#777; font-size:0.84rem;">Loading your booking…</span>
+            </div>
+        </div>
+
+        <!-- MANUAL LOOKUP -->
+        <div class="state" id="stateLookup">
+            <p class="lookup-note">Enter your <strong>Booking ID</strong> (e.g. <strong>EEK-1234567890</strong>) and the email address you booked with.</p>
+            <input type="text" id="inputId" class="form-input" placeholder="Booking ID (EEK-…)">
+            <input type="email" id="inputEmail" class="form-input" placeholder="Email address">
+            <button class="btn-gold" onclick="lookupBooking()">Find My Booking</button>
+            <p class="error-msg" id="lookupError" style="display:none;">Booking not found. Please check your details.</p>
+        </div>
+
+        <!-- PICK NEW DATE/BARBER/TIME -->
+        <div class="state" id="stateReschedule">
+            <p style="color:#c8a84b; font-family:'Cinzel',serif; font-size:0.72rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:14px;">Current Booking</p>
+            <div id="currentBookingDetails"></div>
+
+            <p class="section-label">New Date</p>
+            <input type="date" id="newDate" class="form-input" style="margin-bottom:0;">
+
+            <p class="section-label">Barber</p>
+            <div class="barber-grid" id="barberGrid">
+                <!-- populated from Firestore -->
+            </div>
+
+            <p class="section-label">Available Times</p>
+            <div id="slotsContainer">
+                <div class="slots-status">Select a date to see available slots.</div>
+            </div>
+
+            <button class="btn-gold" id="btnConfirm" onclick="confirmReschedule()" disabled style="margin-top:16px;">
+                🔄 Confirm Reschedule
+            </button>
+            <a href="index.html" class="btn-outline">Keep Original Booking</a>
+        </div>
+
+        <!-- PROCESSING -->
+        <div class="state" id="stateProcessing">
+            <div class="loading-center">
+                <span class="spinner"></span>
+                <span style="color:#777; font-size:0.84rem;">Rescheduling your booking…</span>
+            </div>
+        </div>
+
+        <!-- SUCCESS -->
+        <div class="state" id="stateSuccess">
+            <div style="text-align:center;">
+                <div class="success-icon">✅</div>
+                <h2 class="success-title">Rescheduled!</h2>
+                <div class="new-booking-box" id="successDetails"></div>
+                <p style="color:#777; font-size:0.8rem; margin-bottom:20px;">We look forward to seeing you!</p>
+                <a href="index.html" class="btn-gold" style="display:block; text-align:center; text-decoration:none;">Back to Home →</a>
+            </div>
+        </div>
+
+        <!-- NOT FOUND -->
+        <div class="state" id="stateNotFound">
+            <div style="text-align:center; padding:20px 0;">
+                <div style="font-size:2.5rem; margin-bottom:12px;">❌</div>
+                <h2 style="font-family:'Cinzel',serif; color:#ff5252; letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; font-size:1rem;">Not Found</h2>
+                <p style="color:#777; font-size:0.84rem; line-height:1.6; margin-bottom:22px;">We couldn't find a booking with those details. Please check your confirmation email for the correct Booking ID.</p>
+                <a href="tel:02078331525" style="display:inline-block; background:linear-gradient(135deg,#c8a84b,#9a7a1e); color:#000; padding:12px 24px; border-radius:10px; font-weight:800; text-decoration:none; text-transform:uppercase; font-size:0.78rem; letter-spacing:1px;">📞 Call Us</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="margin-top:20px; text-align:center;">
+        <a href="index.html" style="color:#555; font-size:0.76rem; text-decoration:none; letter-spacing:1px; text-transform:uppercase;">← Back to Main Page</a>
+    </div>
+
+</div>
+
+<script type="module">
+    import { initializeApp }   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getFirestore, collection, query, where, getDocs, updateDoc, Timestamp }
+        from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const firebaseConfig = {
+        apiKey:            "AIzaSyA16eMVtA4ZOIu3ixCg8y8RUh-EAjMev3A",
+        authDomain:        "havuz-44f70.firebaseapp.com",
+        projectId:         "havuz-44f70",
+        storageBucket:     "havuz-44f70.firebasestorage.app",
+        messagingSenderId: "1050766582653",
+        appId:             "1:1050766582653:web:7ddaa5acb3bec5ef122214"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+    const TENANT = 'eekurt';
+
+    const SERVICE_NAMES = {
+        'hair-cut': 'Hair Cut', 'skin-fade': 'Skin Fade',
+        'childrens-hair': "Children's Hair", 'children-skin-fade': "Children's Skin Fade",
+        'shape-up': 'Shape Up', 'beard-trim': 'Beard Trim',
+        'hair-beard': 'Hair & Beard', 'skin-fade-beard': 'Skin Fade & Beard',
+        'eekurt-special': 'EE KURT Special'
+    };
+
+    const DURATION_MAP = {
+        'hair-cut': 25, 'skin-fade': 25, 'childrens-hair': 25,
+        'children-skin-fade': 25, 'shape-up': 25, 'beard-trim': 25,
+        'hair-beard': 30, 'skin-fade-beard': 30, 'eekurt-special': 45
+    };
+
+    const SCHEDULE = [
+        { open: '09:00', close: '19:00', closed: false }, // Mon
+        { open: '09:00', close: '19:00', closed: false }, // Tue
+        { open: '09:00', close: '19:00', closed: false }, // Wed
+        { open: '09:00', close: '19:00', closed: false }, // Thu
+        { open: '09:00', close: '19:00', closed: false }, // Fri
+        { open: '09:00', close: '19:00', closed: false }, // Sat
+        { open: '10:00', close: '17:00', closed: false }, // Sun
+    ];
+    const JS_TO_SCHEDULE = [6, 0, 1, 2, 3, 4, 5]; // JS getDay() 0=Sun → SCHEDULE[6]
+
+    let currentDocRef = null;
+    let currentBookingData = null;
+    let currentBookingId   = '';
+    let currentEmail       = '';
+    let selectedBarber     = '';
+    let selectedTime       = '';
+    let selectedDate       = '';
+    let activeBarbers      = [];
+
+    function showState(id) {
+        document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function getLocalDate(dateStr, h = 0, m = 0) {
+        const [y, mo, d] = dateStr.split('-').map(Number);
+        return new Date(y, mo - 1, d, h, m, 0, 0);
+    }
+
+    function timeMins(t) {
+        const [h, m] = t.split(':').map(Number);
+        return h * 60 + m;
+    }
+
+    function formatTimestamp(ts) {
+        if (!ts) return { date: 'N/A', time: 'N/A' };
+        const d = ts.toDate();
+        const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const h = d.getHours(), m = d.getMinutes();
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 || 12;
+        return {
+            date: `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`,
+            time: `${h12}:${String(m).padStart(2,'0')} ${ampm}`
+        };
+    }
+
+    async function loadBarbers() {
+        const snap = await getDocs(collection(db, `tenants/${TENANT}/barbers`));
+        activeBarbers = snap.docs
+            .map(d => ({ id: d.id, ...d.data() }))
+            .filter(b => b.active !== false)
+            .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+    }
+
+    function renderBarberGrid() {
+        const grid = document.getElementById('barberGrid');
+        grid.innerHTML = '';
+        activeBarbers.forEach(b => {
+            const btn = document.createElement('button');
+            btn.className = 'barber-btn' + (b.id === selectedBarber ? ' selected' : '');
+            btn.textContent = '✂ ' + (b.name || b.id);
+            btn.onclick = () => {
+                selectedBarber = b.id;
+                selectedTime = '';
+                document.getElementById('btnConfirm').disabled = true;
+                document.querySelectorAll('.barber-btn').forEach(x => x.classList.remove('selected'));
+                btn.classList.add('selected');
+                if (selectedDate) loadSlots();
+            };
+            grid.appendChild(btn);
+        });
+    }
+
+    async function getBusySlotsForDate(dateStr) {
+        const start = getLocalDate(dateStr, 0, 0);
+        const end   = getLocalDate(dateStr, 23, 59);
+        const snap = await getDocs(query(
+            collection(db, `tenants/${TENANT}/bookings`),
+            where('startTime', '>=', Timestamp.fromDate(start)),
+            where('startTime', '<=', Timestamp.fromDate(end))
+        ));
+        const busy = [];
+        snap.forEach(docSnap => {
+            const d = docSnap.data();
+            if (d.status === 'CANCELLED') return;
+            if (docSnap.ref.id === currentDocRef?.id) return; // exclude current booking
+            if (!d.startTime || !d.endTime) return;
+            busy.push({ barberId: d.barberId, start: d.startTime.toMillis(), end: d.endTime.toMillis() });
+        });
+        return busy;
+    }
+
+    async function loadSlots() {
+        const container = document.getElementById('slotsContainer');
+        container.innerHTML = '<div class="slots-status"><span class="spinner" style="vertical-align:middle; display:inline-block; width:16px; height:16px; border-width:2px;"></span> Checking availability…</div>';
+
+        const dateStr = selectedDate;
+        const selDate = getLocalDate(dateStr);
+        const dayIdx  = JS_TO_SCHEDULE[selDate.getDay()];
+        const day     = SCHEDULE[dayIdx];
+
+        if (day.closed) {
+            container.innerHTML = '<div class="slots-status">We are closed on this day. Please pick another date.</div>';
+            return;
+        }
+
+        const service = currentBookingData?.serviceId || 'hair-cut';
+        const duration = DURATION_MAP[service] || 30;
+        const openH    = parseInt(day.open.split(':')[0]);
+        const closeH   = parseInt(day.close.split(':')[0]);
+        const closeMins = timeMins(day.close);
+
+        const now      = new Date();
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+        const isToday  = dateStr === todayStr;
+        const nowMins  = isToday ? now.getHours() * 60 + now.getMinutes() : 0;
+
+        const slots = [];
+        for (let h = openH; h < closeH; h++) {
+            for (const m of [0, 30]) {
+                const mins = h * 60 + m;
+                if (isToday && mins <= nowMins + 15) continue;
+                if (mins + duration > closeMins) continue;
+                const h12 = h % 12 || 12;
+                const ampm = h >= 12 ? 'PM' : 'AM';
+                slots.push({ h, m, label: `${h12}:${String(m).padStart(2,'0')} ${ampm}` });
+            }
+        }
+
+        let busy = [];
+        try { busy = await getBusySlotsForDate(dateStr); } catch(e) { console.warn('Slot fetch error:', e); }
+
+        const grid = document.createElement('div');
+        grid.className = 'slots-grid';
+        let available = 0;
+
+        slots.forEach(slot => {
+            const slotStart = getLocalDate(dateStr, slot.h, slot.m).getTime();
+            const slotEnd   = slotStart + duration * 60 * 1000;
+            const isBusy = busy
+                .filter(b => b.barberId === selectedBarber)
+                .some(b => slotStart < b.end && slotEnd > b.start);
+
+            const btn = document.createElement('button');
+            btn.className = 'slot-btn';
+            btn.textContent = slot.label;
+            if (isBusy) {
+                btn.disabled = true;
+            } else {
+                available++;
+                btn.onclick = () => {
+                    document.querySelectorAll('.slot-btn').forEach(x => x.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    selectedTime = slot.label;
+                    document.getElementById('btnConfirm').disabled = false;
+                };
+            }
+            grid.appendChild(btn);
+        });
+
+        container.innerHTML = '';
+        if (available === 0) {
+            container.innerHTML = '<div class="slots-status">No available slots for this date. Please pick another day.</div>';
+        } else {
+            container.appendChild(grid);
+        }
+    }
+
+    async function lookupByParams(id, email) {
+        const snap = await getDocs(query(
+            collection(db, `tenants/${TENANT}/bookings`),
+            where('bookingId', '==', id)
+        ));
+        if (snap.empty) return null;
+        const docSnap = snap.docs[0];
+        const data = docSnap.data();
+        if ((data.clientEmail || '').toLowerCase() !== email.toLowerCase()) return null;
+        if (data.status === 'CANCELLED') return null;
+        return { ref: docSnap.ref, data };
+    }
+
+    function renderCurrentBooking(data) {
+        const { date, time } = formatTimestamp(data.startTime);
+        document.getElementById('currentBookingDetails').innerHTML = `
+            <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">${data.clientName || '—'}</span></div>
+            <div class="detail-row"><span class="detail-label">Current Date</span><span class="detail-value gold">${date}</span></div>
+            <div class="detail-row"><span class="detail-label">Current Time</span><span class="detail-value">${time}</span></div>
+            <div class="detail-row"><span class="detail-label">Service</span><span class="detail-value">${SERVICE_NAMES[data.serviceId] || data.serviceId || '—'}</span></div>
+            <div class="detail-row"><span class="detail-label">Barber</span><span class="detail-value">${(data.barberId || 'TBC').toUpperCase()}</span></div>
+        `;
+    }
+
+    async function init(id, email) {
+        try {
+            await loadBarbers();
+            const result = await lookupByParams(id, email);
+            if (!result) { showState('stateNotFound'); return; }
+            currentDocRef      = result.ref;
+            currentBookingData = result.data;
+            selectedBarber = result.data.barberId || (activeBarbers[0]?.id ?? '');
+            renderCurrentBooking(result.data);
+            renderBarberGrid();
+
+            // Date picker: min = tomorrow
+            const input = document.getElementById('newDate');
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            input.min = tomorrow.toISOString().split('T')[0];
+            input.addEventListener('change', function() {
+                selectedDate = this.value;
+                selectedTime = '';
+                document.getElementById('btnConfirm').disabled = true;
+                loadSlots();
+            });
+
+            showState('stateReschedule');
+        } catch(e) {
+            console.error(e);
+            showState('stateNotFound');
+        }
+    }
+
+    // Exposed to onclick
+    window.lookupBooking = async function() {
+        const id    = document.getElementById('inputId').value.trim();
+        const email = document.getElementById('inputEmail').value.trim();
+        if (!id || !email) return;
+        currentBookingId = id;
+        currentEmail = email;
+        document.getElementById('lookupError').style.display = 'none';
+        showState('stateLoading');
+        await init(id, email);
+    };
+
+    window.confirmReschedule = async function() {
+        if (!selectedDate || !selectedTime || !selectedBarber) return;
+
+        // Parse new time
+        const match = selectedTime.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        let h = parseInt(match[1]), m = parseInt(match[2]);
+        if (match[3].toUpperCase() === 'PM' && h !== 12) h += 12;
+        if (match[3].toUpperCase() === 'AM' && h === 12) h = 0;
+
+        const service = currentBookingData?.serviceId || 'hair-cut';
+        const duration = DURATION_MAP[service] || 30;
+        const newStart = getLocalDate(selectedDate, h, m);
+        const newEnd   = new Date(newStart.getTime() + duration * 60 * 1000);
+
+        // Final overlap check before committing
+        let busy = [];
+        try { busy = await getBusySlotsForDate(selectedDate); } catch(e) {}
+        const hasOverlap = busy
+            .filter(b => b.barberId === selectedBarber)
+            .some(b => newStart.getTime() < b.end && newEnd.getTime() > b.start);
+        if (hasOverlap) {
+            alert('Sorry, that slot was just taken. Please pick another time.');
+            loadSlots();
+            return;
+        }
+
+        showState('stateProcessing');
+        try {
+            await updateDoc(currentDocRef, {
+                barberId:  selectedBarber,
+                startTime: Timestamp.fromDate(newStart),
+                endTime:   Timestamp.fromDate(newEnd),
+                status:    'PENDING',
+                rescheduledAt: Timestamp.fromDate(new Date()),
+            });
+
+            const newDateFmt = newStart.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('successDetails').innerHTML = `
+                <p><strong style="color:#c8a84b;">📅 New Date:</strong> ${newDateFmt}</p>
+                <p><strong style="color:#c8a84b;">⏰ New Time:</strong> ${selectedTime}</p>
+                <p><strong style="color:#c8a84b;">💈 Barber:</strong> ${selectedBarber.toUpperCase()}</p>
+                <p><strong style="color:#c8a84b;">✂️ Service:</strong> ${SERVICE_NAMES[service] || service}</p>
+            `;
+            showState('stateSuccess');
+        } catch(e) {
+            console.error(e);
+            alert('Something went wrong. Please call us on 020 7833 1525.');
+            showState('stateReschedule');
+        }
+    };
+
+    // Auto-load from URL params
+    (function() {
+        const params = new URLSearchParams(window.location.search);
+        const id    = params.get('id');
+        const email = params.get('email');
+        if (id && email) {
+            currentBookingId = id;
+            currentEmail = email;
+            init(id, email);
+        } else {
+            showState('stateLookup');
+        }
+    })();
+</script>
+
+</body>
+</html>
