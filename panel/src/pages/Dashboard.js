@@ -644,7 +644,9 @@ function BookingForm({ preBarber, preHour, preMins, preDate, preBooking, barbers
 for (let h = 9; h <= 19; h++) {
   [0, 15, 30, 45].forEach(m => {
     if (h === 19 && m > 0) return;
-    hours.push({ label: minsToLabel(h * 60 + m) });
+    const start = h * 60 + m;
+    const end = start + selectedDuration;
+    hours.push({ label: minsToLabel(start), isBusy: busySlots.some(slot => overlapsRange(start, end, slot.start, slot.end)) });
   });
 }
 const handleSave = async (goCheckout = false) => {
