@@ -73,7 +73,7 @@ function getBColor(barber, barbers) {
     const f = barbers.find(b => String(b.id || '').toLowerCase() === key || String(b.name || '').toLowerCase() === key);
     if (f) return f.color;
   }
-  return '#7a7260';
+  return '#777777';
 }
 function getResolvedBarber(barber, barbers) {
   const key = String(barber || '').toLowerCase();
@@ -122,9 +122,9 @@ function ResizeHandle({ onResize, direction = 'horizontal' }) {
   return (
     <div onMouseDown={handleMouseDown}
       style={{ width:direction==='horizontal'?'6px':'100%', height:direction==='horizontal'?'100%':'6px', background:'transparent', cursor:direction==='horizontal'?'col-resize':'row-resize', flexShrink:0, position:'relative', zIndex:10, display:'flex', alignItems:'center', justifyContent:'center' }}
-      onMouseEnter={e=>e.currentTarget.querySelector('.handle-line').style.background='rgba(212,175,55,0.6)'}
-      onMouseLeave={e=>e.currentTarget.querySelector('.handle-line').style.background='rgba(212,175,55,0.15)'}>
-      <div className="handle-line" style={{ width:direction==='horizontal'?'2px':'40px', height:direction==='horizontal'?'40px':'2px', background:'rgba(212,175,55,0.15)', borderRadius:'2px', transition:'background 0.2s' }} />
+      onMouseEnter={e=>e.currentTarget.querySelector('.handle-line').style.background='rgba(180,180,180,0.6)'}
+      onMouseLeave={e=>e.currentTarget.querySelector('.handle-line').style.background='rgba(180,180,180,0.15)'}>
+      <div className="handle-line" style={{ width:direction==='horizontal'?'2px':'40px', height:direction==='horizontal'?'40px':'2px', background:'rgba(180,180,180,0.15)', borderRadius:'2px', transition:'background 0.2s' }} />
     </div>
   );
 }
@@ -218,10 +218,10 @@ const handleCheckout = async (method) => {
     const isDone = (s === 'cart' && (step === 'tip' || step === 'payment')) || (s === 'tip' && step === 'payment');
     return (
       <div onClick={() => isDone && setStep(s)} style={{ display: 'flex', alignItems: 'center', gap: '7px', cursor: isDone ? 'pointer' : 'default' }}>
-        <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: isActive ? '#d4af37' : isDone ? 'rgba(76,175,80,0.4)' : 'rgba(212,175,55,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.62rem', fontWeight: '700', color: isActive ? '#000' : isDone ? '#4caf50' : 'var(--muted)', transition: 'all 0.2s' }}>
+        <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: isActive ? '#c0c0c0' : isDone ? 'rgba(76,175,80,0.4)' : 'rgba(180,180,180,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.62rem', fontWeight: '700', color: isActive ? '#000' : isDone ? '#4caf50' : 'var(--muted)', transition: 'all 0.2s' }}>
           {isDone ? '✓' : num}
         </div>
-        <span style={{ fontSize: '0.75rem', color: isActive ? '#d4af37' : isDone ? '#4caf50' : 'var(--muted)', fontWeight: isActive ? '600' : '400' }}>{label}</span>
+        <span style={{ fontSize: '0.75rem', color: isActive ? '#c0c0c0' : isDone ? '#4caf50' : 'var(--muted)', fontWeight: isActive ? '600' : '400' }}>{label}</span>
       </div>
     );
   };
@@ -230,7 +230,7 @@ const handleCheckout = async (method) => {
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={e => { if(e.target === e.currentTarget) onClose(); }}>
       <div style={{ background: 'var(--card2)', border: '1px solid var(--border)', borderRadius: '20px', width: '720px', maxWidth: '96vw', maxHeight: '92vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 24px 64px rgba(0,0,0,0.7)' }}>
         {/* Header */}
-        <div style={{ padding: '18px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(212,175,55,0.03)' }}>
+        <div style={{ padding: '18px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(180,180,180,0.03)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             {stepDot('cart', '1', 'Cart')}
             <div style={{ width: '28px', height: '1px', background: 'var(--border)' }} />
@@ -246,7 +246,7 @@ const handleCheckout = async (method) => {
             {step === 'cart' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                 <p style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text)', margin: 0 }}>Cart</p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', background: 'rgba(212,175,55,0.04)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', background: 'rgba(180,180,180,0.04)', borderRadius: '12px', border: '1px solid var(--border)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <div style={{ width: '4px', height: '36px', background: getBColor(booking.barber, barbers), borderRadius: '2px' }} />
                     <div>
@@ -254,7 +254,7 @@ const handleCheckout = async (method) => {
                       <div style={{ fontSize: '0.68rem', color: 'var(--muted)', marginTop: '2px' }}>{svc ? svc.duration + 'min' : ''} · {(booking.barber || '').toUpperCase()}</div>
                     </div>
                   </div>
-                  <span style={{ fontSize: '1rem', fontWeight: '700', color: '#d4af37' }}>£{basePrice}</span>
+                  <span style={{ fontSize: '1rem', fontWeight: '700', color: '#c0c0c0' }}>£{basePrice}</span>
                 </div>
                 <div style={{ padding: '14px 16px', background: 'var(--card)', borderRadius: '12px', border: '1px solid var(--border)' }}>
                   <p style={{ fontSize: '0.65rem', color: 'var(--muted)', letterSpacing: '1.5px', textTransform: 'uppercase', margin: '0 0 10px', fontWeight: '600' }}>Discount</p>
@@ -262,7 +262,7 @@ const handleCheckout = async (method) => {
                     <div style={{ display: 'flex', border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
                       {['%', '£'].map(t => (
                         <button key={t} onClick={() => setDiscountType(t)}
-                          style={{ padding: '8px 16px', border: 'none', cursor: 'pointer', background: discountType === t ? 'rgba(212,175,55,0.18)' : 'transparent', color: discountType === t ? '#d4af37' : 'var(--muted)', fontSize: '0.85rem', fontWeight: '700', transition: 'all 0.15s' }}>
+                          style={{ padding: '8px 16px', border: 'none', cursor: 'pointer', background: discountType === t ? 'rgba(180,180,180,0.18)' : 'transparent', color: discountType === t ? '#c0c0c0' : 'var(--muted)', fontSize: '0.85rem', fontWeight: '700', transition: 'all 0.15s' }}>
                           {t}
                         </button>
                       ))}
@@ -270,7 +270,7 @@ const handleCheckout = async (method) => {
                     <input type="number" min="0" value={discountValue} onChange={e => setDiscountValue(e.target.value)}
                       placeholder={discountType === '%' ? '0' : '0.00'} style={{ ...inp, width: '90px' }} />
                     <button onClick={applyDiscount}
-                      style={{ padding: '9px 18px', background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.3)', borderRadius: '8px', color: '#d4af37', cursor: 'pointer', fontSize: '0.82rem', fontWeight: '600' }}>
+                      style={{ padding: '9px 18px', background: 'rgba(180,180,180,0.12)', border: '1px solid rgba(180,180,180,0.3)', borderRadius: '8px', color: '#c0c0c0', cursor: 'pointer', fontSize: '0.82rem', fontWeight: '600' }}>
                       Apply
                     </button>
                     {discountAmt > 0 && <span style={{ fontSize: '0.85rem', color: '#4caf50', fontWeight: '700' }}>-£{discountAmt.toFixed(2)}</span>}
@@ -292,7 +292,7 @@ const handleCheckout = async (method) => {
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                   <div style={{ position: 'relative' }}>
                     <button onClick={() => setShowQuickActions(!showQuickActions)}
-                      style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(212,175,55,0.06)', border: '1px solid var(--border)', color: 'var(--muted)', cursor: 'pointer', fontSize: '1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(180,180,180,0.06)', border: '1px solid var(--border)', color: 'var(--muted)', cursor: 'pointer', fontSize: '1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       ···
                     </button>
                     {showQuickActions && (
@@ -306,7 +306,7 @@ const handleCheckout = async (method) => {
                         ].map(item => (
                           <button key={item.label} onClick={item.action}
                             style={{ display: 'flex', width: '100%', padding: '8px 12px', background: 'transparent', border: 'none', color: 'var(--text)', cursor: 'pointer', borderRadius: '6px', fontSize: '0.78rem', textAlign: 'left' }}
-                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(212,175,55,0.08)'}
+                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(180,180,180,0.08)'}
                             onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                             {item.label}
                           </button>
@@ -323,7 +323,7 @@ const handleCheckout = async (method) => {
                     )}
                   </div>
                   <button onClick={() => setStep('tip')}
-                    style={{ flex: 1, padding: '13px', background: 'linear-gradient(135deg,#d4af37,#b8860b)', border: 'none', borderRadius: '10px', color: '#000', fontWeight: '700', fontSize: '0.92rem', cursor: 'pointer' }}>
+                    style={{ flex: 1, padding: '13px', background: 'linear-gradient(135deg,#c0c0c0,#666666)', border: 'none', borderRadius: '10px', color: '#000', fontWeight: '700', fontSize: '0.92rem', cursor: 'pointer' }}>
                     Continue to Tip →
                   </button>
                 </div>
@@ -332,7 +332,7 @@ const handleCheckout = async (method) => {
 
             {step === 'tip' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-                <p style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text)', margin: 0 }}>Select tip for <span style={{ color: '#d4af37' }}>{(booking.barber || 'barber').toUpperCase()}</span></p>
+                <p style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text)', margin: 0 }}>Select tip for <span style={{ color: '#c0c0c0' }}>{(booking.barber || 'barber').toUpperCase()}</span></p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
                   {[
                     { label: 'No tip', value: 0, sub: '' },
@@ -344,8 +344,8 @@ const handleCheckout = async (method) => {
                   ].map(t => (
                     <button key={t.label}
                       onClick={() => { if (t.value === -1) return; setTip(t.value); setCustomTip(''); }}
-                      style={{ padding: '16px 8px', borderRadius: '12px', border: '1px solid ' + (tip === t.value && t.value !== -1 ? '#d4af37' : 'var(--border)'), background: tip === t.value && t.value !== -1 ? 'rgba(212,175,55,0.12)' : 'var(--card)', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px', transition: 'all 0.15s' }}>
-                      <span style={{ fontSize: '0.92rem', fontWeight: '600', color: tip === t.value && t.value !== -1 ? '#d4af37' : 'var(--text)' }}>{t.label}</span>
+                      style={{ padding: '16px 8px', borderRadius: '12px', border: '1px solid ' + (tip === t.value && t.value !== -1 ? '#c0c0c0' : 'var(--border)'), background: tip === t.value && t.value !== -1 ? 'rgba(180,180,180,0.12)' : 'var(--card)', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px', transition: 'all 0.15s' }}>
+                      <span style={{ fontSize: '0.92rem', fontWeight: '600', color: tip === t.value && t.value !== -1 ? '#c0c0c0' : 'var(--text)' }}>{t.label}</span>
                       {t.sub && <span style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>{t.sub}</span>}
                     </button>
                   ))}
@@ -354,14 +354,14 @@ const handleCheckout = async (method) => {
                   <span style={{ fontSize: '0.82rem', color: 'var(--muted)' }}>Custom £</span>
                   <input type="number" min="0" value={customTip} onChange={e => setCustomTip(e.target.value)} placeholder="0.00" style={{ ...inp, width: '90px' }} />
                   <button onClick={() => { const v = parseFloat(customTip) || 0; setTip(v); }}
-                    style={{ padding: '8px 16px', background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.3)', borderRadius: '8px', color: '#d4af37', cursor: 'pointer', fontSize: '0.8rem', fontWeight: '600' }}>
+                    style={{ padding: '8px 16px', background: 'rgba(180,180,180,0.1)', border: '1px solid rgba(180,180,180,0.3)', borderRadius: '8px', color: '#c0c0c0', cursor: 'pointer', fontSize: '0.8rem', fontWeight: '600' }}>
                     Set
                   </button>
                   {tip > 0 && <span style={{ fontSize: '0.82rem', color: '#4caf50', fontWeight: '600', marginLeft: 'auto' }}>+£{tip.toFixed(2)}</span>}
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button onClick={() => setStep('cart')} style={{ flex: 1, padding: '12px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '10px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.85rem' }}>← Back</button>
-                  <button onClick={() => setStep('payment')} style={{ flex: 2, padding: '12px', background: 'linear-gradient(135deg,#d4af37,#b8860b)', border: 'none', borderRadius: '10px', color: '#000', fontWeight: '700', fontSize: '0.88rem', cursor: 'pointer' }}>Continue to Payment →</button>
+                  <button onClick={() => setStep('payment')} style={{ flex: 2, padding: '12px', background: 'linear-gradient(135deg,#c0c0c0,#666666)', border: 'none', borderRadius: '10px', color: '#000', fontWeight: '700', fontSize: '0.88rem', cursor: 'pointer' }}>Continue to Payment →</button>
                 </div>
               </div>
             )}
@@ -377,13 +377,13 @@ const handleCheckout = async (method) => {
                     { id: 'SPLIT', label: 'Split payment' },
                   ].map(m => (
                     <button key={m.id} onClick={() => setPaymentMethod(m.id)}
-                      style={{ padding: '18px 16px', borderRadius: '12px', border: '2px solid ' + (paymentMethod === m.id ? '#d4af37' : 'var(--border)'), background: paymentMethod === m.id ? 'rgba(212,175,55,0.1)' : 'var(--card)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', transition: 'all 0.15s' }}>
-                      <span style={{ fontSize: '0.88rem', fontWeight: '600', color: paymentMethod === m.id ? '#d4af37' : 'var(--text)' }}>{m.label}</span>
+                      style={{ padding: '18px 16px', borderRadius: '12px', border: '2px solid ' + (paymentMethod === m.id ? '#c0c0c0' : 'var(--border)'), background: paymentMethod === m.id ? 'rgba(180,180,180,0.1)' : 'var(--card)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', transition: 'all 0.15s' }}>
+                      <span style={{ fontSize: '0.88rem', fontWeight: '600', color: paymentMethod === m.id ? '#c0c0c0' : 'var(--text)' }}>{m.label}</span>
                     </button>
                   ))}
                 </div>
                 {paymentMethod === 'SPLIT' && (
-                  <div style={{ padding: '14px', background: 'rgba(212,175,55,0.04)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                  <div style={{ padding: '14px', background: 'rgba(180,180,180,0.04)', borderRadius: '12px', border: '1px solid var(--border)' }}>
                     <p style={{ fontSize: '0.72rem', color: 'var(--muted)', margin: '0 0 10px' }}>Split between Cash and:</p>
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
                       <select value={splitSecond} onChange={e => setSplitSecond(e.target.value)} style={{ ...inp, flex: 1 }}>
@@ -408,7 +408,7 @@ const handleCheckout = async (method) => {
                     Save unpaid
                   </button>
                   <button onClick={() => handleCheckout(paymentMethod)} disabled={saving}
-                    style={{ flex: 2, padding: '12px', background: saving ? 'rgba(212,175,55,0.2)' : 'linear-gradient(135deg,#d4af37,#b8860b)', border: 'none', borderRadius: '10px', color: saving ? 'var(--muted)' : '#000', fontWeight: '700', fontSize: '0.92rem', cursor: saving ? 'not-allowed' : 'pointer' }}>
+                    style={{ flex: 2, padding: '12px', background: saving ? 'rgba(180,180,180,0.2)' : 'linear-gradient(135deg,#c0c0c0,#666666)', border: 'none', borderRadius: '10px', color: saving ? 'var(--muted)' : '#000', fontWeight: '700', fontSize: '0.92rem', cursor: saving ? 'not-allowed' : 'pointer' }}>
                     {saving ? 'Processing...' : 'Checkout £' + total.toFixed(2)}
                   </button>
                 </div>
@@ -418,7 +418,7 @@ const handleCheckout = async (method) => {
 
           {/* Right summary panel */}
           <div style={{ width: '230px', flexShrink: 0, borderLeft: '1px solid var(--border)', padding: '22px 18px', display: 'flex', flexDirection: 'column', gap: '14px', background: 'var(--card)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: 'rgba(212,175,55,0.05)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: 'rgba(180,180,180,0.05)', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: getBColor(booking.barber, barbers) + '22', border: '2px solid ' + getBColor(booking.barber, barbers) + '44', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '800', color: getBColor(booking.barber, barbers), flexShrink: 0 }}>
                 {(booking.name || '?')[0].toUpperCase()}
               </div>
@@ -430,7 +430,7 @@ const handleCheckout = async (method) => {
             <div style={{ padding: '10px 12px', background: 'var(--card)', borderRadius: '10px', borderLeft: '3px solid ' + getBColor(booking.barber, barbers) }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
                 <span style={{ fontSize: '0.78rem', color: 'var(--text)', fontWeight: '600' }}>{svc ? svc.name : booking.service}</span>
-                <span style={{ fontSize: '0.78rem', color: '#d4af37', fontWeight: '700' }}>£{basePrice}</span>
+                <span style={{ fontSize: '0.78rem', color: '#c0c0c0', fontWeight: '700' }}>£{basePrice}</span>
               </div>
               <div style={{ fontSize: '0.62rem', color: 'var(--muted)' }}>{svc ? svc.duration + 'min' : ''} · {(booking.barber || '').toUpperCase()}</div>
             </div>
@@ -465,15 +465,15 @@ const handleCheckout = async (method) => {
               )}
               <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid var(--border)', marginTop: '2px' }}>
                 <span style={{ fontSize: '0.88rem', fontWeight: '700', color: 'var(--text)' }}>Total</span>
-                <span style={{ fontSize: '1rem', fontWeight: '800', color: '#d4af37' }}>£{total.toFixed(2)}</span>
+                <span style={{ fontSize: '1rem', fontWeight: '800', color: '#c0c0c0' }}>£{total.toFixed(2)}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: '0.73rem', color: 'var(--muted)' }}>{alreadyPaid > 0 ? 'Remaining to pay' : 'To pay'}</span>
-                <span style={{ fontSize: '0.82rem', fontWeight: '700', color: '#d4af37' }}>£{total.toFixed(2)}</span>
+                <span style={{ fontSize: '0.82rem', fontWeight: '700', color: '#c0c0c0' }}>£{total.toFixed(2)}</span>
               </div>
             </div>
             {note && (
-              <div style={{ padding: '8px 10px', background: 'rgba(212,175,55,0.04)', borderRadius: '8px', border: '1px solid var(--border)' }}>
+              <div style={{ padding: '8px 10px', background: 'rgba(180,180,180,0.04)', borderRadius: '8px', border: '1px solid var(--border)' }}>
                 <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: '3px', textTransform: 'uppercase', letterSpacing: '1px' }}>Note</div>
                 <div style={{ fontSize: '0.72rem', color: 'var(--text)' }}>{note}</div>
               </div>
@@ -492,7 +492,7 @@ function BookingDetail({ booking, barbers, onClose, onEdit, onDelete, onCheckout
   const color = getBColor(booking.barber, barbers);
   const serviceLabel = config.services ? (config.services.find(s => s.id === booking.service) || {}).name || booking.service : booking.service;
   return (
-    <div style={{ width:'300px', flexShrink:0, background:'var(--card2)', border:'1px solid rgba(212,175,55,0.25)', borderRadius:'16px', display:'flex', flexDirection:'column', overflow:'hidden', maxHeight:'calc(100vh - 200px)', boxShadow:'0 8px 32px rgba(0,0,0,0.4)', position:'relative' }}>
+    <div style={{ width:'300px', flexShrink:0, background:'var(--card2)', border:'1px solid rgba(180,180,180,0.25)', borderRadius:'16px', display:'flex', flexDirection:'column', overflow:'hidden', maxHeight:'calc(100vh - 200px)', boxShadow:'0 8px 32px rgba(0,0,0,0.4)', position:'relative' }}>
       {deleting && (
         <div style={{ position:'absolute', inset:0, background:'rgba(10,10,8,0.88)', zIndex:10, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'12px', borderRadius:'16px' }}>
           <div style={{ width:'36px', height:'36px', border:'3px solid rgba(255,82,82,0.2)', borderTop:'3px solid #ff5252', borderRadius:'50%', animation:'spin2 0.8s linear infinite' }} />
@@ -502,18 +502,18 @@ function BookingDetail({ booking, barbers, onClose, onEdit, onDelete, onCheckout
       )}
       {editing && (
         <div style={{ position:'absolute', inset:0, background:'rgba(10,10,8,0.88)', zIndex:10, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'12px', borderRadius:'16px' }}>
-          <div style={{ width:'36px', height:'36px', border:'3px solid rgba(212,175,55,0.2)', borderTop:'3px solid #d4af37', borderRadius:'50%', animation:'spin2 0.8s linear infinite' }} />
-          <span style={{ fontSize:'0.78rem', color:'#d4af37', fontWeight:'600', letterSpacing:'1px' }}>Opening editor...</span>
+          <div style={{ width:'36px', height:'36px', border:'3px solid rgba(180,180,180,0.2)', borderTop:'3px solid #c0c0c0', borderRadius:'50%', animation:'spin2 0.8s linear infinite' }} />
+          <span style={{ fontSize:'0.78rem', color:'#c0c0c0', fontWeight:'600', letterSpacing:'1px' }}>Opening editor...</span>
         </div>
       )}
-      <div style={{ padding:'16px 20px', borderBottom:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center', background:'rgba(212,175,55,0.04)', flexShrink:0 }}>
+      <div style={{ padding:'16px 20px', borderBottom:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center', background:'rgba(180,180,180,0.04)', flexShrink:0 }}>
         <span style={{ fontSize:'0.65rem', color:'var(--muted)', letterSpacing:'3px', textTransform:'uppercase', fontWeight:'600' }}>Booking Detail</span>
         <button onClick={onClose} style={{ background:'transparent', border:'none', color:'var(--muted)', cursor:'pointer', fontSize:'1rem', width:'24px', height:'24px', display:'flex', alignItems:'center', justifyContent:'center', borderRadius:'50%' }}
           onMouseEnter={e=>{ e.currentTarget.style.background='rgba(255,255,255,0.08)'; e.currentTarget.style.color='var(--text)'; }}
           onMouseLeave={e=>{ e.currentTarget.style.background='transparent'; e.currentTarget.style.color='var(--muted)'; }}>x</button>
       </div>
       <div style={{ overflowY:'auto', flex:1, padding:'16px 20px', display:'flex', flexDirection:'column', gap:'12px' }}>
-        <div style={{ display:'flex', alignItems:'center', gap:'12px', padding:'14px', background:'rgba(212,175,55,0.05)', borderRadius:'12px', border:'1px solid var(--border)' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:'12px', padding:'14px', background:'rgba(180,180,180,0.05)', borderRadius:'12px', border:'1px solid var(--border)' }}>
           <div style={{ width:'44px', height:'44px', borderRadius:'50%', background:color+'22', border:'2px solid '+color+'44', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.2rem', fontWeight:'800', color, flexShrink:0 }}>
             {(booking.name||'?')[0].toUpperCase()}
           </div>
@@ -526,11 +526,11 @@ function BookingDetail({ booking, barbers, onClose, onEdit, onDelete, onCheckout
               }}>{booking.source}</span>
             )}
             {booking.status === 'CHECKED_OUT' && (
-              <button onClick={onViewReceipt} style={{ padding:'2px 8px', background:'rgba(212,175,55,0.1)', border:'1px solid rgba(212,175,55,0.3)', borderRadius:'6px', color:'#d4af37', fontSize:'0.6rem', fontWeight:'600', cursor:'pointer' }}>Receipt</button>
+              <button onClick={onViewReceipt} style={{ padding:'2px 8px', background:'rgba(180,180,180,0.1)', border:'1px solid rgba(180,180,180,0.3)', borderRadius:'6px', color:'#c0c0c0', fontSize:'0.6rem', fontWeight:'600', cursor:'pointer' }}>Receipt</button>
             )}
           </div>
         </div>
-        <div style={{ display:'flex', flexDirection:'column', gap:'1px', background:'rgba(212,175,55,0.06)', borderRadius:'10px', overflow:'hidden' }}>
+        <div style={{ display:'flex', flexDirection:'column', gap:'1px', background:'rgba(180,180,180,0.06)', borderRadius:'10px', overflow:'hidden' }}>
           {[
             { label:'Service', value:serviceLabel },
             { label:'Date', value:booking.date },
@@ -550,9 +550,9 @@ function BookingDetail({ booking, barbers, onClose, onEdit, onDelete, onCheckout
         </div>
         <div style={{ display:'flex', gap:'8px' }}>
           <button onClick={()=>{ setEditing(true); setTimeout(()=>{ onEdit(booking); setEditing(false); }, 300); }} disabled={editing||deleting}
-            style={{ flex:1, padding:'10px', background:'rgba(212,175,55,0.1)', border:'1px solid rgba(212,175,55,0.3)', borderRadius:'8px', color:'#d4af37', cursor:editing||deleting?'not-allowed':'pointer', fontSize:'0.75rem', fontWeight:'600', transition:'all 0.2s' }}
-            onMouseEnter={e=>{ if(!editing&&!deleting) e.currentTarget.style.background='rgba(212,175,55,0.2)'; }}
-            onMouseLeave={e=>{ if(!editing&&!deleting) e.currentTarget.style.background='rgba(212,175,55,0.1)'; }}>Edit</button>
+            style={{ flex:1, padding:'10px', background:'rgba(180,180,180,0.1)', border:'1px solid rgba(180,180,180,0.3)', borderRadius:'8px', color:'#c0c0c0', cursor:editing||deleting?'not-allowed':'pointer', fontSize:'0.75rem', fontWeight:'600', transition:'all 0.2s' }}
+            onMouseEnter={e=>{ if(!editing&&!deleting) e.currentTarget.style.background='rgba(180,180,180,0.2)'; }}
+            onMouseLeave={e=>{ if(!editing&&!deleting) e.currentTarget.style.background='rgba(180,180,180,0.1)'; }}>Edit</button>
          <button onClick={async()=>{
               if(!window.confirm('Delete this booking?')) return;
               setDeleting(true);
@@ -572,7 +572,7 @@ function BookingDetail({ booking, barbers, onClose, onEdit, onDelete, onCheckout
         <div style={{ display:'flex', flexDirection:'column', gap:'6px' }}>
           {booking.status !== 'CHECKED_OUT' ? (
             <button onClick={onCheckout}
-              style={{ width:'100%', padding:'11px', background:'linear-gradient(135deg,#d4af37,#b8860b)', border:'none', borderRadius:'8px', color:'#000', cursor:'pointer', fontSize:'0.82rem', fontWeight:'700', marginBottom:'2px' }}
+              style={{ width:'100%', padding:'11px', background:'linear-gradient(135deg,#c0c0c0,#666666)', border:'none', borderRadius:'8px', color:'#000', cursor:'pointer', fontSize:'0.82rem', fontWeight:'700', marginBottom:'2px' }}
               onMouseEnter={e=>e.currentTarget.style.opacity='0.9'}
               onMouseLeave={e=>e.currentTarget.style.opacity='1'}>
               Checkout
@@ -587,9 +587,9 @@ function BookingDetail({ booking, barbers, onClose, onEdit, onDelete, onCheckout
             onMouseEnter={e=>e.currentTarget.style.background='#25D36620'}
             onMouseLeave={e=>e.currentTarget.style.background='#25D36610'}>WhatsApp</a>
           <a href={'mailto:'+booking.email}
-            style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'6px', padding:'10px', background:'rgba(212,175,55,0.06)', border:'1px solid var(--border)', borderRadius:'8px', color:'#d4af37', fontSize:'0.75rem', textDecoration:'none', fontWeight:'600' }}
-            onMouseEnter={e=>e.currentTarget.style.background='rgba(212,175,55,0.12)'}
-            onMouseLeave={e=>e.currentTarget.style.background='rgba(212,175,55,0.06)'}>Email</a>
+            style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'6px', padding:'10px', background:'rgba(180,180,180,0.06)', border:'1px solid var(--border)', borderRadius:'8px', color:'#c0c0c0', fontSize:'0.75rem', textDecoration:'none', fontWeight:'600' }}
+            onMouseEnter={e=>e.currentTarget.style.background='rgba(180,180,180,0.12)'}
+            onMouseLeave={e=>e.currentTarget.style.background='rgba(180,180,180,0.06)'}>Email</a>
         </div>
       </div>
     </div>
@@ -704,16 +704,16 @@ const handleSave = async (goCheckout = false) => {
   const errStyle = { fontSize:'0.62rem', color:'#ff5252', marginTop:'4px' };
 
   return (
-    <div style={{ width:'310px', flexShrink:0, background:'var(--card2)', border:'1px solid rgba(212,175,55,0.25)', borderRadius:'16px', display:'flex', flexDirection:'column', overflow:'hidden', maxHeight:'calc(100vh - 200px)', boxShadow:'0 8px 32px rgba(0,0,0,0.4)', position:'relative' }}>
+    <div style={{ width:'310px', flexShrink:0, background:'var(--card2)', border:'1px solid rgba(180,180,180,0.25)', borderRadius:'16px', display:'flex', flexDirection:'column', overflow:'hidden', maxHeight:'calc(100vh - 200px)', boxShadow:'0 8px 32px rgba(0,0,0,0.4)', position:'relative' }}>
       {saving && (
         <div style={{ position:'absolute', inset:0, background:'rgba(10,10,8,0.85)', zIndex:10, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'12px', borderRadius:'16px' }}>
-          <div style={{ width:'36px', height:'36px', border:'3px solid rgba(212,175,55,0.2)', borderTop:'3px solid #d4af37', borderRadius:'50%', animation:'spin 0.8s linear infinite' }} />
-          <span style={{ fontSize:'0.78rem', color:'#d4af37', fontWeight:'600', letterSpacing:'1px' }}>{isEdit ? 'Saving changes...' : 'Booking...'}</span>
+          <div style={{ width:'36px', height:'36px', border:'3px solid rgba(180,180,180,0.2)', borderTop:'3px solid #c0c0c0', borderRadius:'50%', animation:'spin 0.8s linear infinite' }} />
+          <span style={{ fontSize:'0.78rem', color:'#c0c0c0', fontWeight:'600', letterSpacing:'1px' }}>{isEdit ? 'Saving changes...' : 'Booking...'}</span>
           <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
       )}
-      <div style={{ padding:'16px 20px', borderBottom:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center', background:'rgba(212,175,55,0.04)', flexShrink:0 }}>
-        <span style={{ fontSize:'0.85rem', fontWeight:'700', color:'#d4af37' }}>{isEdit ? 'Edit Booking' : 'New Booking'}</span>
+      <div style={{ padding:'16px 20px', borderBottom:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center', background:'rgba(180,180,180,0.04)', flexShrink:0 }}>
+        <span style={{ fontSize:'0.85rem', fontWeight:'700', color:'#c0c0c0' }}>{isEdit ? 'Edit Booking' : 'New Booking'}</span>
         <button onClick={onClose} style={{ background:'transparent', border:'none', color:'var(--muted)', cursor:'pointer', fontSize:'1rem', width:'24px', height:'24px', display:'flex', alignItems:'center', justifyContent:'center', borderRadius:'50%' }}>x</button>
       </div>
       <div style={{ overflowY:'auto', flex:1, padding:'16px 20px', display:'flex', flexDirection:'column', gap:'12px' }}>
@@ -771,12 +771,12 @@ const handleSave = async (goCheckout = false) => {
         <div style={{ display:'flex', gap:'8px', paddingTop:'4px' }}>
           <button onClick={onClose} style={{ flex:1, padding:'11px', background:'transparent', border:'1px solid var(--border)', borderRadius:'8px', color:'var(--muted)', cursor:'pointer', fontSize:'0.82rem' }}>Cancel</button>
             <button onClick={()=>handleSave(false)} disabled={saving||!form.name.trim()}            
-            style={{ flex:1, padding:'11px', background:'transparent', border:'1px solid rgba(212,175,55,0.3)', borderRadius:'8px', color:'#d4af37', cursor:saving||!form.name.trim()?'not-allowed':'pointer', fontWeight:'600', fontSize:'0.82rem' }}>
+            style={{ flex:1, padding:'11px', background:'transparent', border:'1px solid rgba(180,180,180,0.3)', borderRadius:'8px', color:'#c0c0c0', cursor:saving||!form.name.trim()?'not-allowed':'pointer', fontWeight:'600', fontSize:'0.82rem' }}>
             {saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Save'}
           </button>
           {!isEdit && (
               <button onClick={()=>handleSave(true)} disabled={saving||!form.name.trim()}
-              style={{ flex:2, padding:'11px', background:saving||!form.name.trim()?'rgba(212,175,55,0.25)':'linear-gradient(135deg,#d4af37,#b8860b)', border:'none', borderRadius:'8px', color:saving||!form.name.trim()?'var(--muted)':'#000', cursor:saving||!form.name.trim()?'not-allowed':'pointer', fontWeight:'700', fontSize:'0.82rem' }}>
+              style={{ flex:2, padding:'11px', background:saving||!form.name.trim()?'rgba(180,180,180,0.25)':'linear-gradient(135deg,#c0c0c0,#666666)', border:'none', borderRadius:'8px', color:saving||!form.name.trim()?'var(--muted)':'#000', cursor:saving||!form.name.trim()?'not-allowed':'pointer', fontWeight:'700', fontSize:'0.82rem' }}>
               Checkout
             </button>
           )}
@@ -788,7 +788,7 @@ const handleSave = async (goCheckout = false) => {
 function SlotPopup({ popup, onNewBooking, onWalkIn, onBlockTime, onClose }) {
   if (!popup) return null;
   return (
-    <div style={{ position:'fixed', top:popup.y, left:popup.x, zIndex:1000, background:'var(--card)', border:'1px solid rgba(212,175,55,0.3)', borderRadius:'10px', padding:'6px', minWidth:'170px', boxShadow:'0 8px 24px rgba(0,0,0,0.6)' }}
+    <div style={{ position:'fixed', top:popup.y, left:popup.x, zIndex:1000, background:'var(--card)', border:'1px solid rgba(180,180,180,0.3)', borderRadius:'10px', padding:'6px', minWidth:'170px', boxShadow:'0 8px 24px rgba(0,0,0,0.6)' }}
       onMouseLeave={onClose}>
       <div style={{ fontSize:'0.62rem', color:'var(--muted)', padding:'4px 10px 6px', letterSpacing:'1px', borderBottom:'1px solid var(--border)', marginBottom:'4px' }}>
       {minsToLabel(popup.mins || popup.hour * 60)} -- {popup.barber.name}
@@ -800,7 +800,7 @@ function SlotPopup({ popup, onNewBooking, onWalkIn, onBlockTime, onClose }) {
       ].map(item => (
         <button key={item.label} onClick={item.action}
           style={{ display:'flex', alignItems:'center', gap:'8px', width:'100%', padding:'8px 10px', background:'transparent', border:'none', color:'var(--text)', cursor:'pointer', borderRadius:'6px', fontSize:'0.78rem', textAlign:'left' }}
-          onMouseEnter={e=>e.currentTarget.style.background='rgba(212,175,55,0.1)'}
+          onMouseEnter={e=>e.currentTarget.style.background='rgba(180,180,180,0.1)'}
           onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
           {item.label}
         </button>
@@ -854,15 +854,15 @@ const handleSave = async () => {
   const lbl = { display:'block', fontSize:'0.62rem', color:'var(--muted)', letterSpacing:'1.5px', textTransform:'uppercase', marginBottom:'5px', fontWeight:'600' };
 
   return (
-    <div style={{ width:'310px', flexShrink:0, background:'var(--card2)', border:'1px solid rgba(212,175,55,0.25)', borderRadius:'16px', display:'flex', flexDirection:'column', overflow:'hidden', maxHeight:'calc(100vh - 200px)', boxShadow:'0 8px 32px rgba(0,0,0,0.4)', position:'relative' }}>
+    <div style={{ width:'310px', flexShrink:0, background:'var(--card2)', border:'1px solid rgba(180,180,180,0.25)', borderRadius:'16px', display:'flex', flexDirection:'column', overflow:'hidden', maxHeight:'calc(100vh - 200px)', boxShadow:'0 8px 32px rgba(0,0,0,0.4)', position:'relative' }}>
       {saving && (
         <div style={{ position:'absolute', inset:0, background:'rgba(10,10,8,0.85)', zIndex:10, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'12px', borderRadius:'16px' }}>
-          <div style={{ width:'36px', height:'36px', border:'3px solid rgba(212,175,55,0.2)', borderTop:'3px solid #d4af37', borderRadius:'50%', animation:'spin 0.8s linear infinite' }} />
-          <span style={{ fontSize:'0.78rem', color:'#d4af37', fontWeight:'600', letterSpacing:'1px' }}>Blocking...</span>
+          <div style={{ width:'36px', height:'36px', border:'3px solid rgba(180,180,180,0.2)', borderTop:'3px solid #c0c0c0', borderRadius:'50%', animation:'spin 0.8s linear infinite' }} />
+          <span style={{ fontSize:'0.78rem', color:'#c0c0c0', fontWeight:'600', letterSpacing:'1px' }}>Blocking...</span>
         </div>
       )}
-      <div style={{ padding:'16px 20px', borderBottom:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center', background:'rgba(212,175,55,0.04)', flexShrink:0 }}>
-        <span style={{ fontSize:'0.85rem', fontWeight:'700', color:'#d4af37' }}>🚫 Block Time</span>
+      <div style={{ padding:'16px 20px', borderBottom:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center', background:'rgba(180,180,180,0.04)', flexShrink:0 }}>
+        <span style={{ fontSize:'0.85rem', fontWeight:'700', color:'#c0c0c0' }}>🚫 Block Time</span>
         <button onClick={onClose} style={{ background:'transparent', border:'none', color:'var(--muted)', cursor:'pointer', fontSize:'1rem' }}>x</button>
       </div>
       <div style={{ overflowY:'auto', flex:1, padding:'16px 20px', display:'flex', flexDirection:'column', gap:'14px' }}>
@@ -897,7 +897,7 @@ const handleSave = async () => {
         <div style={{ display:'flex', gap:'8px', paddingTop:'4px' }}>
           <button onClick={onClose} style={{ flex:1, padding:'11px', background:'transparent', border:'1px solid var(--border)', borderRadius:'8px', color:'var(--muted)', cursor:'pointer', fontSize:'0.82rem' }}>Cancel</button>
           <button onClick={handleSave} disabled={saving}
-            style={{ flex:2, padding:'11px', background:saving?'rgba(212,175,55,0.25)':'linear-gradient(135deg,#d4af37,#b8860b)', border:'none', borderRadius:'8px', color:saving?'var(--muted)':'#000', cursor:saving?'not-allowed':'pointer', fontWeight:'700', fontSize:'0.82rem' }}>
+            style={{ flex:2, padding:'11px', background:saving?'rgba(180,180,180,0.25)':'linear-gradient(135deg,#c0c0c0,#666666)', border:'none', borderRadius:'8px', color:saving?'var(--muted)':'#000', cursor:saving?'not-allowed':'pointer', fontWeight:'700', fontSize:'0.82rem' }}>
             {saving ? 'Blocking...' : 'Block'}
           </button>
         </div>
@@ -995,15 +995,15 @@ function WalkInForm({ preBarber, preHour, preMins, preDate, barbers, existingBoo
   const lbl = { display:'block', fontSize:'0.62rem', color:'var(--muted)', letterSpacing:'1.5px', textTransform:'uppercase', marginBottom:'5px', fontWeight:'600' };
 
   return (
-    <div style={{ width:'310px', flexShrink:0, background:'var(--card2)', border:'1px solid rgba(212,175,55,0.25)', borderRadius:'16px', display:'flex', flexDirection:'column', overflow:'hidden', maxHeight:'calc(100vh - 200px)', boxShadow:'0 8px 32px rgba(0,0,0,0.4)', position:'relative' }}>
+    <div style={{ width:'310px', flexShrink:0, background:'var(--card2)', border:'1px solid rgba(180,180,180,0.25)', borderRadius:'16px', display:'flex', flexDirection:'column', overflow:'hidden', maxHeight:'calc(100vh - 200px)', boxShadow:'0 8px 32px rgba(0,0,0,0.4)', position:'relative' }}>
       {saving && (
         <div style={{ position:'absolute', inset:0, background:'rgba(10,10,8,0.85)', zIndex:10, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'12px', borderRadius:'16px' }}>
-          <div style={{ width:'36px', height:'36px', border:'3px solid rgba(212,175,55,0.2)', borderTop:'3px solid #d4af37', borderRadius:'50%', animation:'spin 0.8s linear infinite' }} />
-          <span style={{ fontSize:'0.78rem', color:'#d4af37', fontWeight:'600', letterSpacing:'1px' }}>Saving...</span>
+          <div style={{ width:'36px', height:'36px', border:'3px solid rgba(180,180,180,0.2)', borderTop:'3px solid #c0c0c0', borderRadius:'50%', animation:'spin 0.8s linear infinite' }} />
+          <span style={{ fontSize:'0.78rem', color:'#c0c0c0', fontWeight:'600', letterSpacing:'1px' }}>Saving...</span>
         </div>
       )}
-      <div style={{ padding:'16px 20px', borderBottom:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center', background:'rgba(212,175,55,0.04)', flexShrink:0 }}>
-        <span style={{ fontSize:'0.85rem', fontWeight:'700', color:'#d4af37' }}>🚶 Walk-in</span>
+      <div style={{ padding:'16px 20px', borderBottom:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center', background:'rgba(180,180,180,0.04)', flexShrink:0 }}>
+        <span style={{ fontSize:'0.85rem', fontWeight:'700', color:'#c0c0c0' }}>🚶 Walk-in</span>
         <button onClick={onClose} style={{ background:'transparent', border:'none', color:'var(--muted)', cursor:'pointer', fontSize:'1rem' }}>x</button>
       </div>
 
@@ -1023,19 +1023,19 @@ function WalkInForm({ preBarber, preHour, preMins, preDate, barbers, existingBoo
               {filteredClients.map((c, i) => (
                 <div key={i} onClick={() => selectClient(c)}
                   style={{ padding:'10px 14px', cursor:'pointer', borderBottom:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center' }}
-                  onMouseEnter={e => e.currentTarget.style.background='rgba(212,175,55,0.08)'}
+                  onMouseEnter={e => e.currentTarget.style.background='rgba(180,180,180,0.08)'}
                   onMouseLeave={e => e.currentTarget.style.background='transparent'}>
                   <div>
                     <div style={{ fontSize:'0.82rem', fontWeight:'600', color:'var(--text)' }}>{c.name}</div>
                     <div style={{ fontSize:'0.65rem', color:'var(--muted)' }}>{c.phone} · {c.visits} visits</div>
                   </div>
-                  <div style={{ fontSize:'0.65rem', color:'#d4af37' }}>{c.totalSpent}</div>
+                  <div style={{ fontSize:'0.65rem', color:'#c0c0c0' }}>{c.totalSpent}</div>
                 </div>
               ))}
             </div>
           )}
           {selectedClient && (
-            <div style={{ marginTop:'8px', padding:'8px 12px', background:'rgba(212,175,55,0.06)', borderRadius:'8px', border:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+            <div style={{ marginTop:'8px', padding:'8px 12px', background:'rgba(180,180,180,0.06)', borderRadius:'8px', border:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
               <div>
                 <div style={{ fontSize:'0.78rem', fontWeight:'600', color:'var(--text)' }}>{selectedClient.name}</div>
                 <div style={{ fontSize:'0.62rem', color:'var(--muted)' }}>{selectedClient.visits} visits · {selectedClient.totalSpent} spent · Last: {selectedClient.lastService}</div>
@@ -1078,9 +1078,9 @@ function WalkInForm({ preBarber, preHour, preMins, preDate, barbers, existingBoo
 
         {/* Price preview */}
         {svc && (
-          <div style={{ padding:'10px 14px', background:'rgba(212,175,55,0.06)', borderRadius:'8px', border:'1px solid var(--border)', display:'flex', justifyContent:'space-between' }}>
+          <div style={{ padding:'10px 14px', background:'rgba(180,180,180,0.06)', borderRadius:'8px', border:'1px solid var(--border)', display:'flex', justifyContent:'space-between' }}>
             <span style={{ fontSize:'0.78rem', color:'var(--muted)' }}>{svc.name} · {svc.duration}min</span>
-            <span style={{ fontSize:'0.88rem', fontWeight:'700', color:'#d4af37' }}>£{svc.price}</span>
+            <span style={{ fontSize:'0.88rem', fontWeight:'700', color:'#c0c0c0' }}>£{svc.price}</span>
           </div>
         )}
 
@@ -1088,11 +1088,11 @@ function WalkInForm({ preBarber, preHour, preMins, preDate, barbers, existingBoo
         <div style={{ display:'flex', gap:'8px', paddingTop:'4px' }}>
           <button onClick={onClose} style={{ flex:1, padding:'11px', background:'transparent', border:'1px solid var(--border)', borderRadius:'8px', color:'var(--muted)', cursor:'pointer', fontSize:'0.82rem' }}>Cancel</button>
           <button onClick={() => handleSave(false)} disabled={saving || !service}
-            style={{ flex:1, padding:'11px', background:'transparent', border:'1px solid rgba(212,175,55,0.3)', borderRadius:'8px', color:'#d4af37', cursor:saving||!service?'not-allowed':'pointer', fontWeight:'600', fontSize:'0.82rem' }}>
+            style={{ flex:1, padding:'11px', background:'transparent', border:'1px solid rgba(180,180,180,0.3)', borderRadius:'8px', color:'#c0c0c0', cursor:saving||!service?'not-allowed':'pointer', fontWeight:'600', fontSize:'0.82rem' }}>
             Save
           </button>
           <button onClick={() => handleSave(true)} disabled={saving || !service}
-            style={{ flex:2, padding:'11px', background:saving||!service?'rgba(212,175,55,0.25)':'linear-gradient(135deg,#d4af37,#b8860b)', border:'none', borderRadius:'8px', color:saving||!service?'var(--muted)':'#000', cursor:saving||!service?'not-allowed':'pointer', fontWeight:'700', fontSize:'0.82rem' }}>
+            style={{ flex:2, padding:'11px', background:saving||!service?'rgba(180,180,180,0.25)':'linear-gradient(135deg,#c0c0c0,#666666)', border:'none', borderRadius:'8px', color:saving||!service?'var(--muted)':'#000', cursor:saving||!service?'not-allowed':'pointer', fontWeight:'700', fontSize:'0.82rem' }}>
             Checkout
           </button>
         </div>
@@ -1146,18 +1146,18 @@ function ReceiptPanel({ booking, barbers, clientData, onClose, onEdit }) {
   };
 
   return (
-    <div style={{ width:'280px', flexShrink:0, background:'var(--card2)', border:'1px solid rgba(212,175,55,0.25)', borderRadius:'16px', display:'flex', flexDirection:'column', overflow:'hidden', maxHeight:'calc(100vh - 200px)', boxShadow:'0 8px 32px rgba(0,0,0,0.4)' }}>
-      <div style={{ padding:'14px 18px', borderBottom:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center', background:'rgba(212,175,55,0.04)', flexShrink:0 }}>
+    <div style={{ width:'280px', flexShrink:0, background:'var(--card2)', border:'1px solid rgba(180,180,180,0.25)', borderRadius:'16px', display:'flex', flexDirection:'column', overflow:'hidden', maxHeight:'calc(100vh - 200px)', boxShadow:'0 8px 32px rgba(0,0,0,0.4)' }}>
+      <div style={{ padding:'14px 18px', borderBottom:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center', background:'rgba(180,180,180,0.04)', flexShrink:0 }}>
         <span style={{ fontSize:'0.62rem', color:'var(--muted)', letterSpacing:'3px', textTransform:'uppercase', fontWeight:'600' }}>Receipt</span>
         <button onClick={onClose} style={{ background:'transparent', border:'none', color:'var(--muted)', cursor:'pointer', fontSize:'1rem' }}>x</button>
       </div>
       <div style={{ overflowY:'auto', flex:1, padding:'14px 18px', display:'flex', flexDirection:'column', gap:'12px' }}>
         <div style={{ textAlign:'center', paddingBottom:'12px', borderBottom:'1px solid var(--border)' }}>
-          <div style={{ fontSize:'0.72rem', fontWeight:'700', color:'#d4af37', letterSpacing:'2px' }}>EE KURT BARBERS</div>
+          <div style={{ fontSize:'0.72rem', fontWeight:'700', color:'#c0c0c0', letterSpacing:'2px' }}>EE KURT BARBERS</div>
           <div style={{ fontSize:'0.6rem', color:'var(--muted)', marginTop:'3px' }}>EE Kurt Barbers, London</div>
           <div style={{ fontSize:'0.6rem', color:'var(--muted)' }}>{booking.date} · {booking.time}</div>
         </div>
-        <div style={{ display:'flex', alignItems:'center', gap:'8px', padding:'10px', background:'rgba(212,175,55,0.04)', borderRadius:'8px' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:'8px', padding:'10px', background:'rgba(180,180,180,0.04)', borderRadius:'8px' }}>
           <div style={{ width:'32px', height:'32px', borderRadius:'50%', background:barberColor+'22', border:'1px solid '+barberColor+'44', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'0.85rem', fontWeight:'700', color:barberColor, flexShrink:0 }}>
             {(booking.name||'?')[0].toUpperCase()}
           </div>
@@ -1165,7 +1165,7 @@ function ReceiptPanel({ booking, barbers, clientData, onClose, onEdit }) {
             <div style={{ fontSize:'0.82rem', fontWeight:'600', color:'var(--text)' }}>{booking.name}</div>
             <div style={{ fontSize:'0.62rem', color:'var(--muted)' }}>Barber: {(booking.barber||'').toUpperCase()}</div>
           </div>
-          {isVIP && <span style={{ fontSize:'0.6rem', color:'#d4af37', background:'rgba(212,175,55,0.15)', padding:'2px 6px', borderRadius:'8px', fontWeight:'700' }}>VIP</span>}
+          {isVIP && <span style={{ fontSize:'0.6rem', color:'#c0c0c0', background:'rgba(180,180,180,0.15)', padding:'2px 6px', borderRadius:'8px', fontWeight:'700' }}>VIP</span>}
         </div>
         <div style={{ display:'flex', flexDirection:'column', gap:'4px' }}>
           <div style={{ display:'flex', justifyContent:'space-between' }}>
@@ -1199,9 +1199,9 @@ function ReceiptPanel({ booking, barbers, clientData, onClose, onEdit }) {
         </div>
         <div style={{ borderTop:'1px solid var(--border)', paddingTop:'10px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
           <span style={{ fontSize:'0.88rem', fontWeight:'700', color:'var(--text)' }}>Total</span>
-          <span style={{ fontSize:'1rem', fontWeight:'800', color:'#d4af37' }}>£{(booking.source === 'Booksy' ? basePrice - discount + tip : paidAmount).toFixed(2)}</span>
+          <span style={{ fontSize:'1rem', fontWeight:'800', color:'#c0c0c0' }}>£{(booking.source === 'Booksy' ? basePrice - discount + tip : paidAmount).toFixed(2)}</span>
         </div>
-        <div style={{ display:'flex', justifyContent:'space-between', padding:'8px 12px', background:'rgba(212,175,55,0.06)', borderRadius:'8px' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', padding:'8px 12px', background:'rgba(180,180,180,0.06)', borderRadius:'8px' }}>
           <span style={{ fontSize:'0.72rem', color:'var(--muted)' }}>Payment</span>
           <span style={{ fontSize:'0.72rem', color:'var(--text)', fontWeight:'600' }}>{paymentMethod}</span>
         </div>
@@ -1209,10 +1209,10 @@ function ReceiptPanel({ booking, barbers, clientData, onClose, onEdit }) {
           <div style={{ borderTop:'1px solid var(--border)', paddingTop:'10px' }}>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'6px' }}>
               <span style={{ fontSize:'0.62rem', color:'var(--muted)', letterSpacing:'1px', textTransform:'uppercase' }}>Loyalty</span>
-              <span style={{ fontSize:'0.65rem', color:'#d4af37', fontWeight:'600' }}>{visits} visits · £{totalSpent.toFixed(0)} spent</span>
+              <span style={{ fontSize:'0.65rem', color:'#c0c0c0', fontWeight:'600' }}>{visits} visits · £{totalSpent.toFixed(0)} spent</span>
             </div>
-            <div style={{ height:'6px', background:'rgba(212,175,55,0.1)', borderRadius:'3px', overflow:'hidden' }}>
-              <div style={{ width:loyaltyProgress+'%', height:'100%', background:'#d4af37', borderRadius:'3px', transition:'width 0.5s' }} />
+            <div style={{ height:'6px', background:'rgba(180,180,180,0.1)', borderRadius:'3px', overflow:'hidden' }}>
+              <div style={{ width:loyaltyProgress+'%', height:'100%', background:'#c0c0c0', borderRadius:'3px', transition:'width 0.5s' }} />
             </div>
             <div style={{ fontSize:'0.6rem', color:'var(--muted)', marginTop:'4px' }}>{discountAtMilestone}</div>
           </div>
@@ -1221,16 +1221,16 @@ function ReceiptPanel({ booking, barbers, clientData, onClose, onEdit }) {
         <div style={{ display:'flex', flexDirection:'column', gap:'6px' }}>
           <div style={{ display:'flex', gap:'6px' }}>
             <button onClick={handleSendEmail} disabled={sending}
-              style={{ flex:1, padding:'10px', background:sent?'rgba(76,175,80,0.15)':'rgba(212,175,55,0.1)', border:'1px solid '+(sent?'rgba(76,175,80,0.4)':'rgba(212,175,55,0.3)'), borderRadius:'8px', color:sent?'#4caf50':'#d4af37', cursor:sending?'not-allowed':'pointer', fontSize:'0.72rem', fontWeight:'600', transition:'all 0.2s' }}>
+              style={{ flex:1, padding:'10px', background:sent?'rgba(76,175,80,0.15)':'rgba(180,180,180,0.1)', border:'1px solid '+(sent?'rgba(76,175,80,0.4)':'rgba(180,180,180,0.3)'), borderRadius:'8px', color:sent?'#4caf50':'#c0c0c0', cursor:sending?'not-allowed':'pointer', fontSize:'0.72rem', fontWeight:'600', transition:'all 0.2s' }}>
               {sending ? '...' : sent ? 'Sent!' : 'Send Email'}
             </button>
             <button onClick={handlePrint}
-              style={{ flex:1, padding:'10px', background:'rgba(212,175,55,0.06)', border:'1px solid var(--border)', borderRadius:'8px', color:'#d4af37', cursor:'pointer', fontSize:'0.72rem', fontWeight:'600' }}>
+              style={{ flex:1, padding:'10px', background:'rgba(180,180,180,0.06)', border:'1px solid var(--border)', borderRadius:'8px', color:'#c0c0c0', cursor:'pointer', fontSize:'0.72rem', fontWeight:'600' }}>
               Print
             </button>
           </div>
           <button onClick={onEdit}
-            style={{ width:'100%', padding:'10px', background:'rgba(212,175,55,0.06)', border:'1px solid var(--border)', borderRadius:'8px', color:'#d4af37', cursor:'pointer', fontSize:'0.72rem', fontWeight:'600' }}>
+            style={{ width:'100%', padding:'10px', background:'rgba(180,180,180,0.06)', border:'1px solid var(--border)', borderRadius:'8px', color:'#c0c0c0', cursor:'pointer', fontSize:'0.72rem', fontWeight:'600' }}>
             ✏️ Edit Checkout
           </button>
         </div>
@@ -1275,14 +1275,14 @@ const IS_CLOSED = dayHours ? dayHours.closed : false;
         {barbers.map((barber, bi) => (
           <div key={barber.id} onClick={(e) => { const rect = e.currentTarget.getBoundingClientRect(); setSlotPopup({ barber, hour: OPEN, mins: OPEN * 60, x: rect.left + 10, y: rect.bottom }); }}
   style={{ flex:1, padding:'12px 16px', display:'flex', alignItems:'center', gap:'10px', borderRight:bi<barbers.length-1?'1px solid var(--border)':'none', cursor:'pointer' }}
-  onMouseEnter={e=>e.currentTarget.style.background='rgba(212,175,55,0.04)'}
+  onMouseEnter={e=>e.currentTarget.style.background='rgba(180,180,180,0.04)'}
   onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
             <div style={{ width:'30px', height:'30px', borderRadius:'50%', background:barber.color+'22', border:'1px solid '+barber.color+'44', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'0.82rem', fontWeight:'700', color:barber.color, flexShrink:0 }}>{barber.name[0]}</div>
             <div>
               <div style={{ fontSize:'0.85rem', fontWeight:'700', color:'var(--text)' }}>{barber.name}</div>
               <div style={{ fontSize:'0.62rem', color:'var(--muted)' }}>9:00 -- 19:00</div>
             </div>
-            <span style={{ fontSize:'0.65rem', color:'var(--muted)', marginLeft:'auto', background:'rgba(212,175,55,0.08)', padding:'2px 7px', borderRadius:'8px' }}>
+            <span style={{ fontSize:'0.65rem', color:'var(--muted)', marginLeft:'auto', background:'rgba(180,180,180,0.08)', padding:'2px 7px', borderRadius:'8px' }}>
               {(byBarber[barber.name.toLowerCase()]||[]).filter(b=>b.status!=='CANCELLED').length} appts
             </span>
           </div>
@@ -1291,7 +1291,7 @@ const IS_CLOSED = dayHours ? dayHours.closed : false;
       <div style={{ display:'flex', position:'relative' }}>
         <div style={{ width:TIME_COL, flexShrink:0, borderRight:'1px solid var(--border)' }}>
           {slots.map(slot => (
-            <div key={slot.mins} style={{ height:slotHeight, borderBottom:slot.m===0?'1px solid var(--border)':'1px solid rgba(212,175,55,0.06)', background:'transparent', position:'relative', display:'flex', alignItems:'flex-start', justifyContent:'flex-end', paddingRight:'6px' }}>
+            <div key={slot.mins} style={{ height:slotHeight, borderBottom:slot.m===0?'1px solid var(--border)':'1px solid rgba(180,180,180,0.06)', background:'transparent', position:'relative', display:'flex', alignItems:'flex-start', justifyContent:'flex-end', paddingRight:'6px' }}>
               {slot.m === 0 && (
                 <span style={{ fontSize:'0.6rem', color:'var(--muted)', lineHeight:'1', marginTop:'2px', whiteSpace:'nowrap' }}>
                   {slot.h < 12 ? slot.h + ':00' : slot.h === 12 ? '12:00' : (slot.h - 12) + ':00'}{slot.h < 12 ? 'am' : 'pm'}
@@ -1311,7 +1311,7 @@ const IS_CLOSED = dayHours ? dayHours.closed : false;
                 return (
                   <div key={slot.mins}
                     onClick={(e) => { if (!inactive) { const rect = e.currentTarget.getBoundingClientRect(); setSlotPopup({ barber, hour: slot.h, mins: slot.mins, x: rect.left + 10, y: rect.top }); } }}
-                    style={{ height:slotHeight, borderBottom:slot.m===0?'1px solid var(--border)':'1px solid rgba(212,175,55,0.06)', cursor:inactive?'default':'pointer', background:inactive?'var(--slot-past)':'var(--slot-bg)', transition:'background 0.1s', position:'relative' }}
+                    style={{ height:slotHeight, borderBottom:slot.m===0?'1px solid var(--border)':'1px solid rgba(180,180,180,0.06)', cursor:inactive?'default':'pointer', background:inactive?'var(--slot-past)':'var(--slot-bg)', transition:'background 0.1s', position:'relative' }}
                     onMouseEnter={e=>{ if(!inactive) e.currentTarget.style.background='var(--slot-hover)'; }}
                     onMouseLeave={e=>e.currentTarget.style.background=inactive?'var(--slot-past)':'var(--slot-bg)'}>
                     {inactive && <div style={{ position:'absolute', inset:0, background:'repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(0,0,0,0.03) 4px, rgba(0,0,0,0.03) 8px)', pointerEvents:'none' }} />}
@@ -1515,22 +1515,22 @@ if (!barbersSnap.empty) {
         <div style={{ display:'flex', background:'var(--card)', border:'1px solid var(--border)', borderRadius:'8px', overflow:'hidden' }}>
           {['day','week','month'].map(v=>(
             <button key={v} onClick={()=>{setView(v);setSelectedBooking(null);setShowForm(false);}}
-              style={{ padding:'8px 16px', border:'none', cursor:'pointer', background:view===v?'#d4af37':'transparent', color:view===v?'#000':'var(--muted)', fontWeight:view===v?'700':'400', fontSize:'0.82rem', textTransform:'capitalize', transition:'all 0.2s' }}>{v}</button>
+              style={{ padding:'8px 16px', border:'none', cursor:'pointer', background:view===v?'#c0c0c0':'transparent', color:view===v?'#000':'var(--muted)', fontWeight:view===v?'700':'400', fontSize:'0.82rem', textTransform:'capitalize', transition:'all 0.2s' }}>{v}</button>
           ))}
         </div>
-        <button onClick={navPrev} style={{ background:'transparent', border:'1px solid var(--border)', borderRadius:'6px', color:'#d4af37', width:'30px', height:'30px', cursor:'pointer', fontSize:'1rem' }}>&#8249;</button>
+        <button onClick={navPrev} style={{ background:'transparent', border:'1px solid var(--border)', borderRadius:'6px', color:'#c0c0c0', width:'30px', height:'30px', cursor:'pointer', fontSize:'1rem' }}>&#8249;</button>
         <span style={{ fontSize:'0.9rem', fontWeight:'600', color:'var(--text)', minWidth:'180px', textAlign:'center' }}>{periodLabel}</span>
-        <button onClick={navNext} style={{ background:'transparent', border:'1px solid var(--border)', borderRadius:'6px', color:'#d4af37', width:'30px', height:'30px', cursor:'pointer', fontSize:'1rem' }}>&#8250;</button>
+        <button onClick={navNext} style={{ background:'transparent', border:'1px solid var(--border)', borderRadius:'6px', color:'#c0c0c0', width:'30px', height:'30px', cursor:'pointer', fontSize:'1rem' }}>&#8250;</button>
         <button onClick={()=>{setSelectedDate(new Date());setCurrentMonth(new Date());setSelectedBooking(null);setShowForm(false);}}
-          style={{ padding:'7px 14px', background:'rgba(212,175,55,0.1)', border:'1px solid rgba(212,175,55,0.3)', borderRadius:'6px', color:'#d4af37', fontSize:'0.78rem', cursor:'pointer' }}>Today</button>
+          style={{ padding:'7px 14px', background:'rgba(180,180,180,0.1)', border:'1px solid rgba(180,180,180,0.3)', borderRadius:'6px', color:'#c0c0c0', fontSize:'0.78rem', cursor:'pointer' }}>Today</button>
         <div style={{ flex:1 }} />
         <div style={{ display:'flex', alignItems:'center', gap:'6px', background:'var(--card)', border:'1px solid var(--border)', borderRadius:'8px', padding:'4px 8px' }}>
-          <button onClick={()=>setSlotHeight(h=>Math.max(8,h-2))} style={{ background:'transparent', border:'none', color:'#d4af37', cursor:'pointer', fontSize:'1.1rem', width:'24px', height:'24px' }}>-</button>
+          <button onClick={()=>setSlotHeight(h=>Math.max(8,h-2))} style={{ background:'transparent', border:'none', color:'#c0c0c0', cursor:'pointer', fontSize:'1.1rem', width:'24px', height:'24px' }}>-</button>
           <span style={{ fontSize:'0.68rem', color:'var(--muted)', minWidth:'30px', textAlign:'center' }}>{slotHeight}px</span>
-          <button onClick={()=>setSlotHeight(h=>Math.min(36,h+2))} style={{ background:'transparent', border:'none', color:'#d4af37', cursor:'pointer', fontSize:'1.1rem', width:'24px', height:'24px' }}>+</button>
+          <button onClick={()=>setSlotHeight(h=>Math.min(36,h+2))} style={{ background:'transparent', border:'none', color:'#c0c0c0', cursor:'pointer', fontSize:'1.1rem', width:'24px', height:'24px' }}>+</button>
         </div>
         <div style={{ display:'flex', background:'var(--card)', border:'1px solid var(--border)', borderRadius:'8px', overflow:'hidden' }}>
-          <button onClick={()=>setBarberFilter('all')} style={{ padding:'8px 12px', border:'none', cursor:'pointer', background:barberFilter==='all'?'rgba(212,175,55,0.2)':'transparent', color:barberFilter==='all'?'#d4af37':'var(--muted)', fontSize:'0.78rem', fontWeight:'600' }}>All</button>
+          <button onClick={()=>setBarberFilter('all')} style={{ padding:'8px 12px', border:'none', cursor:'pointer', background:barberFilter==='all'?'rgba(180,180,180,0.2)':'transparent', color:barberFilter==='all'?'#c0c0c0':'var(--muted)', fontSize:'0.78rem', fontWeight:'600' }}>All</button>
           {barbers.map(b=>(
             <button key={b.id} onClick={()=>setBarberFilter(b.id)}
               style={{ padding:'8px 12px', border:'none', cursor:'pointer', background:barberFilter===b.id?b.color+'20':'transparent', color:barberFilter===b.id?b.color:'var(--muted)', fontSize:'0.78rem', fontWeight:'600', display:'flex', alignItems:'center', gap:'5px' }}>
@@ -1541,11 +1541,11 @@ if (!barbersSnap.empty) {
       </div>
 
       <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' }}>
-        <StatPill label="Total" value={statsBookings.length} color="#d4af37" />
+        <StatPill label="Total" value={statsBookings.length} color="#c0c0c0" />
         <StatPill label="Confirmed" value={statsBookings.filter(b=>b.status==='CONFIRMED').length} color="#4caf50" />
         <StatPill label="Pending" value={statsBookings.filter(b=>b.status==='PENDING').length} color="#ff9800" />
         <StatPill label="Checked Out" value={checkedOutCount} color="#2196f3" />
-        <StatPill label="Revenue" value={'£'+revenue} color="#d4af37" />
+        <StatPill label="Revenue" value={'£'+revenue} color="#c0c0c0" />
         <div style={{ width:'1px', background:'var(--border)', margin:'0 4px', alignSelf:'stretch' }} />
         <StatPill label="Booksy" value={statsBookings.filter(b=>b.source==='Booksy').length} color="#9c27b0" />
         <StatPill label="Fresha" value={statsBookings.filter(b=>b.source==='Fresha').length} color="#2196f3" />
@@ -1559,9 +1559,9 @@ if (!barbersSnap.empty) {
             <div style={{ width:leftPanelWidth, flexShrink:0, display:'flex', flexDirection:'column', gap:'12px', overflow:'hidden' }}>
               <div style={{ background:'var(--card)', border:'1px solid var(--border)', borderRadius:'12px', padding:'14px' }}>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'10px' }}>
-                  <button onClick={()=>setCurrentMonth(new Date(year,month-1,1))} style={{ background:'transparent', border:'none', color:'#d4af37', cursor:'pointer', fontSize:'1rem' }}>&#8249;</button>
+                  <button onClick={()=>setCurrentMonth(new Date(year,month-1,1))} style={{ background:'transparent', border:'none', color:'#c0c0c0', cursor:'pointer', fontSize:'1rem' }}>&#8249;</button>
                   <span style={{ fontSize:'0.8rem', fontWeight:'600', color:'var(--text)' }}>{MONTHS[month]} {year}</span>
-                  <button onClick={()=>setCurrentMonth(new Date(year,month+1,1))} style={{ background:'transparent', border:'none', color:'#d4af37', cursor:'pointer', fontSize:'1rem' }}>&#8250;</button>
+                  <button onClick={()=>setCurrentMonth(new Date(year,month+1,1))} style={{ background:'transparent', border:'none', color:'#c0c0c0', cursor:'pointer', fontSize:'1rem' }}>&#8250;</button>
                 </div>
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(7,1fr)', gap:'1px', marginBottom:'4px' }}>
                   {DAYS_SHORT.map(d=><div key={d} style={{ textAlign:'center', fontSize:'0.55rem', color:'var(--muted)' }}>{d}</div>)}
@@ -1571,12 +1571,12 @@ if (!barbersSnap.empty) {
                     const cnt=dayCount(d), sel=isSel(d), tod=isToday(d);
                     return (
                       <div key={i} onClick={()=>{if(d){setSelectedDate(new Date(year,month,d));setSelectedBooking(null);setShowForm(false);}}}
-                        style={{ height:'26px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', borderRadius:'4px', cursor:d?'pointer':'default', background:sel?'#d4af37':tod?'rgba(212,175,55,0.15)':'transparent', position:'relative' }}
-                        onMouseEnter={e=>{if(d&&!sel)e.currentTarget.style.background='rgba(212,175,55,0.08)';}}
-                        onMouseLeave={e=>{if(d&&!sel)e.currentTarget.style.background=tod?'rgba(212,175,55,0.15)':'transparent';}}>
+                        style={{ height:'26px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', borderRadius:'4px', cursor:d?'pointer':'default', background:sel?'#c0c0c0':tod?'rgba(180,180,180,0.15)':'transparent', position:'relative' }}
+                        onMouseEnter={e=>{if(d&&!sel)e.currentTarget.style.background='rgba(180,180,180,0.08)';}}
+                        onMouseLeave={e=>{if(d&&!sel)e.currentTarget.style.background=tod?'rgba(180,180,180,0.15)':'transparent';}}>
                         {d&&<>
-                          <span style={{ fontSize:'0.68rem', color:sel?'#000':tod?'#d4af37':'var(--text)', fontWeight:(sel||tod)?'700':'400', lineHeight:1 }}>{d}</span>
-                          {cnt>0&&<div style={{ position:'absolute', bottom:'1px', width:'3px', height:'3px', borderRadius:'50%', background:sel?'#000':'#d4af37' }} />}
+                          <span style={{ fontSize:'0.68rem', color:sel?'#000':tod?'#c0c0c0':'var(--text)', fontWeight:(sel||tod)?'700':'400', lineHeight:1 }}>{d}</span>
+                          {cnt>0&&<div style={{ position:'absolute', bottom:'1px', width:'3px', height:'3px', borderRadius:'50%', background:sel?'#000':'#c0c0c0' }} />}
                         </>}
                       </div>
                     );
@@ -1588,8 +1588,8 @@ if (!barbersSnap.empty) {
                   {selectedDate.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})}
                 </div>
                 <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px', marginBottom:'10px' }}>
-                  <div style={{ textAlign:'center', padding:'10px', background:'rgba(212,175,55,0.06)', borderRadius:'8px' }}>
-                    <div style={{ fontSize:'1.5rem', fontWeight:'700', color:'#d4af37' }}>{getForDate(selectedDate).length}</div>
+                  <div style={{ textAlign:'center', padding:'10px', background:'rgba(180,180,180,0.06)', borderRadius:'8px' }}>
+                    <div style={{ fontSize:'1.5rem', fontWeight:'700', color:'#c0c0c0' }}>{getForDate(selectedDate).length}</div>
                     <div style={{ fontSize:'0.58rem', color:'var(--muted)' }}>BOOKINGS</div>
                   </div>
                   <div style={{ textAlign:'center', padding:'10px', background:'rgba(76,175,80,0.06)', borderRadius:'8px' }}>
@@ -1676,12 +1676,12 @@ if (!barbersSnap.empty) {
                 const cnt=getForDate(wd).length;
                 return (
                   <div key={i} onClick={()=>{setSelectedDate(wd);setView('day');}}
-                    style={{ padding:'12px 8px', textAlign:'center', cursor:'pointer', background:isWToday?'rgba(212,175,55,0.08)':'transparent', borderRight:i<6?'1px solid var(--border)':'none' }}
-                    onMouseEnter={e=>{if(!isWToday)e.currentTarget.style.background='rgba(212,175,55,0.04)';}}
+                    style={{ padding:'12px 8px', textAlign:'center', cursor:'pointer', background:isWToday?'rgba(180,180,180,0.08)':'transparent', borderRight:i<6?'1px solid var(--border)':'none' }}
+                    onMouseEnter={e=>{if(!isWToday)e.currentTarget.style.background='rgba(180,180,180,0.04)';}}
                     onMouseLeave={e=>{if(!isWToday)e.currentTarget.style.background='transparent';}}>
                     <div style={{ fontSize:'0.6rem', color:'var(--muted)', letterSpacing:'1px', marginBottom:'4px' }}>{DAYS_SHORT[i]}</div>
-                    <div style={{ fontSize:'1.1rem', fontWeight:'700', color:isWToday?'#d4af37':'var(--text)', marginBottom:'4px' }}>{wd.getDate()}</div>
-                    {cnt>0&&<div style={{ fontSize:'0.6rem', color:'#d4af37', background:'rgba(212,175,55,0.15)', borderRadius:'8px', padding:'1px 5px', display:'inline-block' }}>{cnt}</div>}
+                    <div style={{ fontSize:'1.1rem', fontWeight:'700', color:isWToday?'#c0c0c0':'var(--text)', marginBottom:'4px' }}>{wd.getDate()}</div>
+                    {cnt>0&&<div style={{ fontSize:'0.6rem', color:'#c0c0c0', background:'rgba(180,180,180,0.15)', borderRadius:'8px', padding:'1px 5px', display:'inline-block' }}>{cnt}</div>}
                   </div>
                 );
               })}
@@ -1696,7 +1696,7 @@ if (!barbersSnap.empty) {
                         style={{ padding:'5px 7px', borderRadius:'5px', background:getBColor(b.barber,barbers)+'15', borderLeft:'3px solid '+getBColor(b.barber,barbers), marginBottom:'4px', cursor:'pointer' }}
                         onMouseEnter={e=>e.currentTarget.style.background=getBColor(b.barber,barbers)+'25'}
                         onMouseLeave={e=>e.currentTarget.style.background=getBColor(b.barber,barbers)+'15'}>
-                        <div style={{ fontSize:'0.62rem', color:'#d4af37', fontWeight:'700' }}>{b.time}</div>
+                        <div style={{ fontSize:'0.62rem', color:'#c0c0c0', fontWeight:'700' }}>{b.time}</div>
                         <div style={{ fontSize:'0.68rem', color:'var(--text)', fontWeight:'600', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{getBookingName(b)}</div>
                       </div>
                     ))}
@@ -1718,13 +1718,13 @@ if (!barbersSnap.empty) {
                 const dayBs=d?getForDate(new Date(year,month,d)):[];
                 return (
                   <div key={i} onClick={()=>{if(d){setSelectedDate(new Date(year,month,d));setView('day');setSelectedBooking(null);}}}
-                    style={{ padding:'5px', borderRight:(i+1)%7!==0?'1px solid var(--border)':'none', borderBottom:'1px solid var(--border)', cursor:d?'pointer':'default', background:tod?'rgba(212,175,55,0.04)':'transparent', minHeight:'68px' }}
-                    onMouseEnter={e=>{if(d&&!tod)e.currentTarget.style.background='rgba(212,175,55,0.02)';}}
+                    style={{ padding:'5px', borderRight:(i+1)%7!==0?'1px solid var(--border)':'none', borderBottom:'1px solid var(--border)', cursor:d?'pointer':'default', background:tod?'rgba(180,180,180,0.04)':'transparent', minHeight:'68px' }}
+                    onMouseEnter={e=>{if(d&&!tod)e.currentTarget.style.background='rgba(180,180,180,0.02)';}}
                     onMouseLeave={e=>{if(d&&!tod)e.currentTarget.style.background='transparent';}}>
                     {d&&<>
                       <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'3px' }}>
-                        <span style={{ fontSize:'0.72rem', fontWeight:tod?'800':'500', color:tod?'#d4af37':'var(--text)', width:'20px', height:'20px', display:'flex', alignItems:'center', justifyContent:'center', borderRadius:'50%', background:tod?'rgba(212,175,55,0.2)':'transparent' }}>{d}</span>
-                        {dayBs.length>0&&<span style={{ fontSize:'0.58rem', color:'#d4af37', background:'rgba(212,175,55,0.15)', borderRadius:'8px', padding:'1px 4px' }}>{dayBs.length}</span>}
+                        <span style={{ fontSize:'0.72rem', fontWeight:tod?'800':'500', color:tod?'#c0c0c0':'var(--text)', width:'20px', height:'20px', display:'flex', alignItems:'center', justifyContent:'center', borderRadius:'50%', background:tod?'rgba(180,180,180,0.2)':'transparent' }}>{d}</span>
+                        {dayBs.length>0&&<span style={{ fontSize:'0.58rem', color:'#c0c0c0', background:'rgba(180,180,180,0.15)', borderRadius:'8px', padding:'1px 4px' }}>{dayBs.length}</span>}
                       </div>
                       {dayBs.slice(0,2).map((b,j)=>(
                         <div key={j} style={{ fontSize:'0.6rem', color:'var(--text)', background:getBColor(b.barber,barbers)+'15', borderLeft:'2px solid '+getBColor(b.barber,barbers), padding:'1px 4px', borderRadius:'3px', marginBottom:'2px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
@@ -1750,7 +1750,7 @@ if (!barbersSnap.empty) {
     🚶 Walk-in
   </button>
   <button onClick={()=>{setSelectedBooking(null);setShowWalkIn(false);setFormPreset({date:selectedDate});setShowForm(true);}}
-    style={{ width:'52px', height:'52px', borderRadius:'50%', background:'linear-gradient(135deg,#d4af37,#b8860b)', border:'none', color:'#000', fontSize:'1.6rem', cursor:'pointer', boxShadow:'0 4px 20px rgba(212,175,55,0.4)', display:'flex', alignItems:'center', justifyContent:'center', transition:'all 0.2s' }}
+    style={{ width:'52px', height:'52px', borderRadius:'50%', background:'linear-gradient(135deg,#c0c0c0,#666666)', border:'none', color:'#000', fontSize:'1.6rem', cursor:'pointer', boxShadow:'0 4px 20px rgba(180,180,180,0.4)', display:'flex', alignItems:'center', justifyContent:'center', transition:'all 0.2s' }}
     onMouseEnter={e=>e.currentTarget.style.transform='scale(1.1)'}
     onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'}>+</button>
 </div>

@@ -8,7 +8,7 @@ function getBColor(barber, barbers) {
     const f = barbers.find(b => String(b.id || '').toLowerCase() === key || String(b.name || '').toLowerCase() === key);
     if (f) return f.color;
   }
-  return '#7a7260';
+  return '#777777';
 }
 
 function parsePrice(val) {
@@ -177,7 +177,7 @@ export default function Reports() {
   // Payment method breakdown
   const pmMap = {};
   checkedOut.forEach(b => { const pm = b.paymentMethod || b.paymentType || 'CASH'; pmMap[pm] = (pmMap[pm] || 0) + 1; });
-  const pmColors = { CASH: '#d4af37', CARD: '#2196f3', VOUCHER: '#9c27b0', SPLIT: '#ff9800', UNPAID: '#ff5252' };
+  const pmColors = { CASH: '#c0c0c0', CARD: '#2196f3', VOUCHER: '#9c27b0', SPLIT: '#ff9800', UNPAID: '#ff5252' };
   const pmSegments = Object.entries(pmMap).map(([k, v]) => ({ label: k, value: v, color: pmColors[k] || '#999' }));
 
   // Barber stats
@@ -247,7 +247,7 @@ export default function Reports() {
         <div style={{ display: 'flex', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
           {PERIODS.map(p => (
             <button key={p.id} onClick={() => setPeriod(p.id)}
-              style={{ padding: '8px 12px', border: 'none', cursor: 'pointer', background: period === p.id ? '#d4af37' : 'transparent', color: period === p.id ? '#000' : 'var(--muted)', fontSize: '0.72rem', fontWeight: period === p.id ? '700' : '400', transition: 'all 0.15s', whiteSpace: 'nowrap' }}>
+              style={{ padding: '8px 12px', border: 'none', cursor: 'pointer', background: period === p.id ? '#c0c0c0' : 'transparent', color: period === p.id ? '#000' : 'var(--muted)', fontSize: '0.72rem', fontWeight: period === p.id ? '700' : '400', transition: 'all 0.15s', whiteSpace: 'nowrap' }}>
               {p.label}
             </button>
           ))}
@@ -258,7 +258,7 @@ export default function Reports() {
       <div style={{ display: 'flex', gap: '4px', borderBottom: '1px solid var(--border)', paddingBottom: '0' }}>
         {tabs.map(t => (
           <button key={t} onClick={() => setActiveTab(t)}
-            style={{ padding: '8px 16px', background: 'transparent', border: 'none', color: activeTab === t ? '#d4af37' : 'var(--muted)', fontSize: '0.78rem', fontWeight: activeTab === t ? '700' : '400', cursor: 'pointer', borderBottom: activeTab === t ? '2px solid #d4af37' : '2px solid transparent', textTransform: 'capitalize', transition: 'all 0.15s' }}>
+            style={{ padding: '8px 16px', background: 'transparent', border: 'none', color: activeTab === t ? '#c0c0c0' : 'var(--muted)', fontSize: '0.78rem', fontWeight: activeTab === t ? '700' : '400', cursor: 'pointer', borderBottom: activeTab === t ? '2px solid #c0c0c0' : '2px solid transparent', textTransform: 'capitalize', transition: 'all 0.15s' }}>
             {t}
           </button>
         ))}
@@ -270,10 +270,10 @@ export default function Reports() {
           {/* KPI row */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px' }}>
             {[
-              { label: 'Total Bookings', value: active.length, sub: cancelled.length + ' cancelled', color: '#d4af37' },
+              { label: 'Total Bookings', value: active.length, sub: cancelled.length + ' cancelled', color: '#c0c0c0' },
               { label: 'Checked Out', value: checkedOut.length, sub: active.length ? Math.round(checkedOut.length / active.length * 100) + '% conversion' : '0%', color: '#4caf50' },
               { label: 'Revenue', value: '£' + totalRevenue.toFixed(2), sub: '+£' + totalTips.toFixed(2) + ' tips', color: '#4caf50' },
-              { label: 'Net Revenue', value: '£' + netRevenue.toFixed(2), sub: '-£' + totalDiscount.toFixed(2) + ' discount', color: '#d4af37' },
+              { label: 'Net Revenue', value: '£' + netRevenue.toFixed(2), sub: '-£' + totalDiscount.toFixed(2) + ' discount', color: '#c0c0c0' },
               { label: 'Tips', value: '£' + totalTips.toFixed(2), sub: checkedOut.length ? (checkedOut.filter(b => parsePrice(b.tip) > 0).length) + ' bookings tipped' : '--', color: '#4caf50' },
               { label: 'Avg Sale', value: checkedOut.length ? '£' + (totalRevenue / checkedOut.length).toFixed(2) : '--', sub: 'per checkout', color: '#2196f3' },
             ].map(k => (
@@ -289,7 +289,7 @@ export default function Reports() {
           {dailyRevenue.length > 0 && (
             <div style={card}>
               <div style={lbl}>Daily Revenue (last 30 days)</div>
-              <BarChart data={dailyRevenue} valueKey="revenue" labelKey="date" color="#d4af37" height={100} />
+              <BarChart data={dailyRevenue} valueKey="revenue" labelKey="date" color="#c0c0c0" height={100} />
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px' }}>
                 <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>{dailyRevenue[0]?.date}</span>
                 <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>{dailyRevenue[dailyRevenue.length - 1]?.date}</span>
@@ -342,7 +342,7 @@ export default function Reports() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px' }}>
             {[
-              { label: 'Gross Revenue', value: '£' + totalRevenue.toFixed(2), color: '#d4af37' },
+              { label: 'Gross Revenue', value: '£' + totalRevenue.toFixed(2), color: '#c0c0c0' },
               { label: 'Tips', value: '£' + totalTips.toFixed(2), color: '#4caf50' },
               { label: 'Discounts Given', value: '-£' + totalDiscount.toFixed(2), color: '#ff5252' },
               { label: 'Net Revenue', value: '£' + netRevenue.toFixed(2), color: '#4caf50' },
@@ -358,7 +358,7 @@ export default function Reports() {
           {monthlyData.length > 0 && (
             <div style={card}>
               <div style={lbl}>Monthly Revenue Trend</div>
-              <BarChart data={monthlyData} valueKey="revenue" labelKey="label" color="#d4af37" height={120} />
+              <BarChart data={monthlyData} valueKey="revenue" labelKey="label" color="#c0c0c0" height={120} />
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px' }}>
                 {monthlyData.map((d, i) => (
                   <span key={i} style={{ fontSize: '0.52rem', color: 'var(--muted)', flex: 1, textAlign: 'center' }}>{d.label.slice(5)}</span>
@@ -384,9 +384,9 @@ export default function Reports() {
                     <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
                       <td style={{ padding: '8px 12px', fontSize: '0.78rem', color: 'var(--text)' }}>{d.date}</td>
                       <td style={{ padding: '8px 12px', fontSize: '0.78rem', color: 'var(--muted)' }}>{d.count}</td>
-                      <td style={{ padding: '8px 12px', fontSize: '0.78rem', color: '#d4af37', fontWeight: '600' }}>£{d.revenue.toFixed(2)}</td>
+                      <td style={{ padding: '8px 12px', fontSize: '0.78rem', color: '#c0c0c0', fontWeight: '600' }}>£{d.revenue.toFixed(2)}</td>
                       <td style={{ padding: '8px 12px', fontSize: '0.78rem', color: '#4caf50' }}>{d.tips > 0 ? '£' + d.tips.toFixed(2) : '--'}</td>
-                      <td style={{ padding: '8px 12px', fontSize: '0.82rem', color: '#d4af37', fontWeight: '700' }}>£{(d.revenue + d.tips).toFixed(2)}</td>
+                      <td style={{ padding: '8px 12px', fontSize: '0.82rem', color: '#c0c0c0', fontWeight: '700' }}>£{(d.revenue + d.tips).toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -460,7 +460,7 @@ export default function Reports() {
                       <span style={{ fontSize: '0.75rem', color: 'var(--text)', fontWeight: i === 0 ? '700' : '400' }}>{s.name}</span>
                       <span style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>{s.count}x</span>
                     </div>
-                    <MiniBar value={s.count} max={maxCount} color={i === 0 ? '#d4af37' : 'rgba(212,175,55,0.5)'} />
+                    <MiniBar value={s.count} max={maxCount} color={i === 0 ? '#c0c0c0' : 'rgba(180,180,180,0.5)'} />
                   </div>
                 );
               })}
@@ -473,7 +473,7 @@ export default function Reports() {
                   <div key={s.name} style={{ marginBottom: '12px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
                       <span style={{ fontSize: '0.75rem', color: 'var(--text)', fontWeight: i === 0 ? '700' : '400' }}>{s.name}</span>
-                      <span style={{ fontSize: '0.72rem', color: '#d4af37', fontWeight: '600' }}>£{s.revenue.toFixed(0)}</span>
+                      <span style={{ fontSize: '0.72rem', color: '#c0c0c0', fontWeight: '600' }}>£{s.revenue.toFixed(0)}</span>
                     </div>
                     <MiniBar value={s.revenue} max={maxRev} color={i === 0 ? '#4caf50' : 'rgba(76,175,80,0.5)'} />
                   </div>
@@ -497,7 +497,7 @@ export default function Reports() {
                   <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
                     <td style={{ padding: '9px 12px', fontSize: '0.78rem', color: 'var(--text)', fontWeight: '500' }}>{s.name}</td>
                     <td style={{ padding: '9px 12px', fontSize: '0.78rem', color: 'var(--muted)' }}>{s.count}</td>
-                    <td style={{ padding: '9px 12px', fontSize: '0.78rem', color: '#d4af37', fontWeight: '600' }}>£{s.revenue.toFixed(2)}</td>
+                    <td style={{ padding: '9px 12px', fontSize: '0.78rem', color: '#c0c0c0', fontWeight: '600' }}>£{s.revenue.toFixed(2)}</td>
                     <td style={{ padding: '9px 12px', fontSize: '0.78rem', color: 'var(--muted)' }}>{s.count ? '£' + (s.revenue / s.count).toFixed(2) : '--'}</td>
                   </tr>
                 ))}
@@ -512,7 +512,7 @@ export default function Reports() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px' }}>
             {[
-              { label: 'Unique Clients', value: Object.keys(clientMap).length, color: '#d4af37' },
+              { label: 'Unique Clients', value: Object.keys(clientMap).length, color: '#c0c0c0' },
               { label: 'Walk-ins', value: active.filter(b => !b.name || b.name === 'Walk-in').length, color: '#ff9800' },
               { label: 'Returning', value: Object.values(clientMap).filter(c => c.visits > 1).length, color: '#4caf50' },
               { label: 'New Clients', value: Object.values(clientMap).filter(c => c.visits === 1).length, color: '#2196f3' },
@@ -540,13 +540,13 @@ export default function Reports() {
                     <td style={{ padding: '9px 12px', fontSize: '0.72rem', color: 'var(--muted)' }}>#{i + 1}</td>
                     <td style={{ padding: '9px 12px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{ width: '26px', height: '26px', borderRadius: '50%', background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem', fontWeight: '700', color: '#d4af37' }}>{c.name[0]}</div>
+                        <div style={{ width: '26px', height: '26px', borderRadius: '50%', background: 'rgba(180,180,180,0.15)', border: '1px solid rgba(180,180,180,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem', fontWeight: '700', color: '#c0c0c0' }}>{c.name[0]}</div>
                         <span style={{ fontSize: '0.78rem', color: 'var(--text)', fontWeight: '600' }}>{c.name}</span>
-                        {i === 0 && <span style={{ fontSize: '0.55rem', background: 'rgba(212,175,55,0.2)', color: '#d4af37', padding: '1px 5px', borderRadius: '4px', fontWeight: '700' }}>TOP</span>}
+                        {i === 0 && <span style={{ fontSize: '0.55rem', background: 'rgba(180,180,180,0.2)', color: '#c0c0c0', padding: '1px 5px', borderRadius: '4px', fontWeight: '700' }}>TOP</span>}
                       </div>
                     </td>
                     <td style={{ padding: '9px 12px', fontSize: '0.78rem', color: 'var(--muted)' }}>{c.visits}</td>
-                    <td style={{ padding: '9px 12px', fontSize: '0.82rem', color: '#d4af37', fontWeight: '700' }}>£{c.spent.toFixed(2)}</td>
+                    <td style={{ padding: '9px 12px', fontSize: '0.82rem', color: '#c0c0c0', fontWeight: '700' }}>£{c.spent.toFixed(2)}</td>
                     <td style={{ padding: '9px 12px', fontSize: '0.75rem', color: 'var(--muted)' }}>£{(c.spent / c.visits).toFixed(2)}</td>
                   </tr>
                 ))}

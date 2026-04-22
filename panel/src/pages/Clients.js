@@ -6,7 +6,7 @@ import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 function getBColor(barber, barbers) {
   const key = (barber || '').toLowerCase();
   const found = (barbers || []).find(b => String(b.id || '').toLowerCase() === key || String(b.name || '').toLowerCase() === key);
-  return found?.color || '#7a7260';
+  return found?.color || '#777777';
 }
 
 function formatDate(dateStr) {
@@ -143,7 +143,7 @@ export default function Clients() {
       {/* Stats row */}
       <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
         {[
-          { label: 'Total Clients', value: clients.length, color: '#d4af37' },
+          { label: 'Total Clients', value: clients.length, color: '#c0c0c0' },
           { label: 'Total Revenue', value: '£' + totalRevenue.toFixed(0), color: '#4caf50' },
           { label: 'Avg Spend', value: '£' + avgSpend.toFixed(0), color: '#2196f3' },
           { label: 'VIP (5+ visits)', value: vipCount, color: '#9c27b0' },
@@ -185,7 +185,7 @@ export default function Clients() {
                     { label: 'Barber', key: null },
                     { label: 'Status', key: null },
                   ].map(h => (
-                    <th key={h.label} onClick={() => h.key && toggleSort(h.key)} style={{ ...col, textAlign: 'left', color: sortBy === h.key ? '#d4af37' : 'var(--muted)' }}>
+                    <th key={h.label} onClick={() => h.key && toggleSort(h.key)} style={{ ...col, textAlign: 'left', color: sortBy === h.key ? '#c0c0c0' : 'var(--muted)' }}>
                       {h.label} {sortBy === h.key ? (sortDir === 'desc' ? '↓' : '↑') : ''}
                     </th>
                   ))}
@@ -200,8 +200,8 @@ export default function Clients() {
                   const isSel = selectedClient?.phone === c.phone && selectedClient?.name === c.name;
                   return (
                     <tr key={i} onClick={() => setSelectedClient(isSel ? null : c)}
-                      style={{ borderBottom: '1px solid var(--border)', cursor: 'pointer', background: isSel ? 'rgba(212,175,55,0.06)' : 'transparent', transition: 'background 0.15s' }}
-                      onMouseEnter={e => { if (!isSel) e.currentTarget.style.background = 'rgba(212,175,55,0.03)'; }}
+                      style={{ borderBottom: '1px solid var(--border)', cursor: 'pointer', background: isSel ? 'rgba(180,180,180,0.06)' : 'transparent', transition: 'background 0.15s' }}
+                      onMouseEnter={e => { if (!isSel) e.currentTarget.style.background = 'rgba(180,180,180,0.03)'; }}
                       onMouseLeave={e => { if (!isSel) e.currentTarget.style.background = 'transparent'; }}>
                       <td style={{ padding: '12px 14px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -211,7 +211,7 @@ export default function Clients() {
                           <div>
                             <div style={{ fontSize: '0.82rem', fontWeight: '600', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                               {c.name}
-                              {isVIP && <span style={{ fontSize: '0.55rem', background: 'rgba(212,175,55,0.2)', color: '#d4af37', padding: '1px 5px', borderRadius: '4px', fontWeight: '700' }}>VIP</span>}
+                              {isVIP && <span style={{ fontSize: '0.55rem', background: 'rgba(180,180,180,0.2)', color: '#c0c0c0', padding: '1px 5px', borderRadius: '4px', fontWeight: '700' }}>VIP</span>}
                               {isNew && <span style={{ fontSize: '0.55rem', background: 'rgba(76,175,80,0.2)', color: '#4caf50', padding: '1px 5px', borderRadius: '4px', fontWeight: '700' }}>NEW</span>}
                             </div>
                             <div style={{ fontSize: '0.62rem', color: 'var(--muted)' }}>{c.phone || c.email || '--'}</div>
@@ -219,7 +219,7 @@ export default function Clients() {
                         </div>
                       </td>
                       <td style={{ padding: '12px 14px', fontSize: '0.82rem', color: 'var(--text)', fontWeight: '600' }}>{c.visits}</td>
-                      <td style={{ padding: '12px 14px', fontSize: '0.85rem', color: '#d4af37', fontWeight: '700' }}>£{c.totalSpent.toFixed(2)}</td>
+                      <td style={{ padding: '12px 14px', fontSize: '0.85rem', color: '#c0c0c0', fontWeight: '700' }}>£{c.totalSpent.toFixed(2)}</td>
                       <td style={{ padding: '12px 14px', fontSize: '0.78rem', color: 'var(--muted)' }}>£{c.visits ? (c.totalSpent / c.visits).toFixed(0) : '0'}</td>
                       <td style={{ padding: '12px 14px', fontSize: '0.78rem', color: c.totalTip > 0 ? '#4caf50' : 'var(--muted)' }}>{c.totalTip > 0 ? '£' + c.totalTip.toFixed(2) : '--'}</td>
                       <td style={{ padding: '12px 14px', fontSize: '0.75rem', color: 'var(--muted)' }}>{c.lastVisit || '--'}</td>
@@ -244,21 +244,21 @@ export default function Clients() {
 
         {/* Client detail panel */}
         {selectedClient && (
-          <div style={{ width: '300px', flexShrink: 0, background: 'var(--card2)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: '16px', display: 'flex', flexDirection: 'column', overflow: 'hidden', maxHeight: 'calc(100vh - 200px)' }}>
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(212,175,55,0.04)', flexShrink: 0 }}>
+          <div style={{ width: '300px', flexShrink: 0, background: 'var(--card2)', border: '1px solid rgba(180,180,180,0.25)', borderRadius: '16px', display: 'flex', flexDirection: 'column', overflow: 'hidden', maxHeight: 'calc(100vh - 200px)' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(180,180,180,0.04)', flexShrink: 0 }}>
               <span style={{ fontSize: '0.65rem', color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', fontWeight: '600' }}>Client Profile</span>
               <button onClick={() => setSelectedClient(null)} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '1rem' }}>x</button>
             </div>
             <div style={{ overflowY: 'auto', flex: 1, padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {/* Avatar + name */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px', background: 'rgba(212,175,55,0.05)', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#d4af3722', border: '2px solid #d4af3744', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', fontWeight: '800', color: '#d4af37', flexShrink: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px', background: 'rgba(180,180,180,0.05)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#c0c0c022', border: '2px solid #c0c0c044', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', fontWeight: '800', color: '#c0c0c0', flexShrink: 0 }}>
                   {selectedClient.name[0].toUpperCase()}
                 </div>
                 <div>
                   <div style={{ fontSize: '0.92rem', fontWeight: '700', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     {selectedClient.name}
-                    {selectedClient.visits >= 5 && <span style={{ fontSize: '0.58rem', background: 'rgba(212,175,55,0.2)', color: '#d4af37', padding: '1px 6px', borderRadius: '4px', fontWeight: '700' }}>VIP</span>}
+                    {selectedClient.visits >= 5 && <span style={{ fontSize: '0.58rem', background: 'rgba(180,180,180,0.2)', color: '#c0c0c0', padding: '1px 6px', borderRadius: '4px', fontWeight: '700' }}>VIP</span>}
                   </div>
                   {selectedClient.phone && <div style={{ fontSize: '0.68rem', color: 'var(--muted)', marginTop: '2px' }}>{selectedClient.phone}</div>}
                   {selectedClient.email && <div style={{ fontSize: '0.68rem', color: 'var(--muted)' }}>{selectedClient.email}</div>}
@@ -268,7 +268,7 @@ export default function Clients() {
               {/* Stats */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                 {[
-                  { label: 'Visits', value: selectedClient.visits, color: '#d4af37' },
+                  { label: 'Visits', value: selectedClient.visits, color: '#c0c0c0' },
                   { label: 'Total Spent', value: '£' + selectedClient.totalSpent.toFixed(2), color: '#4caf50' },
                   { label: 'Tips Given', value: selectedClient.totalTip > 0 ? '£' + selectedClient.totalTip.toFixed(2) : '--', color: '#4caf50' },
                   { label: 'Discounts', value: selectedClient.totalDiscount > 0 ? '£' + selectedClient.totalDiscount.toFixed(2) : '--', color: '#ff9800' },
@@ -283,13 +283,13 @@ export default function Clients() {
               </div>
 
               {/* Loyalty bar */}
-              <div style={{ padding: '10px 14px', background: 'rgba(212,175,55,0.04)', borderRadius: '10px', border: '1px solid var(--border)' }}>
+              <div style={{ padding: '10px 14px', background: 'rgba(180,180,180,0.04)', borderRadius: '10px', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                   <span style={{ fontSize: '0.65rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Loyalty</span>
-                  <span style={{ fontSize: '0.65rem', color: '#d4af37' }}>{selectedClient.visits}/10</span>
+                  <span style={{ fontSize: '0.65rem', color: '#c0c0c0' }}>{selectedClient.visits}/10</span>
                 </div>
-                <div style={{ height: '6px', background: 'rgba(212,175,55,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
-                  <div style={{ width: Math.min(selectedClient.visits / 10 * 100, 100) + '%', height: '100%', background: 'linear-gradient(90deg, #d4af37, #b8860b)', borderRadius: '3px', transition: 'width 0.5s' }} />
+                <div style={{ height: '6px', background: 'rgba(180,180,180,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
+                  <div style={{ width: Math.min(selectedClient.visits / 10 * 100, 100) + '%', height: '100%', background: 'linear-gradient(90deg, #c0c0c0, #666666)', borderRadius: '3px', transition: 'width 0.5s' }} />
                 </div>
                 <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: '4px' }}>
                   {selectedClient.visits >= 10 ? '🎉 Free service earned!' : selectedClient.visits >= 5 ? '10% discount active' : `${5 - selectedClient.visits} more visits for 10% discount`}
@@ -311,10 +311,10 @@ export default function Clients() {
               <div>
                 <div style={{ fontSize: '0.62rem', color: 'var(--muted)', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '8px', fontWeight: '600' }}>History</div>
                 {selectedClient.bookings.slice().reverse().slice(0, 10).map((b, i) => (
-                  <div key={i} style={{ padding: '8px 10px', background: 'rgba(212,175,55,0.04)', borderRadius: '8px', marginBottom: '6px', border: '1px solid var(--border)' }}>
+                  <div key={i} style={{ padding: '8px 10px', background: 'rgba(180,180,180,0.04)', borderRadius: '8px', marginBottom: '6px', border: '1px solid var(--border)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
                       <span style={{ fontSize: '0.72rem', fontWeight: '600', color: 'var(--text)' }}>{b.date}</span>
-                      <span style={{ fontSize: '0.68rem', fontWeight: '700', color: '#d4af37' }}>{b.paidAmount ? '£' + b.paidAmount : (b.price ? '£' + b.price : '--')}</span>
+                      <span style={{ fontSize: '0.68rem', fontWeight: '700', color: '#c0c0c0' }}>{b.paidAmount ? '£' + b.paidAmount : (b.price ? '£' + b.price : '--')}</span>
                     </div>
                     <div style={{ fontSize: '0.65rem', color: 'var(--muted)' }}>{getSvcLabel(b.service)} · {(b.barber || '').toUpperCase()}</div>
                     <div style={{ display: 'flex', gap: '4px', marginTop: '3px' }}>
@@ -335,7 +335,7 @@ export default function Clients() {
                 )}
                 {selectedClient.email && (
                   <a href={'mailto:' + selectedClient.email}
-                    style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px', background: 'rgba(212,175,55,0.06)', border: '1px solid var(--border)', borderRadius: '8px', color: '#d4af37', fontSize: '0.72rem', textDecoration: 'none', fontWeight: '600' }}>
+                    style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px', background: 'rgba(180,180,180,0.06)', border: '1px solid var(--border)', borderRadius: '8px', color: '#c0c0c0', fontSize: '0.72rem', textDecoration: 'none', fontWeight: '600' }}>
                     Email
                   </a>
                 )}

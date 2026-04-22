@@ -105,13 +105,13 @@ export default function Settings({ theme, onToggleTheme }) {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ fontSize: '1.4rem', color: '#d4af37', marginBottom: '4px' }}>Settings</h1>
+          <h1 style={{ fontSize: '1.4rem', color: '#c0c0c0', marginBottom: '4px' }}>Settings</h1>
           <p style={{ fontSize: '0.82rem', color: 'var(--muted)' }}>Shop info, opening hours & platform settings</p>
         </div>
         <button
           onClick={handleSave}
           disabled={saving}
-          style={{ padding: '12px 28px', background: saving ? 'rgba(212,175,55,0.4)' : 'linear-gradient(135deg, #d4af37, #b8860b)', border: 'none', borderRadius: '8px', color: '#000', cursor: saving ? 'not-allowed' : 'pointer', fontWeight: '700', fontSize: '0.85rem', letterSpacing: '1px' }}
+          style={{ padding: '12px 28px', background: saving ? 'rgba(180,180,180,0.4)' : 'linear-gradient(135deg, #c0c0c0, #666666)', border: 'none', borderRadius: '8px', color: '#000', cursor: saving ? 'not-allowed' : 'pointer', fontWeight: '700', fontSize: '0.85rem', letterSpacing: '1px' }}
         >
           {saving ? 'Saving...' : '💾 Save Changes'}
         </button>
@@ -140,7 +140,7 @@ export default function Settings({ theme, onToggleTheme }) {
     </div>
     <div 
   onClick={() => onToggleTheme()}
-  style={{ width:'52px', height:'28px', borderRadius:'14px', cursor:'pointer', background: theme === 'light' ? '#d4af37' : 'var(--muted)', position:'relative', transition:'background 0.2s', flexShrink:0 }}>
+  style={{ width:'52px', height:'28px', borderRadius:'14px', cursor:'pointer', background: theme === 'light' ? '#c0c0c0' : 'var(--muted)', position:'relative', transition:'background 0.2s', flexShrink:0 }}>
   <div style={{ position:'absolute', top:'4px', left: theme === 'light' ? '27px' : '4px', width:'20px', height:'20px', borderRadius:'50%', background:'#fff', transition:'left 0.2s' }} />
 </div>
   </div>
@@ -249,9 +249,9 @@ export default function Settings({ theme, onToggleTheme }) {
             var dayHours = (settings.hours && settings.hours[day]) || { open: '09:00', close: '19:00', closed: false };
             var isToday = new Date().toLocaleDateString('en-GB', { weekday: 'long' }) === day;
             return (
-              <div key={day} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '14px 16px', borderRadius: '10px', background: dayHours.closed ? 'rgba(255,82,82,0.05)' : 'rgba(212,175,55,0.04)', border: '1px solid ' + (isToday ? 'rgba(212,175,55,0.3)' : 'rgba(212,175,55,0.1)') }}>
+              <div key={day} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '14px 16px', borderRadius: '10px', background: dayHours.closed ? 'rgba(255,82,82,0.05)' : 'rgba(180,180,180,0.04)', border: '1px solid ' + (isToday ? 'rgba(180,180,180,0.3)' : 'rgba(180,180,180,0.1)') }}>
                 <div style={{ width: '100px', flexShrink: 0 }}>
-                  <span style={{ fontSize: '0.88rem', fontWeight: isToday ? '700' : '500', color: isToday ? '#d4af37' : 'var(--text)' }}>
+                  <span style={{ fontSize: '0.88rem', fontWeight: isToday ? '700' : '500', color: isToday ? '#c0c0c0' : 'var(--text)' }}>
                     {isToday ? '▶ ' : ''}{day}
                   </span>
                 </div>

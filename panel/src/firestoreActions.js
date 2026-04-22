@@ -225,7 +225,7 @@ export async function deleteBooking(bookingId) {
 // ── SEED DATA ──────────────────────────────────────────────────────────────
 export async function seedBarbers() {
   const barbers = [
-    { id: 'tunc', name: 'Tunc', color: '#d4af37', active: true, order: 1 },
+    { id: 'tunc', name: 'Tunc', color: '#c0c0c0', active: true, order: 1 },
     { id: 'manoc', name: 'Manoc', color: '#4caf50', active: true, order: 2 },
   ];
   for (const barber of barbers) {

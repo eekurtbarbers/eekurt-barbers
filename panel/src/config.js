@@ -32,7 +32,7 @@ const config = {
 
   // Barbers
   barbers: [
-    { id: 'tunc', name: 'Tunc', color: '#d4af37' },
+    { id: 'tunc', name: 'Tunc', color: '#c0c0c0' },
     { id: 'manoc', name: 'Manoc', color: '#4caf50' },
   ],
 

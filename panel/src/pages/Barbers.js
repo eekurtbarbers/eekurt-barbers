@@ -3,7 +3,7 @@ import { db } from '../firebase';
 import { collection, doc, getDocs, setDoc, deleteDoc } from 'firebase/firestore';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const COLORS = ['#d4af37', '#4caf50', '#2196f3', '#e91e63', '#ff9800', '#9c27b0', '#00bcd4'];
+const COLORS = ['#c0c0c0', '#4caf50', '#2196f3', '#e91e63', '#ff9800', '#9c27b0', '#00bcd4'];
 const DEFAULT_WORKING_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const DEFAULT_HOURS = { open: '09:00', close: '19:00' };
 
@@ -35,7 +35,7 @@ const normalizeBarberForm = function(barber) {
 const defaultBarber = {
   id: '',
   name: '',
-  color: '#d4af37',
+  color: '#c0c0c0',
   photo: '',
   workingDays: DEFAULT_WORKING_DAYS,
   hours: DEFAULT_HOURS,
@@ -156,10 +156,10 @@ const handleSave = async function() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ fontSize: '1.4rem', color: '#d4af37', marginBottom: '4px' }}>Barbers</h1>
+          <h1 style={{ fontSize: '1.4rem', color: '#c0c0c0', marginBottom: '4px' }}>Barbers</h1>
           <p style={{ fontSize: '0.82rem', color: 'var(--muted)' }}>{barbers.length} barber{barbers.length !== 1 ? 's' : ''} on your team</p>
         </div>
-        <button onClick={openAdd} style={{ padding: '10px 20px', background: 'linear-gradient(135deg, #d4af37, #b8860b)', border: 'none', borderRadius: '8px', color: '#000', cursor: 'pointer', fontWeight: '700', fontSize: '0.85rem', letterSpacing: '1px' }}>
+        <button onClick={openAdd} style={{ padding: '10px 20px', background: 'linear-gradient(135deg, #c0c0c0, #666666)', border: 'none', borderRadius: '8px', color: '#000', cursor: 'pointer', fontWeight: '700', fontSize: '0.85rem', letterSpacing: '1px' }}>
           + Add Barber
         </button>
       </div>
@@ -229,7 +229,7 @@ const handleSave = async function() {
                 </div>
 
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button onClick={function() { openEdit(barber); }} style={{ flex: 1, padding: '10px', background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: '8px', color: '#d4af37', cursor: 'pointer', fontSize: '0.8rem', fontWeight: '600' }}>
+                  <button onClick={function() { openEdit(barber); }} style={{ flex: 1, padding: '10px', background: 'rgba(180,180,180,0.1)', border: '1px solid rgba(180,180,180,0.25)', borderRadius: '8px', color: '#c0c0c0', cursor: 'pointer', fontSize: '0.8rem', fontWeight: '600' }}>
                     ✏️ Edit
                   </button>
                   <button onClick={function() { handleDelete(barber.id); }} style={{ padding: '10px 14px', background: 'rgba(255,82,82,0.1)', border: '1px solid rgba(255,82,82,0.25)', borderRadius: '8px', color: '#ff5252', cursor: 'pointer', fontSize: '0.8rem' }}>
@@ -247,7 +247,7 @@ const handleSave = async function() {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
           <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '16px', padding: '32px', width: '100%', maxWidth: '480px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
-              <h2 style={{ fontSize: '1.1rem', color: '#d4af37', fontWeight: '700' }}>{editId ? 'Edit Barber' : 'Add New Barber'}</h2>
+              <h2 style={{ fontSize: '1.1rem', color: '#c0c0c0', fontWeight: '700' }}>{editId ? 'Edit Barber' : 'Add New Barber'}</h2>
               <button onClick={function() { setShowAdd(false); }} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '1.3rem' }}>✕</button>
             </div>
 
@@ -299,7 +299,7 @@ const handleSave = async function() {
                   {(form.workingDays || []).map(function(day) {
                     var dayHours = Object.assign({}, DEFAULT_HOURS, form.hours || {}, form.dayHours && form.dayHours[day] ? form.dayHours[day] : {});
                     return (
-                      <div key={day} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', borderRadius: '10px', background: 'rgba(212,175,55,0.04)', border: '1px solid rgba(212,175,55,0.12)' }}>
+                      <div key={day} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', borderRadius: '10px', background: 'rgba(180,180,180,0.04)', border: '1px solid rgba(180,180,180,0.12)' }}>
                         <div style={{ width: '92px', color: 'var(--text)', fontSize: '0.82rem', fontWeight: '600', flexShrink: 0 }}>{day}</div>
                         <input type="time" value={dayHours.open || '09:00'} onChange={function(e) { updateDayHours(day, 'open', e.target.value); }} style={Object.assign({}, inputStyle, { flex: 1, marginBottom: 0 })} />
                         <span style={{ color: 'var(--muted)' }}>—</span>
@@ -317,7 +317,7 @@ const handleSave = async function() {
 
             <div style={{ display: 'flex', gap: '12px' }}>
               <button onClick={function() { setShowAdd(false); }} style={{ flex: 1, padding: '12px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--muted)', cursor: 'pointer' }}>Cancel</button>
-              <button onClick={handleSave} style={{ flex: 2, padding: '12px', background: 'linear-gradient(135deg, #d4af37, #b8860b)', border: 'none', borderRadius: '8px', color: '#000', cursor: 'pointer', fontWeight: '700' }}>{editId ? 'Save Changes' : 'Add Barber'}</button>
+              <button onClick={handleSave} style={{ flex: 2, padding: '12px', background: 'linear-gradient(135deg, #c0c0c0, #666666)', border: 'none', borderRadius: '8px', color: '#000', cursor: 'pointer', fontWeight: '700' }}>{editId ? 'Save Changes' : 'Add Barber'}</button>
             </div>
           </div>
         </div>

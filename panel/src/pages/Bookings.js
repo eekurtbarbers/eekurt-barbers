@@ -132,10 +132,10 @@ const fetchAll = async () => {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ fontSize: '1.4rem', color: '#d4af37', marginBottom: '4px' }}>All Bookings</h1>
+          <h1 style={{ fontSize: '1.4rem', color: '#c0c0c0', marginBottom: '4px' }}>All Bookings</h1>
           <p style={{ fontSize: '0.82rem', color: 'var(--muted)' }}>{filtered.length} booking{filtered.length !== 1 ? 's' : ''} shown</p>
         </div>
-        <button onClick={exportCSV} style={{ padding: '10px 16px', background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.3)', borderRadius: '8px', color: '#d4af37', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem' }}>
+        <button onClick={exportCSV} style={{ padding: '10px 16px', background: 'rgba(180,180,180,0.15)', border: '1px solid rgba(180,180,180,0.3)', borderRadius: '8px', color: '#c0c0c0', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem' }}>
           Export CSV
         </button>
       </div>
@@ -143,11 +143,11 @@ const fetchAll = async () => {
       {/* Stats row */}
       <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
         {[
-          { label: 'Total', value: stats.total, color: '#d4af37' },
+          { label: 'Total', value: stats.total, color: '#c0c0c0' },
           { label: 'Confirmed', value: stats.confirmed, color: '#4caf50' },
           { label: 'Checked Out', value: stats.checkedOut, color: '#2196f3' },
           { label: 'Cancelled', value: stats.cancelled, color: '#ff5252' },
-          { label: 'Revenue', value: '£' + stats.revenue, color: '#d4af37' },
+          { label: 'Revenue', value: '£' + stats.revenue, color: '#c0c0c0' },
         ].map(s => (
           <div key={s.label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '10px 18px', background: s.color + '10', border: '1px solid ' + s.color + '30', borderRadius: '10px', minWidth: '80px' }}>
             <span style={{ fontSize: '1.2rem', fontWeight: '800', color: s.color }}>{s.value}</span>
@@ -192,7 +192,7 @@ const fetchAll = async () => {
       {/* Table */}
       <div style={{ background: 'var(--card)', borderRadius: '12px', border: '1px solid var(--border)', overflow: 'hidden' }}>
         {/* Table header */}
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 2fr 1.5fr 1fr 1fr 1fr 1fr', gap: '0', padding: '10px 16px', background: 'rgba(212,175,55,0.05)', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 2fr 1.5fr 1fr 1fr 1fr 1fr', gap: '0', padding: '10px 16px', background: 'rgba(180,180,180,0.05)', borderBottom: '1px solid var(--border)' }}>
           {['Customer', 'Service', 'Date & Time', 'Barber', 'Status', 'Source', 'Amount'].map(h => (
             <span key={h} style={{ fontSize: '0.62rem', color: 'var(--muted)', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: '600' }}>{h}</span>
           ))}
@@ -207,11 +207,11 @@ const fetchAll = async () => {
           </div>
         ) : filtered.map((b, i) => {
           const srcStyle = SOURCE_COLORS[b.source] || SOURCE_COLORS['Walk-in'];
-          const barberColor = (barbers.find(bar => bar.name.toLowerCase() === (b.barber || '').toLowerCase()) || {}).color || '#7a7260';
+          const barberColor = (barbers.find(bar => bar.name.toLowerCase() === (b.barber || '').toLowerCase()) || {}).color || '#777777';
           const svcName = config.services ? (config.services.find(s => s.id === b.service) || {}).name || b.service : b.service;
           return (
             <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 2fr 1.5fr 1fr 1fr 1fr 1fr', gap: '0', padding: '12px 16px', borderBottom: '1px solid var(--border)', transition: 'background 0.1s' }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(212,175,55,0.03)'}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(180,180,180,0.03)'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
 
               {/* Customer */}
@@ -257,7 +257,7 @@ const fetchAll = async () => {
 
               {/* Amount */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', justifyContent: 'center' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#d4af37' }}>{b.price}</span>
+                <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#c0c0c0' }}>{b.price}</span>
                 {b.paidAmount && b.paidAmount !== b.price && (
                   <span style={{ fontSize: '0.65rem', color: '#4caf50' }}>Paid: {b.paidAmount}</span>
                 )}

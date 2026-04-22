@@ -26,7 +26,7 @@ function Sidebar({ activePage, setActivePage, onLogout, theme, onToggleTheme, is
       bottom: 0,
       width: sidebarWidth,
       background: isLight ? '#ffffff' : '#111111',
-      borderRight: isLight ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(212,175,55,0.1)',
+      borderRight: isLight ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(180,180,180,0.1)',
       display: 'flex',
       flexDirection: 'column',
       zIndex: 100,
@@ -44,7 +44,7 @@ function Sidebar({ activePage, setActivePage, onLogout, theme, onToggleTheme, is
           transform: 'translateY(-50%)',
           width: '14px',
           height: '48px',
-          background: 'linear-gradient(180deg, #d4af37 0%, #b8932a 100%)',
+          background: 'linear-gradient(180deg, #c0c0c0 0%, #666666 100%)',
           border: 'none',
           borderRadius: '0 6px 6px 0',
           cursor: 'pointer',
@@ -54,7 +54,7 @@ function Sidebar({ activePage, setActivePage, onLogout, theme, onToggleTheme, is
           color: '#000',
           fontSize: '8px',
           zIndex: 101,
-          boxShadow: '2px 0 8px rgba(212,175,55,0.4)',
+          boxShadow: '2px 0 8px rgba(180,180,180,0.4)',
           transition: 'width 0.2s, box-shadow 0.2s',
           padding: 0,
         }}
@@ -71,17 +71,17 @@ function Sidebar({ activePage, setActivePage, onLogout, theme, onToggleTheme, is
       {/* Logo Section */}
       <div style={{
         padding: isCollapsed ? '28px 20px' : '28px 24px',
-        borderBottom: isLight ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(212,175,55,0.1)',
+        borderBottom: isLight ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(180,180,180,0.1)',
         minHeight: '90px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span style={{ fontSize: '1.5rem', minWidth: '32px' }}>✂️</span>
           {!isCollapsed && (
             <div style={{ opacity: 1, transition: 'opacity 0.2s' }}>
-              <div style={{ fontFamily: 'Georgia, serif', fontSize: '0.85rem', color: '#d4af37', letterSpacing: '1px', fontWeight: '700' }}>
+              <div style={{ fontFamily: 'Georgia, serif', fontSize: '0.85rem', color: '#c0c0c0', letterSpacing: '1px', fontWeight: '700' }}>
                 {config.shopName}
               </div>
-              <div style={{ fontSize: '0.68rem', color: isLight ? '#9a8a70' : '#7a7260', letterSpacing: '1px' }}>
+              <div style={{ fontSize: '0.68rem', color: isLight ? '#888888' : '#777777', letterSpacing: '1px' }}>
                 ADMIN PANEL
               </div>
             </div>
@@ -105,11 +105,11 @@ function Sidebar({ activePage, setActivePage, onLogout, theme, onToggleTheme, is
                 padding: '12px 14px',
                 borderRadius: '8px',
                 border: 'none',
-                background: activePage === item.id ? 'rgba(212,175,55,0.12)' : 'transparent',
-                color: activePage === item.id ? '#d4af37' : (isLight ? '#4a4030' : '#7a7260'),
+                background: activePage === item.id ? 'rgba(180,180,180,0.12)' : 'transparent',
+                color: activePage === item.id ? '#c0c0c0' : (isLight ? '#555555' : '#777777'),
                 cursor: 'pointer',
                 transition: 'all 0.2s',
-                borderLeft: activePage === item.id ? '3px solid #d4af37' : '3px solid transparent',
+                borderLeft: activePage === item.id ? '3px solid #c0c0c0' : '3px solid transparent',
               }}
             >
               <span style={{ fontSize: '1.2rem', minWidth: '32px', textAlign: 'center' }}>{item.icon}</span>
@@ -126,9 +126,9 @@ function Sidebar({ activePage, setActivePage, onLogout, theme, onToggleTheme, is
                 left: 'calc(100% + 10px)',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                background: isLight ? '#ffffff' : '#1a1a14',
-                color: isLight ? '#3b3324' : '#e4c46a',
-                border: '1px solid rgba(212,175,55,0.35)',
+                background: isLight ? '#ffffff' : '#1a1a1a',
+                color: isLight ? '#333333' : '#c0c0c0',
+                border: '1px solid rgba(180,180,180,0.35)',
                 borderRadius: '8px',
                 padding: '7px 10px',
                 fontSize: '0.76rem',
@@ -149,11 +149,11 @@ function Sidebar({ activePage, setActivePage, onLogout, theme, onToggleTheme, is
       {/* Shop info & Footer */}
       <div style={{
         padding: isCollapsed ? '16px 10px' : '16px 24px',
-        borderTop: isLight ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(212,175,55,0.1)',
+        borderTop: isLight ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(180,180,180,0.1)',
         background: isCollapsed ? 'transparent' : 'inherit'
       }}>
         {!isCollapsed && (
-          <div style={{ fontSize: '0.72rem', color: isLight ? '#9a8a70' : '#7a7260', marginBottom: '12px' }}>
+          <div style={{ fontSize: '0.72rem', color: isLight ? '#888888' : '#777777', marginBottom: '12px' }}>
             {config.shopAddress}
           </div>
         )}
@@ -170,14 +170,14 @@ function Sidebar({ activePage, setActivePage, onLogout, theme, onToggleTheme, is
                 cursor: 'pointer'
             }}
         >
-          {!isCollapsed && <span style={{ fontSize: '0.72rem', color: isLight ? '#9a8a70' : '#7a7260' }}>
+          {!isCollapsed && <span style={{ fontSize: '0.72rem', color: isLight ? '#888888' : '#777777' }}>
             {isLight ? 'Light' : 'Dark'}
           </span>}
           <div style={{ 
               width: isCollapsed ? '30px' : '44px', 
               height: isCollapsed ? '16px' : '24px', 
               borderRadius: '12px', 
-              background: isLight ? '#d4af37' : '#333', 
+              background: isLight ? '#c0c0c0' : '#333', 
               position: 'relative',
               flexShrink: 0 
           }}>
