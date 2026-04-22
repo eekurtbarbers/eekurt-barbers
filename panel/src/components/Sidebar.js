@@ -79,10 +79,10 @@ function Sidebar({ activePage, setActivePage, onLogout, theme, onToggleTheme, is
           {!isCollapsed && (
             <div style={{ opacity: 1, transition: 'opacity 0.2s' }}>
               <div style={{ fontFamily: 'Georgia, serif', fontSize: '0.85rem', color: '#d4af37', letterSpacing: '1px', fontWeight: '700' }}>
-                I CUT
+                {config.shopName}
               </div>
               <div style={{ fontSize: '0.68rem', color: isLight ? '#9a8a70' : '#7a7260', letterSpacing: '1px' }}>
-                ADMIN
+                ADMIN PANEL
               </div>
             </div>
           )}
