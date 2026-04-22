@@ -2,6 +2,17 @@ import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 
+function getLoginErrorMessage(err) {
+  const code = err?.code || '';
+  if (code === 'auth/invalid-credential') return 'Wrong email or password.';
+  if (code === 'auth/user-not-found') return 'No user found with this email.';
+  if (code === 'auth/wrong-password') return 'Wrong email or password.';
+  if (code === 'auth/too-many-requests') return 'Too many attempts. Try again later or reset your password.';
+  if (code === 'auth/network-request-failed') return 'Network error. Check internet and try again.';
+  if (code === 'auth/operation-not-allowed') return 'Email/Password sign-in is disabled in Firebase Authentication.';
+  return 'Login failed. Please try again.';
+}
+
 function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,7 +28,7 @@ function Login({ onLogin }) {
       await signInWithEmailAndPassword(auth, email, password);
       onLogin();
     } catch (err) {
-      setError('Invalid email or password');
+      setError(getLoginErrorMessage(err));
       setPassword('');
       setLoading(false);
     }

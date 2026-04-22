@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/barberpanel/static/css/main.62afa40d.css",
-    "main.js": "/barberpanel/static/js/main.c6078b36.js",
+    "main.js": "/barberpanel/static/js/main.f11680f2.js",
     "index.html": "/barberpanel/index.html",
     "main.62afa40d.css.map": "/barberpanel/static/css/main.62afa40d.css.map",
-    "main.c6078b36.js.map": "/barberpanel/static/js/main.c6078b36.js.map"
+    "main.f11680f2.js.map": "/barberpanel/static/js/main.f11680f2.js.map"
   },
   "entrypoints": [
     "static/css/main.62afa40d.css",
-    "static/js/main.c6078b36.js"
+    "static/js/main.f11680f2.js"
   ]
 }
