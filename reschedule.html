@@ -11,7 +11,7 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #110e0a 50%, #0a0a0a 100%);
+            background: linear-gradient(135deg, #080808 0%, #111 50%, #080808 100%);
             min-height: 100vh;
             font-family: 'Inter', sans-serif;
             color: #fff;
@@ -30,7 +30,7 @@
             margin-bottom: 36px;
         }
         .back-link {
-            color: #c8a84b;
+            color: #aaa;
             text-decoration: none;
             font-size: 0.78rem;
             font-weight: 700;
@@ -49,7 +49,7 @@
             font-size: 1.6rem;
             letter-spacing: 4px;
             text-transform: uppercase;
-            background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728);
+            background: linear-gradient(to right, #888, #eee, #999);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -63,11 +63,11 @@
         }
 
         .card {
-            background: linear-gradient(135deg, #151510 0%, #0e0e0a 100%);
-            border: 1px solid rgba(200,168,75,0.4);
+            background: linear-gradient(135deg, #111 0%, #0d0d0d 100%);
+            border: 1px solid rgba(180,180,180,0.25);
             border-radius: 16px;
             padding: 28px;
-            box-shadow: 0 0 30px rgba(200,168,75,0.12), inset 0 0 12px rgba(200,168,75,0.04);
+            box-shadow: 0 0 30px rgba(180,180,180,0.06), inset 0 0 12px rgba(180,180,180,0.02);
         }
 
         .state { display: none; }
@@ -80,8 +80,8 @@
         .spinner {
             display: inline-block;
             width: 22px; height: 22px;
-            border: 2px solid rgba(200,168,75,0.3);
-            border-top-color: #c8a84b;
+            border: 2px solid rgba(180,180,180,0.2);
+            border-top-color: #bbb;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
             margin-right: 8px;
@@ -102,7 +102,7 @@
             padding: 14px;
             margin-bottom: 12px;
             background: rgba(0,0,0,0.5);
-            border: 1px solid rgba(200,168,75,0.35);
+            border: 1px solid rgba(180,180,180,0.25);
             color: #fff;
             border-radius: 10px;
             font-size: 0.9rem;
@@ -110,8 +110,8 @@
         }
         .form-input:focus {
             outline: none;
-            border-color: #c8a84b;
-            box-shadow: 0 0 12px rgba(200,168,75,0.2);
+            border-color: #bbb;
+            box-shadow: 0 0 12px rgba(180,180,180,0.15);
         }
         .form-input::placeholder { color: #555; }
 
@@ -120,7 +120,7 @@
             padding: 14px;
             border-radius: 10px;
             border: none;
-            background: linear-gradient(135deg, #c8a84b, #9a7a1e);
+            background: linear-gradient(135deg, #b0b0b0, #666);
             color: #000;
             font-family: 'Cinzel', serif;
             font-size: 0.82rem;
@@ -162,10 +162,10 @@
         .detail-row:last-child { border-bottom: none; }
         .detail-label { color: #666; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; }
         .detail-value { color: #ddd; font-weight: 600; text-align: right; }
-        .detail-value.gold { color: #c8a84b; }
+        .detail-value.gold { color: #d0d0d0; }
 
         .section-label {
-            color: #c8a84b;
+            color: #aaa;
             font-family: 'Cinzel', serif;
             font-size: 0.7rem;
             letter-spacing: 2px;
@@ -185,7 +185,7 @@
             min-width: 100px;
             padding: 11px 10px;
             border-radius: 10px;
-            border: 1px solid rgba(200,168,75,0.25);
+            border: 1px solid rgba(180,180,180,0.2);
             background: rgba(0,0,0,0.35);
             color: #777;
             font-family: 'Cinzel', serif;
@@ -196,9 +196,9 @@
             transition: all 0.2s;
         }
         .barber-btn.selected {
-            border-color: #c8a84b;
-            background: rgba(200,168,75,0.12);
-            color: #c8a84b;
+            border-color: #b0b0b0;
+            background: rgba(180,180,180,0.1);
+            color: #e0e0e0;
         }
 
         /* SLOTS */
@@ -213,7 +213,7 @@
         .slot-btn {
             padding: 10px 6px;
             border-radius: 8px;
-            border: 1px solid rgba(200,168,75,0.25);
+            border: 1px solid rgba(180,180,180,0.2);
             background: rgba(0,0,0,0.35);
             color: #bbb;
             font-size: 0.78rem;
@@ -221,8 +221,8 @@
             text-align: center;
             transition: all 0.2s;
         }
-        .slot-btn:hover:not(:disabled) { border-color: #c8a84b; color: #c8a84b; }
-        .slot-btn.selected { border-color: #c8a84b; background: rgba(200,168,75,0.18); color: #c8a84b; font-weight: 700; }
+        .slot-btn:hover:not(:disabled) { border-color: #aaa; color: #ddd; }
+        .slot-btn.selected { border-color: #b0b0b0; background: rgba(180,180,180,0.12); color: #e0e0e0; font-weight: 700; }
         .slot-btn:disabled { border-color: #222; color: #333; cursor: not-allowed; text-decoration: line-through; }
 
         .slots-status {
@@ -243,15 +243,15 @@
         .success-icon { font-size: 3rem; margin-bottom: 14px; }
         .success-title {
             font-family: 'Cinzel', serif;
-            color: #c8a84b;
+            color: #c0c0c0;
             font-size: 1.2rem;
             letter-spacing: 3px;
             text-transform: uppercase;
             margin-bottom: 12px;
         }
         .new-booking-box {
-            background: rgba(76,175,80,0.08);
-            border: 1px dashed rgba(76,175,80,0.35);
+            background: rgba(180,180,180,0.04);
+            border: 1px dashed rgba(180,180,180,0.25);
             border-radius: 12px;
             padding: 16px;
             margin: 16px 0;
@@ -298,7 +298,7 @@
 
         <!-- PICK NEW DATE/BARBER/TIME -->
         <div class="state" id="stateReschedule">
-            <p style="color:#c8a84b; font-family:'Cinzel',serif; font-size:0.72rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:14px;">Current Booking</p>
+            <p style="color:#b0b0b0; font-family:'Cinzel',serif; font-size:0.72rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:14px;">Current Booking</p>
             <div id="currentBookingDetails"></div>
 
             <p class="section-label">New Date</p>
@@ -335,7 +335,7 @@
                 <h2 class="success-title">Rescheduled!</h2>
                 <div class="new-booking-box" id="successDetails"></div>
                 <p style="color:#777; font-size:0.8rem; margin-bottom:20px;">We look forward to seeing you!</p>
-                <a href="index.html" class="btn-gold" style="display:block; text-align:center; text-decoration:none;">Back to Home →</a>
+                <a href="index.html" class="btn-gold" style="display:block; text-align:center; text-decoration:none; color:#000;">Back to Home →</a>
             </div>
         </div>
 
@@ -345,7 +345,7 @@
                 <div style="font-size:2.5rem; margin-bottom:12px;">❌</div>
                 <h2 style="font-family:'Cinzel',serif; color:#ff5252; letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; font-size:1rem;">Not Found</h2>
                 <p style="color:#777; font-size:0.84rem; line-height:1.6; margin-bottom:22px;">We couldn't find a booking with those details. Please check your confirmation email for the correct Booking ID.</p>
-                <a href="tel:02078331525" style="display:inline-block; background:linear-gradient(135deg,#c8a84b,#9a7a1e); color:#000; padding:12px 24px; border-radius:10px; font-weight:800; text-decoration:none; text-transform:uppercase; font-size:0.78rem; letter-spacing:1px;">📞 Call Us</a>
+                <a href="tel:02078331525" style="display:inline-block; background:linear-gradient(135deg,#b0b0b0,#666); color:#000; padding:12px 24px; border-radius:10px; font-weight:800; text-decoration:none; text-transform:uppercase; font-size:0.78rem; letter-spacing:1px;">📞 Call Us</a>
             </div>
         </div>
 
@@ -664,10 +664,10 @@
 
             const newDateFmt = newStart.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
             document.getElementById('successDetails').innerHTML = `
-                <p><strong style="color:#c8a84b;">📅 New Date:</strong> ${newDateFmt}</p>
-                <p><strong style="color:#c8a84b;">⏰ New Time:</strong> ${selectedTime}</p>
-                <p><strong style="color:#c8a84b;">💈 Barber:</strong> ${selectedBarber.toUpperCase()}</p>
-                <p><strong style="color:#c8a84b;">✂️ Service:</strong> ${SERVICE_NAMES[service] || service}</p>
+                <p><strong style="color:#c0c0c0;">📅 New Date:</strong> ${newDateFmt}</p>
+                <p><strong style="color:#c0c0c0;">⏰ New Time:</strong> ${selectedTime}</p>
+                <p><strong style="color:#c0c0c0;">💈 Barber:</strong> ${selectedBarber.toUpperCase()}</p>
+                <p><strong style="color:#c0c0c0;">✂️ Service:</strong> ${SERVICE_NAMES[service] || service}</p>
             `;
             showState('stateSuccess');
         } catch(e) {
