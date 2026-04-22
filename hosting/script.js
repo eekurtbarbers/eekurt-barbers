@@ -2,6 +2,7 @@
 import { initializeApp }                from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getFirestore, collection, addDoc, query, where, getDocs, Timestamp }
     from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 // ─── Firebase config (same project, new tenant) ───────────────────────────────
 const firebaseConfig = {
@@ -16,6 +17,7 @@ const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
 const TENANT = 'eekurt';
+let ACTIVE_BARBERS = [];
 
 // ─── Duration map (minutes) ───────────────────────────────────────────────────
 const DURATION_MAP = {
@@ -41,6 +43,91 @@ function timeMins(t) { const [h, m] = t.split(':').map(Number); return h * 60 + 
 function fmt12(t) {
     const [h, m] = t.split(':').map(Number);
     return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`;
+}
+
+async function fetchActiveBarbers() {
+    try {
+        const snap = await getDocs(collection(db, `tenants/${TENANT}/barbers`));
+        const list = snap.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .filter(b => b?.active !== false)
+            .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+        ACTIVE_BARBERS = list;
+    } catch (err) {
+        console.warn('Failed to load barbers:', err);
+        ACTIVE_BARBERS = [];
+    }
+}
+
+function setBarbersAndRefresh(list) {
+    const prevValue = document.getElementById('barber')?.value || 'no-preference';
+    ACTIVE_BARBERS = list;
+    renderBarberButtons();
+    bindBarberSelector();
+
+    const hasPrev = ACTIVE_BARBERS.some(b => b.id === prevValue);
+    const nextValue = hasPrev ? prevValue : 'no-preference';
+    const nextBtn = document.querySelector(`.barber-btn[data-value="${nextValue}"]`);
+    if (nextBtn) {
+        document.querySelectorAll('.barber-btn').forEach(b => b.classList.remove('selected'));
+        nextBtn.classList.add('selected');
+    }
+    document.getElementById('barber').value = nextValue;
+
+    const d = document.getElementById('date').value;
+    if (d) checkAvailability(d);
+}
+
+function renderBarberButtons() {
+    const grid = document.getElementById('barberGrid');
+    if (!grid) return;
+
+    const noPreferenceBtn = `
+        <button type="button" class="barber-btn selected" data-value="no-preference">
+            <span class="barber-icon">⭐</span>
+            <span class="barber-name">No Preference</span>
+        </button>
+    `;
+
+    const dynamicBtns = ACTIVE_BARBERS.map(b => `
+        <button type="button" class="barber-btn" data-value="${b.id}">
+            <span class="barber-icon">✂️</span>
+            <span class="barber-name">${b.name}</span>
+        </button>
+    `).join('');
+
+    grid.innerHTML = noPreferenceBtn + dynamicBtns;
+}
+
+function bindBarberSelector() {
+    document.querySelectorAll('.barber-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.barber-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            document.getElementById('barber').value = btn.dataset.value;
+            const d = document.getElementById('date').value;
+            if (d) checkAvailability(d);
+        });
+    });
+}
+
+async function initBarberSelector() {
+    await fetchActiveBarbers();
+    renderBarberButtons();
+    bindBarberSelector();
+}
+
+function startBarberRealtimeSync() {
+    const barbersRef = collection(db, `tenants/${TENANT}/barbers`);
+    onSnapshot(barbersRef, (snap) => {
+        const list = snap.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .filter(b => b?.active !== false)
+            .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+        setBarbersAndRefresh(list);
+    }, (err) => {
+        console.warn('Realtime barber sync failed, using last loaded list:', err);
+    });
 }
 
 // ─── Firestore helpers ────────────────────────────────────────────────────────
@@ -205,9 +292,12 @@ async function checkAvailability(date) {
         if (!isBusy) {
             // auto-assign barber for no-preference
             if (barber === 'no-preference') {
-                const tuncFree  = !busyList.filter(b => b.barberId === 'tunc').some(b => slotMs.getTime() < b.end && slotEnd > b.start);
-                const manocFree = !busyList.filter(b => b.barberId === 'manoc').some(b => slotMs.getTime() < b.end && slotEnd > b.start);
-                btn.dataset.assignedBarber = tuncFree ? 'tunc' : (manocFree ? 'manoc' : 'tunc');
+                const firstFree = ACTIVE_BARBERS.find(b => {
+                    return !busyList
+                        .filter(item => item.barberId === b.id)
+                        .some(item => slotMs.getTime() < item.end && slotEnd > item.start);
+                });
+                btn.dataset.assignedBarber = firstFree?.id || 'no-preference';
             }
 
             btn.addEventListener('click', () => {
@@ -250,17 +340,6 @@ document.getElementById('bookNowBtn').addEventListener('click', e => {
 });
 document.getElementById('emblemBtn').addEventListener('click', () => {
     document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
-});
-
-// ─── Barber selector ──────────────────────────────────────────────────────────
-document.querySelectorAll('.barber-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.barber-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        document.getElementById('barber').value = btn.dataset.value;
-        const d = document.getElementById('date').value;
-        if (d) checkAvailability(d);
-    });
 });
 
 // ─── Date & service change → refresh slots ────────────────────────────────────
@@ -364,3 +443,5 @@ document.getElementById('bookingForm').addEventListener('submit', async function
 // ─── Init ─────────────────────────────────────────────────────────────────────
 initHoursWidget();
 initManageModal();
+initBarberSelector();
+startBarberRealtimeSync();
