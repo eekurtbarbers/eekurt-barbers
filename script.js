@@ -17,7 +17,10 @@ const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
 const TENANT = 'eekurt';
+const WEBSITE_BUILD = '20260422b';
 let ACTIVE_BARBERS = [];
+
+console.info('EE KURT website build', WEBSITE_BUILD);
 
 // ─── Duration map (minutes) ───────────────────────────────────────────────────
 const DURATION_MAP = {
