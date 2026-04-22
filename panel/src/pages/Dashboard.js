@@ -45,6 +45,28 @@ function minsToLabel(mins) {
   const ap = h >= 12 ? 'PM' : 'AM', h12 = h % 12 || 12;
   return h12 + ':' + (m === 0 ? '00' : String(m).padStart(2,'0')) + ' ' + ap;
 }
+function getServiceDuration(serviceId) {
+  const svc = config.services ? config.services.find(s => s.id === serviceId) : null;
+  return (svc && svc.duration) || 30;
+}
+function normalizeBarberKey(value) {
+  return String(value || '').trim().toLowerCase();
+}
+function overlapsRange(startA, endA, startB, endB) {
+  return startA < endB && endA > startB;
+}
+function getBusyRangesForBooking(existingBookings, bookingDate, barber, excludeBookingId) {
+  return (existingBookings || []).filter(b => {
+    if (b.status === 'CANCELLED') return false;
+    if (excludeBookingId && b.bookingId === excludeBookingId) return false;
+    if (b.date !== bookingDate) return false;
+    return normalizeBarberKey(b.barber) === normalizeBarberKey(barber);
+  }).map(b => {
+    const duration = getServiceDuration(b.service);
+    const start = convertTo24(b.time);
+    return { start, end: start + duration };
+  });
+}
 function getBColor(barber, barbers) {
   if (barbers) {
     const key = (barber || '').toLowerCase();
@@ -117,7 +139,6 @@ const COUNTRY_CODES = [
 // ── CHECKOUT PANEL ────────────────────────────────────────────────────────
 function CheckoutPanel({ booking, barbers, onClose, onComplete, isEdit }) {
   const [step, setStep] = useState('cart');
-  const [isEditCheckout, setIsEditCheckout] = useState(false);
   const [discountType, setDiscountType] = useState('%');
   const [discountValue, setDiscountValue] = useState('');
   const [discountApplied, setDiscountApplied] = useState(0);
@@ -610,24 +631,12 @@ function BookingForm({ preBarber, preHour, preMins, preDate, preBooking, barbers
     return digits.length >= 10 ? '' : 'Phone number too short';
   };
 
-  const busySlots = (existingBookings || []).filter(b => {
-    if (b.status === 'CANCELLED') return false;
-    if (isEdit && b.bookingId === preBooking?.bookingId) return false;
-    const [yr2, mo2, dy2] = (form.date || '').split('-');
-    const months2 = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    const formDateStr = parseInt(dy2) + ' ' + months2[parseInt(mo2)-1] + ' ' + yr2;
-    if (b.date !== formDateStr) return false;
-    if ((b.barber||'').toLowerCase() !== form.barber) return false;
-    return true;
-  }).map(b => {
-    const svc = config.services ? config.services.find(s => s.id === b.service) : null;
-    const duration = (svc && svc.duration) || 30;
-    return { start: convertTo24(b.time), end: convertTo24(b.time) + duration };
-  });
+  const [yr2, mo2, dy2] = (form.date || '').split('-');
+  const months2 = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const formDateStr = parseInt(dy2, 10) + ' ' + months2[parseInt(mo2, 10) - 1] + ' ' + yr2;
+  const selectedDuration = getServiceDuration(form.service);
+  const busySlots = getBusyRangesForBooking(existingBookings, formDateStr, form.barber, isEdit ? preBooking?.bookingId : null);
 
-  const now = new Date();
-  const [yr, mo, dy] = (form.date || '').split('-');
-  const isFormToday = parseInt(yr)===now.getFullYear() && parseInt(mo)-1===now.getMonth() && parseInt(dy)===now.getDate();
   const hours = [];
 for (let h = 9; h <= 19; h++) {
   [0, 15, 30, 45].forEach(m => {
@@ -644,7 +653,8 @@ const handleSave = async (goCheckout = false) => {
   const today = new Date().toISOString().split('T')[0];
   if (!isEdit && form.date < today) { alert('Cannot book a past date.'); return; }
   const selectedMins = convertTo24(form.time);
-  if (!isEdit && busySlots.some(slot => selectedMins >= slot.start && selectedMins < slot.end)) { alert('This time slot is already booked.'); return; }
+  const selectedEnd = selectedMins + selectedDuration;
+  if (busySlots.some(slot => overlapsRange(selectedMins, selectedEnd, slot.start, slot.end))) { alert('This time slot is already full.'); return; }
   setSaving(true);
   const service = config.services ? config.services.find(s => s.id === form.service) : null;
   const price = service ? service.price : 0;
@@ -893,7 +903,7 @@ const handleSave = async () => {
   );
 }
 
-function WalkInForm({ preBarber, preHour, preMins, preDate, barbers, onClose, onSaved }) {
+function WalkInForm({ preBarber, preHour, preMins, preDate, barbers, existingBookings, onClose, onSaved }) {
   const [clients, setClients] = useState([]);
   const [search, setSearch] = useState('');
   const [selectedClient, setSelectedClient] = useState(null);
@@ -928,18 +938,27 @@ function WalkInForm({ preBarber, preHour, preMins, preDate, barbers, onClose, on
   };
 
   const svc = config.services ? config.services.find(s => s.id === service) : null;
-  const price = svc ? svc.price : 0;
+  const selectedDuration = getServiceDuration(service);
+  const busySlots = getBusyRangesForBooking(existingBookings, date, barber, null);
 
   const hours = [];
   for (let h = 9; h <= 19; h++) {
     [0, 30].forEach(m => {
       if (h === 19 && m > 0) return;
-      hours.push({ label: minsToLabel(h * 60 + m) });
+      const start = h * 60 + m;
+      const end = start + selectedDuration;
+      hours.push({ label: minsToLabel(start), isBusy: busySlots.some(slot => overlapsRange(start, end, slot.start, slot.end)) });
     });
   }
 
   const handleSave = async (goCheckout = false) => {
     if (!service) return;
+    const selectedMins = convertTo24(time);
+    const selectedEnd = selectedMins + selectedDuration;
+    if (busySlots.some(slot => overlapsRange(selectedMins, selectedEnd, slot.start, slot.end))) {
+      alert('This time slot is already full.');
+      return;
+    }
     setSaving(true);
     const svc = config.services ? config.services.find(s => s.id === service) : null;
     const price = svc ? svc.price : 0;
@@ -1051,7 +1070,7 @@ function WalkInForm({ preBarber, preHour, preMins, preDate, barbers, onClose, on
         <div>
           <label style={lbl}>Time</label>
           <select value={time} onChange={e => setTime(e.target.value)} style={{ ...inp, cursor:'pointer' }}>
-            {hours.map(h => <option key={h.label} value={h.label}>{h.label}</option>)}
+            {hours.map(h => <option key={h.label} value={h.label} disabled={h.isBusy}>{h.label}{h.isBusy ? ' - Busy' : ''}</option>)}
           </select>
         </div>
 
@@ -1247,8 +1266,6 @@ const IS_CLOSED = dayHours ? dayHours.closed : false;
     if (isToday && nowRef.current) nowRef.current.scrollIntoView({ behavior:'smooth', block:'center' });
   }, [isToday]);
 
-  const isPastHour = (h) => isToday && (h * 60 + 59) < nowMins;
-
   return (
 <div style={{ flex:1, overflowY:'auto', background:'var(--card)', border:'1px solid var(--border)', borderRadius:'12px', position:'relative' }}>
       <div style={{ display:'flex', borderBottom:'1px solid var(--border)', position:'sticky', top:0, background:'var(--card)', zIndex:10 }}>
@@ -1366,7 +1383,7 @@ export default function Dashboard() {
   const [isEditCheckout, setIsEditCheckout] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [showReceipt, setShowReceipt] = useState(false);
-  const [clientData, setClientData] = useState(null);
+  const [clientData] = useState(null);
   const [view, setView] = useState('day');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -1625,7 +1642,7 @@ if (!barbersSnap.empty) {
               )}
               {showWalkIn && (
                 <WalkInForm
-                  preBarber={formPreset.barber} preHour={formPreset.hour} preMins={formPreset.mins} preDate={formPreset.date} barbers={barbers}
+                  preBarber={formPreset.barber} preHour={formPreset.hour} preMins={formPreset.mins} preDate={formPreset.date} barbers={barbers} existingBookings={bookings}
                   onClose={() => setShowWalkIn(false)}
                   onSaved={(savedBooking, goCheckout) => {
                     setTimeout(() => fetchAll(), 2000); setTimeout(() => fetchAll(), 5000);
