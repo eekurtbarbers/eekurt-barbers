@@ -4,14 +4,42 @@ import { collection, doc, getDocs, setDoc, deleteDoc } from 'firebase/firestore'
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const COLORS = ['#d4af37', '#4caf50', '#2196f3', '#e91e63', '#ff9800', '#9c27b0', '#00bcd4'];
+const DEFAULT_WORKING_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const DEFAULT_HOURS = { open: '09:00', close: '19:00' };
+
+const createDayHours = function(sharedHours) {
+  return DAYS.reduce(function(acc, day) {
+    acc[day] = Object.assign({}, DEFAULT_HOURS, sharedHours || {});
+    return acc;
+  }, {});
+};
+
+const normalizeBarberForm = function(barber) {
+  var workingDays = Array.isArray(barber && barber.workingDays) && barber.workingDays.length ? barber.workingDays : DEFAULT_WORKING_DAYS;
+  var hours = Object.assign({}, DEFAULT_HOURS, barber && barber.hours ? barber.hours : {});
+  var dayHours = createDayHours(hours);
+
+  DAYS.forEach(function(day) {
+    if (barber && barber.dayHours && barber.dayHours[day]) {
+      dayHours[day] = Object.assign({}, dayHours[day], barber.dayHours[day]);
+    }
+  });
+
+  return Object.assign({}, defaultBarber, barber, {
+    workingDays: workingDays,
+    hours: hours,
+    dayHours: dayHours,
+  });
+};
 
 const defaultBarber = {
   id: '',
   name: '',
   color: '#d4af37',
   photo: '',
-  workingDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-  hours: { open: '09:00', close: '19:00' },
+  workingDays: DEFAULT_WORKING_DAYS,
+  hours: DEFAULT_HOURS,
+  dayHours: createDayHours(DEFAULT_HOURS),
 };
 
 export default function Barbers() {
@@ -38,13 +66,13 @@ export default function Barbers() {
 useEffect(function() { fetchBarbers(); }, []);
 
   const openAdd = function() {
-    setForm(Object.assign({}, defaultBarber, { id: 'barber-' + Date.now() }));
+    setForm(normalizeBarberForm(Object.assign({}, defaultBarber, { id: 'barber-' + Date.now() })));
     setEditId(null);
     setShowAdd(true);
   };
 
   const openEdit = function(barber) {
-    setForm(Object.assign({}, defaultBarber, barber));
+    setForm(normalizeBarberForm(barber));
     setEditId(barber.id);
     setShowAdd(true);
   };
@@ -53,13 +81,18 @@ const handleSave = async function() {
     if (!form.name.trim()) return;
     try {
       const barberId = form.id || 'barber-' + Date.now();
+      var primaryDay = (form.workingDays || [])[0];
+      var primaryHours = primaryDay && form.dayHours && form.dayHours[primaryDay]
+        ? form.dayHours[primaryDay]
+        : Object.assign({}, DEFAULT_HOURS, form.hours || {});
       await setDoc(doc(db, 'tenants/eekurt/barbers', barberId), {
         id: barberId,
         name: form.name,
         color: form.color,
         photo: form.photo || '',
         workingDays: form.workingDays,
-        hours: form.hours,
+        hours: { open: primaryHours.open, close: primaryHours.close },
+        dayHours: form.dayHours,
         active: true,
       });
       await fetchBarbers();
@@ -84,11 +117,27 @@ const handleSave = async function() {
 
   const toggleDay = function(day) {
     var days = form.workingDays || [];
+    var nextDayHours = Object.assign({}, form.dayHours || createDayHours(form.hours));
     if (days.includes(day)) {
-      setForm(Object.assign({}, form, { workingDays: days.filter(function(d) { return d !== day; }) }));
+      setForm(Object.assign({}, form, {
+        workingDays: days.filter(function(d) { return d !== day; }),
+        dayHours: nextDayHours,
+      }));
     } else {
-      setForm(Object.assign({}, form, { workingDays: [...days, day] }));
+      nextDayHours[day] = Object.assign({}, DEFAULT_HOURS, form.hours || {}, nextDayHours[day] || {});
+      setForm(Object.assign({}, form, {
+        workingDays: DAYS.filter(function(currentDay) {
+          return currentDay === day || days.includes(currentDay);
+        }),
+        dayHours: nextDayHours,
+      }));
     }
+  };
+
+  const updateDayHours = function(day, key, value) {
+    var nextDayHours = Object.assign({}, form.dayHours || createDayHours(form.hours));
+    nextDayHours[day] = Object.assign({}, DEFAULT_HOURS, form.hours || {}, nextDayHours[day] || {}, { [key]: value });
+    setForm(Object.assign({}, form, { dayHours: nextDayHours }));
   };
 
   const handlePhoto = function(e) {
@@ -163,8 +212,19 @@ const handleSave = async function() {
 
                 <div style={{ marginBottom: '20px' }}>
                   <div style={labelStyle}>Hours</div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--text)' }}>
-                    {(barber.hours && barber.hours.open) || '09:00'} — {(barber.hours && barber.hours.close) || '19:00'}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    {((barber.workingDays || []).length ? barber.workingDays : []).map(function(day) {
+                      var dayHours = Object.assign({}, DEFAULT_HOURS, barber.hours || {}, barber.dayHours && barber.dayHours[day] ? barber.dayHours[day] : {});
+                      return (
+                        <div key={day} style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', fontSize: '0.8rem', color: 'var(--text)' }}>
+                          <span style={{ color: 'var(--muted)' }}>{day.slice(0, 3)}</span>
+                          <span>{dayHours.open || '09:00'} — {dayHours.close || '19:00'}</span>
+                        </div>
+                      );
+                    })}
+                    {!(barber.workingDays || []).length && (
+                      <div style={{ fontSize: '0.8rem', color: 'var(--muted)', fontStyle: 'italic' }}>No working days selected</div>
+                    )}
                   </div>
                 </div>
 
@@ -233,12 +293,26 @@ const handleSave = async function() {
             </div>
 
             <div style={{ marginBottom: '28px' }}>
-              <label style={labelStyle}>Working Hours</label>
-              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <input type="time" value={(form.hours && form.hours.open) || '09:00'} onChange={function(e) { setForm(Object.assign({}, form, { hours: Object.assign({}, form.hours, { open: e.target.value }) })); }} style={Object.assign({}, inputStyle, { flex: 1 })} />
-                <span style={{ color: 'var(--muted)' }}>—</span>
-                <input type="time" value={(form.hours && form.hours.close) || '19:00'} onChange={function(e) { setForm(Object.assign({}, form, { hours: Object.assign({}, form.hours, { close: e.target.value }) })); }} style={Object.assign({}, inputStyle, { flex: 1 })} />
-              </div>
+              <label style={labelStyle}>Working Hours By Day</label>
+              {(form.workingDays || []).length ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {(form.workingDays || []).map(function(day) {
+                    var dayHours = Object.assign({}, DEFAULT_HOURS, form.hours || {}, form.dayHours && form.dayHours[day] ? form.dayHours[day] : {});
+                    return (
+                      <div key={day} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', borderRadius: '10px', background: 'rgba(212,175,55,0.04)', border: '1px solid rgba(212,175,55,0.12)' }}>
+                        <div style={{ width: '92px', color: 'var(--text)', fontSize: '0.82rem', fontWeight: '600', flexShrink: 0 }}>{day}</div>
+                        <input type="time" value={dayHours.open || '09:00'} onChange={function(e) { updateDayHours(day, 'open', e.target.value); }} style={Object.assign({}, inputStyle, { flex: 1, marginBottom: 0 })} />
+                        <span style={{ color: 'var(--muted)' }}>—</span>
+                        <input type="time" value={dayHours.close || '19:00'} onChange={function(e) { updateDayHours(day, 'close', e.target.value); }} style={Object.assign({}, inputStyle, { flex: 1, marginBottom: 0 })} />
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div style={{ padding: '14px 16px', borderRadius: '10px', background: 'rgba(255,255,255,0.02)', border: '1px dashed var(--border)', color: 'var(--muted)', fontSize: '0.82rem' }}>
+                  Select at least one working day to set hours.
+                </div>
+              )}
             </div>
 
             <div style={{ display: 'flex', gap: '12px' }}>
