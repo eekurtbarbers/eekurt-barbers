@@ -695,9 +695,8 @@ const handleSave = async (goCheckout = false) => {
     if (onSaved) onSaved(bookingData, goCheckout);
     if (!goCheckout && onClose) onClose();
   } catch (err) {
-    console.log('Save note:', err);
-    if (onSaved) onSaved(bookingData, goCheckout);
-    if (!goCheckout && onClose) onClose();
+    console.error('Save booking error:', err);
+    alert((err && err.message) ? err.message : 'Could not save booking. Please try another slot.');
   } finally { setSaving(false); }
 };
   const inp = { width:'100%', padding:'10px 12px', background:'var(--card)', border:'1px solid var(--border)', borderRadius:'8px', color:'var(--text)', fontSize:'0.85rem', outline:'none', boxSizing:'border-box' };
@@ -845,6 +844,7 @@ const handleSave = async () => {
       if (onClose) onClose();
     } catch(err) {
       console.error('BlockTime error:', err);
+      alert((err && err.message) ? err.message : 'Could not block this time range.');
     } finally {
       setSaving(false);
     }
@@ -985,8 +985,7 @@ function WalkInForm({ preBarber, preHour, preMins, preDate, barbers, existingBoo
       if (!goCheckout && onClose) onClose();
     } catch(err) {
       console.error('WalkIn error:', err);
-      if (onSaved) onSaved(bookingData, goCheckout);
-      if (!goCheckout && onClose) onClose();
+      alert((err && err.message) ? err.message : 'Could not save walk-in booking. Please try another slot.');
     } finally {
       setSaving(false);
     }
