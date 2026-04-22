@@ -16,8 +16,7 @@ const config = {
       depositAmount: 0,
     },
   },
-  // Apps Script URL
-  scriptUrl: 'https://script.google.com/macros/s/AKfycbymASCa4MN7LMPoPa6fYwfeu2OCYfxKlLvoIBlauXhe_o7BDMF5DFgrrpBtUIrZAZi_/exec',
+  // No external API — settings stored in localStorage
   
   // Opening hours
   hours: {

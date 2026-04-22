@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import config from '../config';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const API_URL = config.scriptUrl;
+const STORAGE_KEY = 'eekurt_settings';
 
 const defaultSettings = {
   shopName: config.shopName,
@@ -39,13 +39,12 @@ export default function Settings({ theme, onToggleTheme }) {
 
   useEffect(function() { fetchSettings(); }, []);
 
-  const fetchSettings = async function() {
+  const fetchSettings = function() {
     try {
-      setLoading(true);
-      const res = await fetch(API_URL + '?action=getSettings');
-      const data = await res.json();
-      if (data.settings) {
-        setSettings({ ...defaultSettings, ...data.settings, platforms: { ...defaultSettings.platforms, ...(data.settings.platforms || {}) } });
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const data = JSON.parse(saved);
+        setSettings({ ...defaultSettings, ...data, platforms: { ...defaultSettings.platforms, ...(data.platforms || {}) } });
       }
     } catch (err) {
       // use defaults
@@ -54,20 +53,16 @@ export default function Settings({ theme, onToggleTheme }) {
     }
   };
 
-  const handleSave = async function() {
+  const handleSave = function() {
     setSaving(true);
     setError('');
     try {
-     localStorage.setItem('shopHours', JSON.stringify(settings.hours));
-      await fetch(API_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify({ action: 'saveSettings', settings: settings })
-      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+      localStorage.setItem('shopHours', JSON.stringify(settings.hours));
       setSaved(true);
       setTimeout(function() { setSaved(false); }, 3000);
     } catch (err) {
-      setError('Could not save. Check connection.');
+      setError('Could not save settings.');
     } finally {
       setSaving(false);
     }
