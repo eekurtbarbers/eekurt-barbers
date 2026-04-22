@@ -1,0 +1,5 @@
+panel/node_modules/
+panel/node_modules/.cache/
+panel/.eslintcache
+panel/build/static/js/*.map
+.DS_Store
