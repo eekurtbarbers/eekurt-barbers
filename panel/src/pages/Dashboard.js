@@ -46,8 +46,16 @@ function minsToLabel(mins) {
   return h12 + ':' + (m === 0 ? '00' : String(m).padStart(2,'0')) + ' ' + ap;
 }
 function getBColor(barber, barbers) {
-  if (barbers) { const f = barbers.find(b => b.name.toLowerCase() === (barber||'').toLowerCase()); if (f) return f.color; }
-  return { tunc:'#d4af37', manoc:'#4caf50' }[(barber||'').toLowerCase()] || '#7a7260';
+  if (barbers) {
+    const key = (barber || '').toLowerCase();
+    const f = barbers.find(b => String(b.id || '').toLowerCase() === key || String(b.name || '').toLowerCase() === key);
+    if (f) return f.color;
+  }
+  return '#7a7260';
+}
+function getResolvedBarber(barber, barbers) {
+  const key = String(barber || '').toLowerCase();
+  return (barbers || []).find(b => String(b.id || '').toLowerCase() === key || String(b.name || '').toLowerCase() === key) || null;
 }
 function getBookingName(booking) {
   const firstLast = [booking?.firstName, booking?.lastName].filter(Boolean).join(' ').trim();
@@ -1364,7 +1372,7 @@ export default function Dashboard() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [barberFilter, setBarberFilter] = useState('all');
-  const [barbers, setBarbers] = useState(config.barbers || []);
+  const [barbers, setBarbers] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [formPreset, setFormPreset] = useState({});
   const [leftPanelWidth, setLeftPanelWidth] = useState(240);
@@ -1416,8 +1424,8 @@ const barbersSnap = await getDocs(collection(db, 'tenants/eekurt/barbers'));
 if (!barbersSnap.empty) {
   const fetchedBarbers = barbersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   setBarbers(fetchedBarbers);
-} else if (config.barbers && config.barbers.length > 0) {
-  setBarbers(config.barbers);
+} else {
+  setBarbers([]);
 }
     } catch (err) {
       console.error('fetchAll error:', err);
@@ -1438,10 +1446,10 @@ if (!barbersSnap.empty) {
     return list
     .filter(b => b.status !== 'CANCELLED' && b.status !== 'BLOCKED')     
     .filter(b => {
+        const resolvedBarber = getResolvedBarber(b.barber, barbers);
+        if (barbers.length > 0 && !resolvedBarber) return false;
         if (barberFilter === 'all') return true;
-        const sel = barbers.find(bar => bar.id === barberFilter);
-        if (!sel) return true;
-        return (b.barber||'').toLowerCase() === sel.name.toLowerCase();
+        return resolvedBarber?.id === barberFilter;
       })
       .sort((a,b) => convertTo24(a.time) - convertTo24(b.time));
   };
@@ -1573,7 +1581,7 @@ if (!barbersSnap.empty) {
                   </div>
                 </div>
                 {activeBarbers.map(barber=>{
-                  const cnt=getForDate(selectedDate).filter(b=>(b.barber||'').toLowerCase()===barber.name.toLowerCase()).length;
+                  const cnt=getForDate(selectedDate).filter(b=>getResolvedBarber(b.barber, barbers)?.id===barber.id).length;
                   return (
                     <div key={barber.id} style={{ display:'flex', justifyContent:'space-between', padding:'5px 0', borderBottom:'1px solid var(--border)' }}>
                       <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
@@ -1688,7 +1696,7 @@ if (!barbersSnap.empty) {
             <div style={{ flex:1, display:'grid', gridTemplateColumns:'repeat(7,1fr)', gridAutoRows:'1fr', overflowY:'auto' }}>
               {calDays.map((d,i)=>{
                 const tod=isToday(d);
-                const dayBs=d?(bookingsByDate[formatDateKey(new Date(year,month,d))]||[]).filter(b=>b.status!=='CANCELLED').filter(b=>barberFilter==='all'||(b.barber||'').toLowerCase()===(barbers.find(bar=>bar.id===barberFilter)||{name:''}).name.toLowerCase()):[];
+                const dayBs=d?getForDate(new Date(year,month,d)):[];
                 return (
                   <div key={i} onClick={()=>{if(d){setSelectedDate(new Date(year,month,d));setView('day');setSelectedBooking(null);}}}
                     style={{ padding:'5px', borderRight:(i+1)%7!==0?'1px solid var(--border)':'none', borderBottom:'1px solid var(--border)', cursor:d?'pointer':'default', background:tod?'rgba(212,175,55,0.04)':'transparent', minHeight:'68px' }}
