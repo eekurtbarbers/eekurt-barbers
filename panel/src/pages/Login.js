@@ -25,11 +25,19 @@ function Login({ onLogin }) {
     setLoading(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      onLogin();
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const idTokenResult = await userCredential.user.getIdTokenResult();
+      const tenantId = idTokenResult.claims.tenantId;
+
+      if (!tenantId) {
+        setError('Access denied. No tenant assigned.');
+        return;
+      }
+
+      onLogin(tenantId);
     } catch (err) {
       setError(getLoginErrorMessage(err));
-      setPassword('');
+    } finally {
       setLoading(false);
     }
   };

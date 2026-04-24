@@ -14,6 +14,7 @@ import './App.css';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
+  const [tenantId, setTenantId] = useState(null);
   const [activePage, setActivePage] = useState('dashboard');
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -24,8 +25,19 @@ function App() {
   }, [theme]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsLoggedIn(!!user);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const idTokenResult = await user.getIdTokenResult();
+        const tenant = idTokenResult.claims.tenantId;
+        if (tenant !== 'eekurt') {
+          await signOut(auth);
+          setIsLoggedIn(false);
+          return;
+        }
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
     });
     return unsubscribe;
   }, []);
@@ -35,6 +47,7 @@ function App() {
   const handleLogout = async () => {
     await signOut(auth);
     setIsLoggedIn(false);
+    setTenantId(null);
   };
 
   if (isLoggedIn === null) {
@@ -79,7 +92,6 @@ function App() {
         isCollapsed={isCollapsed}
         setIsCollapsed={setIsCollapsed}
       />
-
       <main style={{
         flex: 1,
         marginLeft: isCollapsed ? '80px' : '240px',

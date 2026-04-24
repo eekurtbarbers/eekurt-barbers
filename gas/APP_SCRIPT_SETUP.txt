@@ -8,7 +8,7 @@ EE KURT BARBERS - GOOGLE APPS SCRIPT EMAIL WEBHOOK SETUP
 2) PASTE WEBHOOK CODE
 - Open file: gas/eekurt_booking_email_webhook.gs
 - Copy all code from that file into Code.gs in Apps Script
-- Save
+- Saveww
 
 3) DEPLOY AS WEB APP
 - Click Deploy > New deployment
