@@ -17,7 +17,7 @@ const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
 const TENANT = 'eekurt';
-const WEBSITE_BUILD = '20260422c-HOURS-WHATSAPP';
+const WEBSITE_BUILD = '20260424a-HOURS-FIX';
 let ACTIVE_BARBERS = [];
 
 console.info('EE KURT website build', WEBSITE_BUILD);
@@ -35,7 +35,7 @@ const SCHEDULE = [
     { day: 'Tuesday',   open: '09:00', close: '19:00', closed: false },
     { day: 'Wednesday', open: '09:00', close: '19:30', closed: false },
     { day: 'Thursday',  open: '09:00', close: '19:00', closed: false },
-    { day: 'Friday',    open: '09:00', close: '19.00', closed: false },
+    { day: 'Friday',    open: '09:00', close: '19:00', closed: false },
     { day: 'Saturday',  open: '09:00', close: '19:00', closed: false },
     { day: 'Sunday',    open: '10:00', close: '17:00', closed: false },
 ];
@@ -295,18 +295,18 @@ async function checkAvailability(date) {
     const isToday  = date === todayStr;
     const nowMins  = isToday ? now.getHours() * 60 + now.getMinutes() : 0;
 
-    const openH  = parseInt(dayConfig.open.split(':')[0]);
-    const closeH = parseInt(dayConfig.close.split(':')[0]);
+    const openMins  = timeMins(dayConfig.open);
+    const closeMins = timeMins(dayConfig.close);
     const slots  = [];
 
-    for (let h = openH; h < closeH; h++) {
-        for (const m of [0, 30]) {
-            const slotMins = h * 60 + m;
-            if (isToday && slotMins <= nowMins) continue;
-            const hour12 = h % 12 || 12;
-            const ampm   = h >= 12 ? 'PM' : 'AM';
-            slots.push({ label: `${hour12}:${String(m).padStart(2, '0')} ${ampm}`, h, m });
-        }
+    for (let slotMins = openMins; slotMins + duration <= closeMins; slotMins += 30) {
+        if (isToday && slotMins <= nowMins) continue;
+
+        const h = Math.floor(slotMins / 60);
+        const m = slotMins % 60;
+        const hour12 = h % 12 || 12;
+        const ampm   = h >= 12 ? 'PM' : 'AM';
+        slots.push({ label: `${hour12}:${String(m).padStart(2, '0')} ${ampm}`, h, m });
     }
 
     if (slots.length === 0) {

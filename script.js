@@ -16,7 +16,7 @@ const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
 const TENANT = 'eekurt';
-const WEBSITE_BUILD = '20260422c-HOURS-WHATSAPP';
+const WEBSITE_BUILD = '20260424a-HOURS-FIX';
 let ACTIVE_BARBERS = [];
 
 console.info('EE KURT website build', WEBSITE_BUILD);
@@ -303,21 +303,18 @@ async function checkAvailability(date) {
     const isToday  = date === todayStr;
     const nowMins  = isToday ? now.getHours() * 60 + now.getMinutes() : 0;
 
-    const openH  = parseInt(dayConfig.open.split(':')[0]);
-    const closeH = parseInt(dayConfig.close.split(':')[0]);
+    const openMins = timeMins(dayConfig.open);
     const closeMins = timeMins(dayConfig.close);
     const slots  = [];
 
-    for (let h = openH; h < closeH; h++) {
-        for (const m of [0, 30]) {
-            const slotMins = h * 60 + m;
-            if (isToday && slotMins <= nowMins + 15) continue; 
-            if (slotMins + duration > closeMins) continue;
+    for (let slotMins = openMins; slotMins + duration <= closeMins; slotMins += 30) {
+        if (isToday && slotMins <= nowMins + 15) continue;
 
-            const hour12 = h % 12 || 12;
-            const ampm   = h >= 12 ? 'PM' : 'AM';
-            slots.push({ h, m, label: `${hour12}:${String(m).padStart(2, '0')} ${ampm}` });
-        }
+        const h = Math.floor(slotMins / 60);
+        const m = slotMins % 60;
+        const hour12 = h % 12 || 12;
+        const ampm   = h >= 12 ? 'PM' : 'AM';
+        slots.push({ h, m, label: `${hour12}:${String(m).padStart(2, '0')} ${ampm}` });
     }
 
     if (slots.length === 0) {
