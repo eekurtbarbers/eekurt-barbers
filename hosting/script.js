@@ -17,7 +17,7 @@ const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
 const TENANT = 'eekurt';
-const WEBSITE_BUILD = '20260424a-HOURS-FIX';
+const WEBSITE_BUILD = '20260424b-HOURS-9TO7';
 let ACTIVE_BARBERS = [];
 
 console.info('EE KURT website build', WEBSITE_BUILD);
@@ -33,7 +33,7 @@ const DURATION_MAP = {
 const SCHEDULE = [
     { day: 'Monday',    open: '09:00', close: '19:00', closed: false },
     { day: 'Tuesday',   open: '09:00', close: '19:00', closed: false },
-    { day: 'Wednesday', open: '09:00', close: '19:30', closed: false },
+    { day: 'Wednesday', open: '09:00', close: '19:00', closed: false },
     { day: 'Thursday',  open: '09:00', close: '19:00', closed: false },
     { day: 'Friday',    open: '09:00', close: '19:00', closed: false },
     { day: 'Saturday',  open: '09:00', close: '19:00', closed: false },
