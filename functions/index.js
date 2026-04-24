@@ -164,6 +164,7 @@ exports.onBookingCreated = onDocumentCreated(
       ...data,
       status: 'CONFIRMED',
       bookingId,
+      barberName,
       dateTime: dateTimeStr,
     });
 
@@ -237,6 +238,7 @@ exports.onBookingConfirmed = onDocumentUpdated(
       await notifyGas('BOOKING_CANCELLED', {
         ...after,
         bookingId,
+        barberName,
         dateTime: dateTimeStr,
       });
     }

@@ -1,0 +1,54 @@
+EE KURT BARBERS - GOOGLE APPS SCRIPT EMAIL WEBHOOK SETUP
+
+1) CREATE APPS SCRIPT PROJECT
+- Go to script.google.com
+- Create New Project
+- Name it: EEKurt Booking Email Webhook
+
+2) PASTE WEBHOOK CODE
+- Open file: gas/eekurt_booking_email_webhook.gs
+- Copy all code from that file into Code.gs in Apps Script
+- Save
+
+3) DEPLOY AS WEB APP
+- Click Deploy > New deployment
+- Type: Web app
+- Execute as: Me
+- Who has access: Anyone
+- Deploy
+- Copy the Web app URL
+
+4) CONNECT FIREBASE FUNCTION TO THIS WEBHOOK
+- In functions/index.js set GAS_WEBHOOK_URL to your Web app URL
+- Example:
+  const GAS_WEBHOOK_URL = 'https://script.google.com/macros/s/XXXX/exec';
+
+- Then deploy functions:
+  firebase deploy --only functions --non-interactive
+
+5) REQUIRED PERMISSIONS IN APPS SCRIPT
+- First time, Apps Script will request authorization for:
+  - Gmail send email (MailApp)
+  - External request receive (web app doPost)
+- Approve all prompts
+
+6) TEST FLOW
+- Create booking -> customer should receive BOOKING CONFIRMED email
+- Edit time/barber/service -> customer should receive BOOKING RESCHEDULED email with before/after details
+- Cancel booking -> customer should receive BOOKING CANCELLED email
+
+7) OPTIONAL: INSTALLABLE TRIGGER (NOT REQUIRED FOR WEBHOOK)
+- doPost works without installable trigger when deployed as web app
+- If you still want one, use this only for manual test functions, not for doPost
+
+8) TROUBLESHOOTING
+- If no emails arrive:
+  - Check Apps Script executions for errors
+  - Confirm booking has clientEmail
+  - Confirm GAS_WEBHOOK_URL is correct and deployed web app version is latest
+  - Re-deploy Apps Script after code changes
+
+9) CURRENT EVENT TYPES SENT FROM FIREBASE
+- BOOKING_CONFIRMED
+- BOOKING_RESCHEDULED
+- BOOKING_CANCELLED
