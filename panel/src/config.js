@@ -2,8 +2,8 @@ const config = {
   shopName: 'EE KURT BARBERS',
   shopAddress: 'EE Kurt Barbers, London',
   shopPhone: '020 7833 1525',
-  shopEmail: 'bookings@eekurtbarbers.co.uk',
-  shopWhatsApp: '447470108578',
+  shopEmail: 'eekurtbookings@gmail.com',
+  shopWhatsApp: '447577487547',
   
   // Platform Settings
   platforms: {
