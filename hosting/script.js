@@ -35,8 +35,8 @@ const SCHEDULE = [
     { day: 'Tuesday',   open: '09:00', close: '19:00', closed: false },
     { day: 'Wednesday', open: '09:00', close: '19:30', closed: false },
     { day: 'Thursday',  open: '09:00', close: '19:00', closed: false },
-    { day: 'Friday',    open: '09:00', close: '19:30', closed: false },
-    { day: 'Saturday',  open: '09:00', close: '18:30', closed: false },
+    { day: 'Friday',    open: '09:00', close: '19.00', closed: false },
+    { day: 'Saturday',  open: '09:00', close: '19:00', closed: false },
     { day: 'Sunday',    open: '10:00', close: '17:00', closed: false },
 ];
 // JS getDay(): 0=Sun,1=Mon,...,6=Sat → map to SCHEDULE index
