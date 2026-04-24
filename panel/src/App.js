@@ -27,7 +27,7 @@ function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-const idTokenResult = await user.getIdTokenResult(true); // true = force refresh
+        const idTokenResult = await user.getIdTokenResult();
         const tenant = idTokenResult.claims.tenantId;
         if (tenant !== 'eekurt') {
           await signOut(auth);
