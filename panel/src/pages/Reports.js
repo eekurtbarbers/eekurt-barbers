@@ -11,6 +11,12 @@ function getBColor(barber, barbers) {
   return '#777777';
 }
 
+function getBarberName(barber, barbers) {
+  const key = String(barber || '').toLowerCase();
+  const found = (barbers || []).find(b => String(b.id || '').toLowerCase() === key || String(b.name || '').toLowerCase() === key);
+  return found?.name || String(barber || 'TBC');
+}
+
 function parsePrice(val) {
   return parseFloat(String(val || '0').replace('£', '').replace('-', '')) || 0;
 }
@@ -107,16 +113,17 @@ export default function Reports() {
       getDocs(query(collection(db, 'tenants/eekurt/bookings'), orderBy('startTime', 'desc'))),
       getDocs(collection(db, 'tenants/eekurt/barbers')),
     ]);
+    const fetchedBarbers = barbersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (fetchedBarbers.length > 0) setBarbers(fetchedBarbers);
+
     const fetchedBookings = bookingsSnap.docs.map(doc => {
       const d = doc.data();
       const startTime = d.startTime?.toDate();
       const date = startTime ? startTime.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
       const time = startTime ? startTime.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase() : '';
-      return { ...d, name: d.clientName || 'Walk-in', email: d.clientEmail || '', phone: d.clientPhone || '', barber: d.barberId || '', service: d.serviceId || '', date, time, bookingId: d.bookingId || doc.id, source: d.source || 'website', paidAmount: d.paidAmount || '', price: d.price || '' };
+      return { ...d, name: d.clientName || 'Walk-in', email: d.clientEmail || '', phone: d.clientPhone || '', barber: d.barberId || '', barberName: getBarberName(d.barberId || '', fetchedBarbers), service: d.serviceId || '', date, time, bookingId: d.bookingId || doc.id, source: d.source || 'website', paidAmount: d.paidAmount || '', price: d.price || '' };
     });
     setBookings(fetchedBookings);
-    const fetchedBarbers = barbersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    if (fetchedBarbers.length > 0) setBarbers(fetchedBarbers);
   } catch (e) { console.log(e); }
   finally { setLoading(false); }
 };
@@ -182,7 +189,7 @@ export default function Reports() {
 
   // Barber stats
   const barberStats = barbers.map(barber => {
-    const bs = active.filter(b => (b.barber || '').toLowerCase() === barber.name.toLowerCase());
+    const bs = active.filter(b => (b.barberName || '').toLowerCase() === barber.name.toLowerCase());
     const co = bs.filter(b => b.status === 'CHECKED_OUT');
     return {
       name: barber.name, color: barber.color,

@@ -353,6 +353,7 @@
     let currentBookingData = null;
     let currentBookingId = '';
     let currentEmail = '';
+    let barberNameMap = new Map();
 
     function showState(id) {
         document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
@@ -372,6 +373,22 @@
         return { date, time };
     }
 
+    async function ensureBarbersLoaded() {
+        if (barberNameMap.size > 0) return;
+        const snap = await getDocs(collection(db, `tenants/${TENANT}/barbers`));
+        barberNameMap = new Map(
+            snap.docs.map(d => {
+                const data = d.data() || {};
+                return [d.id, data.name || d.id];
+            })
+        );
+    }
+
+    function getBarberDisplayName(barberId) {
+        if (!barberId) return 'TBC';
+        return barberNameMap.get(barberId) || barberId;
+    }
+
     async function lookupByParams(id, email) {
         const snap = await getDocs(query(
             collection(db, `tenants/${TENANT}/bookings`),
@@ -387,13 +404,14 @@
 
     function renderBooking(data) {
         const { date, time } = formatTimestamp(data.startTime);
+        const barberName = getBarberDisplayName(data.barberId);
         document.getElementById('bookingDetails').innerHTML = `
             <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">${data.clientName || '—'}</span></div>
             <div class="detail-row"><span class="detail-label">Date</span><span class="detail-value gold">${date}</span></div>
             <div class="detail-row"><span class="detail-label">Time</span><span class="detail-value">${time}</span></div>
             <div class="detail-row"><span class="detail-label">Service</span><span class="detail-value">${SERVICE_NAMES[data.serviceId] || data.serviceId || '—'}</span></div>
-            <div class="detail-row"><span class="detail-label">Barber</span><span class="detail-value">${(data.barberId || 'TBC').toUpperCase()}</span></div>
-            <div class="detail-row"><span class="detail-label">Booking ID</span><span class="detail-value" style="font-size:0.78rem; color:#888;">${data.bookingId}</span></div>
+            <div class="detail-row"><span class="detail-label">Barber</span><span class="detail-value">${barberName}</span></div>
+            <div class="detail-row"><span class="detail-label">Booking ID</span><span class="detail-value" style="font-size:0.78rem; color:#888;">${data.bookingId || currentBookingId || '—'}</span></div>
         `;
 
         // Policy check: within 24 hours?
@@ -427,6 +445,7 @@
             if (!result) { showState('stateNotFound'); return; }
             currentDocRef = result.ref;
             currentBookingData = result.data;
+            await ensureBarbersLoaded();
             renderBooking(result.data);
             showState('stateFound');
         } catch(e) {

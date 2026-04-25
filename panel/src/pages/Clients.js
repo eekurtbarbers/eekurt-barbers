@@ -9,6 +9,12 @@ function getBColor(barber, barbers) {
   return found?.color || '#777777';
 }
 
+function getBarberName(barber, barbers) {
+  const key = String(barber || '').toLowerCase();
+  const found = (barbers || []).find(b => String(b.id || '').toLowerCase() === key || String(b.name || '').toLowerCase() === key);
+  return found?.name || String(barber || 'TBC');
+}
+
 function formatDate(dateStr) {
   if (!dateStr) return '--';
   try {
@@ -35,16 +41,17 @@ export default function Clients() {
       getDocs(query(collection(db, 'tenants/eekurt/bookings'), orderBy('startTime', 'desc'))),
       getDocs(collection(db, 'tenants/eekurt/barbers')),
     ]);
+    const fetchedBarbers = barbersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (fetchedBarbers.length > 0) setBarbers(fetchedBarbers);
+
     const fetchedBookings = bookingsSnap.docs.map(doc => {
       const d = doc.data();
       const startTime = d.startTime?.toDate();
       const date = startTime ? startTime.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
       const time = startTime ? startTime.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase() : '';
-      return { ...d, name: d.clientName || 'Walk-in', email: d.clientEmail || '', phone: d.clientPhone || '', barber: d.barberId || '', service: d.serviceId || '', date, time, bookingId: d.bookingId || doc.id, source: d.source || 'website', paidAmount: d.paidAmount || '', price: d.price || '' };
+      return { ...d, name: d.clientName || 'Walk-in', email: d.clientEmail || '', phone: d.clientPhone || '', barber: d.barberId || '', barberName: getBarberName(d.barberId || '', fetchedBarbers), service: d.serviceId || '', date, time, bookingId: d.bookingId || doc.id, source: d.source || 'website', paidAmount: d.paidAmount || '', price: d.price || '' };
     });
     setBookings(fetchedBookings);
-    const fetchedBarbers = barbersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    if (fetchedBarbers.length > 0) setBarbers(fetchedBarbers);
   } catch (e) { console.log(e); }
   finally { setLoading(false); }
 };
@@ -77,7 +84,7 @@ export default function Clients() {
         c.totalTip += tip;
         c.totalDiscount += discount;
         c.services[b.service] = (c.services[b.service] || 0) + 1;
-        c.barbers[b.barber] = (c.barbers[b.barber] || 0) + 1;
+        c.barbers[b.barberName] = (c.barbers[b.barberName] || 0) + 1;
         c.sources[b.source] = (c.sources[b.source] || 0) + 1;
         if (b.paymentMethod || b.paymentType) {
           const pm = b.paymentMethod || b.paymentType;
@@ -85,7 +92,7 @@ export default function Clients() {
         }
         if (b.status === 'CHECKED_OUT') c.checkedOut++;
         if (!c.firstVisit || b.date < c.firstVisit) c.firstVisit = b.date;
-        if (!c.lastVisit || b.date > c.lastVisit) { c.lastVisit = b.date; c.lastService = b.service; c.lastBarber = b.barber; }
+        if (!c.lastVisit || b.date > c.lastVisit) { c.lastVisit = b.date; c.lastService = b.service; c.lastBarber = b.barberName; }
       } else {
         c.cancelled++;
       }
@@ -225,7 +232,7 @@ export default function Clients() {
                       <td style={{ padding: '12px 14px', fontSize: '0.75rem', color: 'var(--muted)' }}>{c.lastVisit || '--'}</td>
                       <td style={{ padding: '12px 14px', fontSize: '0.72rem', color: 'var(--text)' }}>{favSvc ? getSvcLabel(favSvc[0]) : '--'}</td>
                       <td style={{ padding: '12px 14px' }}>
-                        {favBarber && <span style={{ fontSize: '0.68rem', color: getBColor(favBarber[0], barbers), background: getBColor(favBarber[0], barbers) + '18', padding: '2px 7px', borderRadius: '4px', fontWeight: '600' }}>{favBarber[0]?.toUpperCase()}</span>}
+                        {favBarber && <span style={{ fontSize: '0.68rem', color: getBColor(favBarber[0], barbers), background: getBColor(favBarber[0], barbers) + '18', padding: '2px 7px', borderRadius: '4px', fontWeight: '600' }}>{favBarber[0]}</span>}
                       </td>
                       <td style={{ padding: '12px 14px' }}>
                         <div style={{ display: 'flex', gap: '4px' }}>
@@ -316,7 +323,7 @@ export default function Clients() {
                       <span style={{ fontSize: '0.72rem', fontWeight: '600', color: 'var(--text)' }}>{b.date}</span>
                       <span style={{ fontSize: '0.68rem', fontWeight: '700', color: '#c0c0c0' }}>{b.paidAmount ? '£' + b.paidAmount : (b.price ? '£' + b.price : '--')}</span>
                     </div>
-                    <div style={{ fontSize: '0.65rem', color: 'var(--muted)' }}>{getSvcLabel(b.service)} · {(b.barber || '').toUpperCase()}</div>
+                    <div style={{ fontSize: '0.65rem', color: 'var(--muted)' }}>{getSvcLabel(b.service)} · {b.barberName || b.barber}</div>
                     <div style={{ display: 'flex', gap: '4px', marginTop: '3px' }}>
                       <span style={{ fontSize: '0.58rem', color: b.status === 'CHECKED_OUT' ? '#4caf50' : b.status === 'CANCELLED' ? '#ff5252' : '#ff9800', background: b.status === 'CHECKED_OUT' ? 'rgba(76,175,80,0.15)' : b.status === 'CANCELLED' ? 'rgba(255,82,82,0.15)' : 'rgba(255,152,0,0.15)', padding: '1px 5px', borderRadius: '3px' }}>{b.status}</span>
                       {b.tip && parseFloat(String(b.tip).replace('£', '')) > 0 && <span style={{ fontSize: '0.58rem', color: '#4caf50', background: 'rgba(76,175,80,0.1)', padding: '1px 5px', borderRadius: '3px' }}>tip £{b.tip}</span>}

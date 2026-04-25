@@ -81,6 +81,11 @@ function getResolvedBarber(barber, barbers) {
   const key = String(barber || '').toLowerCase();
   return (barbers || []).find(b => String(b.id || '').toLowerCase() === key || String(b.name || '').toLowerCase() === key) || null;
 }
+function getBarberDisplayName(barber, barbers) {
+  const resolved = getResolvedBarber(barber, barbers);
+  if (resolved?.name) return resolved.name;
+  return String(barber || 'TBC');
+}
 function getBookingName(booking) {
   if (booking?.status === 'BLOCKED' || booking?.source === 'block') {
     return 'Blocked';
@@ -158,6 +163,7 @@ function CheckoutPanel({ booking, barbers, onClose, onComplete, isEdit }) {
   const [showQuickActions, setShowQuickActions] = useState(false);
 
   const svc = config.services ? config.services.find(s => s.id === booking.service) : null;
+  const barberDisplayName = getBarberDisplayName(booking.barber, barbers);
   const basePrice = svc ? svc.price : (parseInt(String(booking.price || '0').replace('£', '')) || 0);
   const depositAmount = booking.source === 'Booksy'
     ? (config.platforms?.booksy?.depositEnabled ? config.platforms.booksy.depositAmount : 0)
@@ -253,7 +259,7 @@ const handleCheckout = async (method) => {
                     <div style={{ width: '4px', height: '36px', background: getBColor(booking.barber, barbers), borderRadius: '2px' }} />
                     <div>
                       <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--text)' }}>{svc ? svc.name : booking.service}</div>
-                      <div style={{ fontSize: '0.68rem', color: 'var(--muted)', marginTop: '2px' }}>{svc ? svc.duration + 'min' : ''} · {(booking.barber || '').toUpperCase()}</div>
+                      <div style={{ fontSize: '0.68rem', color: 'var(--muted)', marginTop: '2px' }}>{svc ? svc.duration + 'min' : ''} · {barberDisplayName}</div>
                     </div>
                   </div>
                   <span style={{ fontSize: '1rem', fontWeight: '700', color: '#c0c0c0' }}>£{basePrice}</span>
@@ -334,7 +340,7 @@ const handleCheckout = async (method) => {
 
             {step === 'tip' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-                <p style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text)', margin: 0 }}>Select tip for <span style={{ color: '#c0c0c0' }}>{(booking.barber || 'barber').toUpperCase()}</span></p>
+                <p style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text)', margin: 0 }}>Select tip for <span style={{ color: '#c0c0c0' }}>{barberDisplayName}</span></p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
                   {[
                     { label: 'No tip', value: 0, sub: '' },
@@ -434,7 +440,7 @@ const handleCheckout = async (method) => {
                 <span style={{ fontSize: '0.78rem', color: 'var(--text)', fontWeight: '600' }}>{svc ? svc.name : booking.service}</span>
                 <span style={{ fontSize: '0.78rem', color: '#c0c0c0', fontWeight: '700' }}>£{basePrice}</span>
               </div>
-              <div style={{ fontSize: '0.62rem', color: 'var(--muted)' }}>{svc ? svc.duration + 'min' : ''} · {(booking.barber || '').toUpperCase()}</div>
+              <div style={{ fontSize: '0.62rem', color: 'var(--muted)' }}>{svc ? svc.duration + 'min' : ''} · {barberDisplayName}</div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '7px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -492,6 +498,7 @@ function BookingDetail({ booking, barbers, onClose, onEdit, onDelete, onCheckout
   const [editing, setEditing] = useState(false);
   if (!booking) return null;
   const color = getBColor(booking.barber, barbers);
+  const barberDisplayName = getBarberDisplayName(booking.barber, barbers);
   const serviceLabel = config.services ? (config.services.find(s => s.id === booking.service) || {}).name || booking.service : booking.service;
   return (
     <div style={{ width:'300px', flexShrink:0, background:'var(--card2)', border:'1px solid rgba(180,180,180,0.25)', borderRadius:'16px', display:'flex', flexDirection:'column', overflow:'hidden', maxHeight:'calc(100vh - 200px)', boxShadow:'0 8px 32px rgba(0,0,0,0.4)', position:'relative' }}>
@@ -537,7 +544,7 @@ function BookingDetail({ booking, barbers, onClose, onEdit, onDelete, onCheckout
             { label:'Service', value:serviceLabel },
             { label:'Date', value:booking.date },
             { label:'Time', value:booking.time },
-            { label:'Barber', value:(booking.barber||'').toUpperCase() },
+            { label:'Barber', value:barberDisplayName },
             { label:'Phone', value:booking.phone },
             { label:'Email', value:booking.email },
             { label:'Paid', value:booking.paidAmount||booking.price, color:'#4caf50' },
@@ -1117,6 +1124,7 @@ function ReceiptPanel({ booking, barbers, clientData, onClose, onEdit }) {
   const tip = parseFloat(String(booking.tip || '0').replace('£', '')) || 0;
   const paymentMethod = booking.paymentMethod || booking.paymentType || 'CASH';
   const barberColor = getBColor(booking.barber, barbers);
+  const barberDisplayName = getBarberDisplayName(booking.barber, barbers);
 
   const visits = clientData ? (parseInt(clientData.visits) || 0) : 0;
   const totalSpent = clientData ? (parseFloat(String(clientData.totalSpent || '0').replace('£', '')) || 0) : 0;
@@ -1129,7 +1137,7 @@ function ReceiptPanel({ booking, barbers, clientData, onClose, onEdit }) {
   const handleSendEmail = async () => {
     if (!booking.email) { alert('No email address for this customer.'); return; }
     setSending(true);
-    const params = new URLSearchParams({ action:'sendReceipt', bookingId:booking.bookingId, email:booking.email, name:booking.name, service:svc?svc.name:booking.service, barber:booking.barber, date:booking.date, time:booking.time, total:paidAmount, discount:discount, tip:tip, paymentMethod:paymentMethod, visits:visits });
+    const params = new URLSearchParams({ action:'sendReceipt', bookingId:booking.bookingId, email:booking.email, name:booking.name, service:svc?svc.name:booking.service, barber:barberDisplayName, date:booking.date, time:booking.time, total:paidAmount, discount:discount, tip:tip, paymentMethod:paymentMethod, visits:visits });
     try {
       await fetch(config.scriptUrl + '?' + params.toString(), { mode:'no-cors' });
       await new Promise(resolve => setTimeout(resolve, 3000));
@@ -1142,7 +1150,7 @@ function ReceiptPanel({ booking, barbers, clientData, onClose, onEdit }) {
   };
 
   const handlePrint = () => {
-    const receiptHTML = `<!DOCTYPE html><html><head><title>Receipt - ${booking.name}</title><style>body{font-family:'Courier New',monospace;max-width:300px;margin:0 auto;padding:20px;color:#000;}.header{text-align:center;border-bottom:1px dashed #000;padding-bottom:10px;margin-bottom:10px;}.shop-name{font-size:14px;font-weight:bold;}.shop-info{font-size:10px;color:#555;}.row{display:flex;justify-content:space-between;margin:4px 0;font-size:12px;}.total-row{border-top:1px dashed #000;margin-top:8px;padding-top:8px;font-weight:bold;font-size:14px;}.footer{text-align:center;margin-top:16px;font-size:10px;color:#555;border-top:1px dashed #000;padding-top:10px;}.discount{color:#27500A;}</style></head><body><div class="header"><div class="shop-name">EE KURT BARBERS</div><div class="shop-info">EE Kurt Barbers, London</div><div class="shop-info">${booking.date} · ${booking.time}</div></div><div class="row"><span>Customer</span><span>${booking.name}</span></div><div class="row"><span>Barber</span><span>${(booking.barber||'').toUpperCase()}</span></div><div class="row"><span>${svc?svc.name:booking.service}</span><span>£${basePrice.toFixed(2)}</span></div>${discount>0?`<div class="row discount"><span>Discount</span><span>-£${discount.toFixed(2)}</span></div>`:''}${tip>0?`<div class="row"><span>Tip</span><span>£${tip.toFixed(2)}</span></div>`:''}<div class="row total-row"><span>TOTAL</span><span>£${paidAmount.toFixed(2)}</span></div><div class="row"><span>Payment</span><span>${paymentMethod}</span></div><div class="footer"><div>Thank you for visiting!</div><div>eekurtbarbers.co.uk</div><div>Booking ID: ${booking.bookingId}</div></div></body></html>`;
+    const receiptHTML = `<!DOCTYPE html><html><head><title>Receipt - ${booking.name}</title><style>body{font-family:'Courier New',monospace;max-width:300px;margin:0 auto;padding:20px;color:#000;}.header{text-align:center;border-bottom:1px dashed #000;padding-bottom:10px;margin-bottom:10px;}.shop-name{font-size:14px;font-weight:bold;}.shop-info{font-size:10px;color:#555;}.row{display:flex;justify-content:space-between;margin:4px 0;font-size:12px;}.total-row{border-top:1px dashed #000;margin-top:8px;padding-top:8px;font-weight:bold;font-size:14px;}.footer{text-align:center;margin-top:16px;font-size:10px;color:#555;border-top:1px dashed #000;padding-top:10px;}.discount{color:#27500A;}</style></head><body><div class="header"><div class="shop-name">EE KURT BARBERS</div><div class="shop-info">EE Kurt Barbers, London</div><div class="shop-info">${booking.date} · ${booking.time}</div></div><div class="row"><span>Customer</span><span>${booking.name}</span></div><div class="row"><span>Barber</span><span>${barberDisplayName}</span></div><div class="row"><span>${svc?svc.name:booking.service}</span><span>£${basePrice.toFixed(2)}</span></div>${discount>0?`<div class="row discount"><span>Discount</span><span>-£${discount.toFixed(2)}</span></div>`:''}${tip>0?`<div class="row"><span>Tip</span><span>£${tip.toFixed(2)}</span></div>`:''}<div class="row total-row"><span>TOTAL</span><span>£${paidAmount.toFixed(2)}</span></div><div class="row"><span>Payment</span><span>${paymentMethod}</span></div><div class="footer"><div>Thank you for visiting!</div><div>eekurtbarbers.co.uk</div><div>Booking ID: ${booking.bookingId}</div></div></body></html>`;
     const win = window.open('', '_blank');
     win.document.write(receiptHTML);
     win.document.close();
@@ -1167,7 +1175,7 @@ function ReceiptPanel({ booking, barbers, clientData, onClose, onEdit }) {
           </div>
           <div style={{ flex:1 }}>
             <div style={{ fontSize:'0.82rem', fontWeight:'600', color:'var(--text)' }}>{booking.name}</div>
-            <div style={{ fontSize:'0.62rem', color:'var(--muted)' }}>Barber: {(booking.barber||'').toUpperCase()}</div>
+            <div style={{ fontSize:'0.62rem', color:'var(--muted)' }}>Barber: {barberDisplayName}</div>
           </div>
           {isVIP && <span style={{ fontSize:'0.6rem', color:'#c0c0c0', background:'rgba(180,180,180,0.15)', padding:'2px 6px', borderRadius:'8px', fontWeight:'700' }}>VIP</span>}
         </div>

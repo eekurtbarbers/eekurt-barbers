@@ -21,6 +21,12 @@ let ACTIVE_BARBERS = [];
 
 console.info('EE KURT website build', WEBSITE_BUILD);
 
+function getBarberDisplayName(barberId) {
+    if (!barberId) return 'TBC';
+    const barber = ACTIVE_BARBERS.find((b) => b.id === barberId);
+    return barber?.name || barberId;
+}
+
 // ─── Duration map (minutes) ───────────────────────────────────────────────────
 const DURATION_MAP = {
     "hair-cut": 25, "skin-fade": 25, "childrens-hair": 25,
@@ -385,13 +391,14 @@ function initManageModal() {
 }
 
 // ─── Success popup ────────────────────────────────────────────────────────────
-function showSuccess(name, date, time, bookingId) {
+function showSuccess(name, date, time, bookingId, barberId) {
     const popup = document.getElementById('successPopup');
     if (!popup) return;
+    const barberName = getBarberDisplayName(barberId);
     document.getElementById('popup-icon').textContent  = '✂️';
     document.getElementById('popup-title').textContent = `You're booked, ${name.split(' ')[0]}!`;
     document.getElementById('popup-text').textContent  =
-        `Your request is received. We'll confirm by email shortly. See you on ${date} at ${time}.`;
+        `Your request is received. We'll confirm by email shortly. See you on ${date} at ${time} with ${barberName}.`;
     document.getElementById('popup-id').textContent = `Booking ID: ${bookingId}`;
     popup.style.display = 'flex';
 }
@@ -492,7 +499,7 @@ document.getElementById('bookingForm').addEventListener('submit', async function
             barber: barberId,
         });
 
-        showSuccess(name, date, hiddenTime.value, bookingId);
+        showSuccess(name, date, hiddenTime.value, bookingId, barberId);
 
         this.reset();
         document.getElementById('timeSlotsWrap').style.display = 'none';

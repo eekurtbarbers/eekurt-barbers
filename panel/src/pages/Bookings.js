@@ -23,6 +23,15 @@ function parsePrice(p) {
   return parseInt(String(p).replace('£', '').trim()) || 0;
 }
 
+function resolveBarber(barberValue, barbers) {
+  const key = String(barberValue || '').toLowerCase();
+  return (barbers || []).find(b => String(b.id || '').toLowerCase() === key || String(b.name || '').toLowerCase() === key) || null;
+}
+
+function getBarberName(barberValue, barbers) {
+  return resolveBarber(barberValue, barbers)?.name || String(barberValue || 'TBC');
+}
+
 export default function Bookings() {
   const [bookings, setBookings] = useState([]);
   const [barbers, setBarbers] = useState([]);
@@ -42,6 +51,9 @@ const fetchAll = async () => {
       getDocs(collection(db, 'tenants/eekurt/barbers')),
     ]);
 
+    const fetchedBarbers = barbersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    setBarbers(fetchedBarbers);
+
     const fetchedBookings = bookingsSnap.docs.map(doc => {
       const d = doc.data();
       const startTime = d.startTime?.toDate();
@@ -57,6 +69,7 @@ const fetchAll = async () => {
         email: d.clientEmail || '',
         phone: d.clientPhone || '',
         barber: d.barberId || '',
+        barberName: getBarberName(d.barberId || '', fetchedBarbers),
         service: d.serviceId || '',
         date,
         time,
@@ -68,9 +81,6 @@ const fetchAll = async () => {
     });
 
     setBookings(fetchedBookings);
-
-    const fetchedBarbers = barbersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    setBarbers(fetchedBarbers);
 
   } catch (err) {
     console.error('fetchAll error:', err);
@@ -104,7 +114,7 @@ const fetchAll = async () => {
   const exportCSV = () => {
     const rows = [['Name', 'Service', 'Date', 'Time', 'Barber', 'Status', 'Price', 'Paid', 'Remaining', 'Source', 'Payment', 'Phone', 'Email', 'ID']];
     filtered.forEach(b => {
-      rows.push([b.name, b.service, b.date, b.time, b.barber, b.status, b.price, b.paidAmount, b.remaining, b.source, b.paymentMethod, b.phone, b.email, b.bookingId]);
+      rows.push([b.name, b.service, b.date, b.time, b.barberName || b.barber, b.status, b.price, b.paidAmount, b.remaining, b.source, b.paymentMethod, b.phone, b.email, b.bookingId]);
     });
     const csv = rows.map(r => r.map(v => `"${v||''}"`).join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -181,7 +191,7 @@ const fetchAll = async () => {
         </select>
         <select value={barberFilter} onChange={e => setBarberFilter(e.target.value)} style={inpStyle}>
           <option value="all">All Barbers</option>
-          {barbers.map(b => <option key={b.id} value={b.name.toLowerCase()}>{b.name}</option>)}
+          {barbers.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
         </select>
         <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={inpStyle}>
           <option value="date">Sort by Date</option>
@@ -207,7 +217,8 @@ const fetchAll = async () => {
           </div>
         ) : filtered.map((b, i) => {
           const srcStyle = SOURCE_COLORS[b.source] || SOURCE_COLORS['Walk-in'];
-          const barberColor = (barbers.find(bar => bar.name.toLowerCase() === (b.barber || '').toLowerCase()) || {}).color || '#777777';
+          const barberColor = resolveBarber(b.barber, barbers)?.color || '#777777';
+          const barberLabel = b.barberName || getBarberName(b.barber, barbers);
           const svcName = config.services ? (config.services.find(s => s.id === b.service) || {}).name || b.service : b.service;
           return (
             <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 2fr 1.5fr 1fr 1fr 1fr 1fr', gap: '0', padding: '12px 16px', borderBottom: '1px solid var(--border)', transition: 'background 0.1s' }}
@@ -234,7 +245,7 @@ const fetchAll = async () => {
               {/* Barber */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: barberColor, flexShrink: 0 }} />
-                <span style={{ fontSize: '0.78rem', color: 'var(--text)' }}>{(b.barber || '').toUpperCase()}</span>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text)' }}>{barberLabel}</span>
               </div>
 
               {/* Status */}
