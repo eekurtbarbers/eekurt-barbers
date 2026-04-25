@@ -9,6 +9,15 @@
   },
   "hosting": [
     {
+      "target": "booking",
+      "public": "hosting",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ]
+    },
+    {
       "target": "admin",
       "public": "panel/build",
       "predeploy": [

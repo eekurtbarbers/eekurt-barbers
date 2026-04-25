@@ -5,6 +5,9 @@
   "targets": {
     "havuz-44f70": {
       "hosting": {
+        "booking": [
+          "havuz-44f70"
+        ],
         "admin": [
           "havuz-44f70-admin"
         ]

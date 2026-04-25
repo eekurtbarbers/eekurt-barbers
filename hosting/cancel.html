@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Cancel Booking | EE KURT Barbers</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: linear-gradient(135deg, #080808 0%, #111 50%, #080808 100%);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+        }
+
+        .wrap {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 36px 20px 80px;
+        }
+
+        /* NAV */
+        .page-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 36px;
+        }
+        .back-link {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .back-link:hover { color: #fff; }
+        .nav-logo { width: 46px; height: auto; }
+
+        /* HEADER */
+        .page-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .page-header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #888, #eee, #999);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .page-header p {
+            color: #666;
+            font-size: 0.78rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        /* CARD */
+        .card {
+            background: linear-gradient(135deg, #111 0%, #0d0d0d 100%);
+            border: 1px solid rgba(180,180,180,0.25);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 0 30px rgba(180,180,180,0.06), inset 0 0 12px rgba(180,180,180,0.02);
+        }
+
+        /* STATES */
+        .state { display: none; }
+        .state.active { display: block; }
+
+        /* LOADING */
+        .loading-center {
+            text-align: center;
+            padding: 32px 0;
+        }
+        .spinner {
+            display: inline-block;
+            width: 22px; height: 22px;
+            border: 2px solid rgba(180,180,180,0.2);
+            border-top-color: #bbb;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* LOOKUP FORM */
+        .lookup-note {
+            color: #777;
+            font-size: 0.84rem;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        .lookup-note strong { color: #aaa; }
+
+        .form-input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 12px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(180,180,180,0.25);
+            color: #fff;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #bbb;
+            box-shadow: 0 0 12px rgba(180,180,180,0.15);
+        }
+        .form-input::placeholder { color: #555; }
+
+        /* BUTTONS */
+        .btn-gold {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, #b0b0b0, #666);
+            color: #000;
+            font-family: 'Cinzel', serif;
+            font-size: 0.82rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-weight: 700;
+            transition: filter 0.2s;
+        }
+        .btn-gold:hover { filter: brightness(1.1); }
+        .btn-gold:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .btn-cancel-confirm {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #ff5252;
+            background: rgba(255,82,82,0.1);
+            color: #ff5252;
+            font-family: 'Cinzel', serif;
+            font-size: 0.82rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 20px;
+        }
+        .btn-cancel-confirm:hover {
+            background: rgba(255,82,82,0.2);
+            box-shadow: 0 0 16px rgba(255,82,82,0.25);
+        }
+
+        .btn-keep {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(180,180,180,0.25);
+            background: linear-gradient(135deg, #b0b0b0, #666);
+            color: #000;
+            font-family: 'Cinzel', serif;
+            font-size: 0.82rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-weight: 700;
+            margin-top: 10px;
+            text-decoration: none;
+            text-align: center;
+            transition: filter 0.2s;
+        }
+        .btn-keep:hover { filter: brightness(1.1); }
+
+        /* DETAIL ROWS */
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #1e1e1a;
+            font-size: 0.88rem;
+        }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { color: #666; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; }
+        .detail-value { color: #ddd; font-weight: 600; text-align: right; }
+        .detail-value.gold { color: #d0d0d0; }
+
+        /* POLICY BOXES */
+        .policy-ok {
+            background: rgba(76,175,80,0.08);
+            border: 1px solid rgba(76,175,80,0.35);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin: 18px 0;
+            font-size: 0.82rem;
+            color: #81c784;
+            line-height: 1.6;
+        }
+        .policy-warn {
+            background: rgba(255,152,0,0.08);
+            border: 1px solid rgba(255,152,0,0.35);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin: 18px 0;
+            font-size: 0.82rem;
+            color: #ffb74d;
+            line-height: 1.6;
+        }
+
+        /* MESSAGES */
+        .error-msg {
+            color: #ff5252;
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* SUCCESS */
+        .success-icon { font-size: 3rem; margin-bottom: 14px; }
+        .success-title {
+            font-family: 'Cinzel', serif;
+            color: #c0c0c0;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .success-text {
+            color: #888;
+            font-size: 0.84rem;
+            line-height: 1.7;
+            margin-bottom: 22px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrap">
+
+    <nav class="page-nav">
+        <a href="index.html" class="back-link">← Back</a>
+        <img src="img/logo.png" alt="EE KURT Barbers" class="nav-logo">
+        <a href="index.html#booking" class="back-link">Book →</a>
+    </nav>
+
+    <div class="page-header">
+        <h1>Cancel Booking</h1>
+        <p>EE KURT Barbers · Exmouth Market</p>
+    </div>
+
+    <div class="card">
+
+        <!-- LOADING -->
+        <div class="state active" id="stateLoading">
+            <div class="loading-center">
+                <span class="spinner"></span>
+                <span style="color:#666; font-size:0.84rem;">Loading your booking…</span>
+            </div>
+        </div>
+
+        <!-- MANUAL LOOKUP -->
+        <div class="state" id="stateLookup">
+            <p class="lookup-note">Enter your <strong>Booking ID</strong> (e.g. <strong>EEK-1234567890</strong>) and the email address you booked with.</p>
+            <input type="text" id="inputId" class="form-input" placeholder="Booking ID (EEK-…)">
+            <input type="email" id="inputEmail" class="form-input" placeholder="Email address">
+            <button class="btn-gold" onclick="lookupBooking()">Find My Booking</button>
+            <p class="error-msg" id="lookupError" style="display:none;">Booking not found. Please check your details.</p>
+        </div>
+
+        <!-- BOOKING FOUND -->
+        <div class="state" id="stateFound">
+            <p style="color:#b0b0b0; font-family:'Cinzel',serif; font-size:0.72rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:14px;">Your Booking</p>
+            <div id="bookingDetails"></div>
+            <div id="policyMsg"></div>
+            <a id="btnReschedule" href="reschedule.html" class="btn-keep" style="background:linear-gradient(135deg,#4caf50,#2e7d32); border-color:transparent; margin-top:20px;">🔄 Reschedule Instead</a>
+            <button class="btn-cancel-confirm" onclick="confirmCancel()">✕ Cancel This Booking</button>
+            <a href="index.html" class="btn-keep">✓ Keep My Booking</a>
+        </div>
+
+        <!-- PROCESSING -->
+        <div class="state" id="stateProcessing">
+            <div class="loading-center">
+                <span class="spinner"></span>
+                <span style="color:#666; font-size:0.84rem;">Processing cancellation…</span>
+            </div>
+        </div>
+
+        <!-- SUCCESS -->
+        <div class="state" id="stateSuccess">
+            <div style="text-align:center;">
+                <div class="success-icon">✅</div>
+                <h2 class="success-title">Booking Cancelled</h2>
+                <p class="success-text" id="successText">Your booking has been cancelled.</p>
+                <a href="index.html" class="btn-gold" style="display:block; text-align:center; text-decoration:none;">Book Again →</a>
+            </div>
+        </div>
+
+        <!-- NOT FOUND -->
+        <div class="state" id="stateNotFound">
+            <div style="text-align:center; padding:20px 0;">
+                <div style="font-size:2.5rem; margin-bottom:12px;">❌</div>
+                <h2 style="font-family:'Cinzel',serif; color:#ff5252; letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; font-size:1rem;">Not Found</h2>
+                <p style="color:#777; font-size:0.84rem; line-height:1.6; margin-bottom:22px;">We couldn't find a booking with those details. Please check your confirmation email for the correct Booking ID.</p>
+                <a href="tel:02078331525" style="display:inline-block; background:linear-gradient(135deg,#b0b0b0,#666); color:#000; padding:12px 24px; border-radius:10px; font-weight:800; text-decoration:none; text-transform:uppercase; font-size:0.78rem; letter-spacing:1px;">📞 Call Us</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="margin-top:20px; text-align:center;">
+        <a href="index.html" style="color:#555; font-size:0.76rem; text-decoration:none; letter-spacing:1px; text-transform:uppercase;">← Back to Main Page</a>
+    </div>
+
+</div>
+
+<script type="module">
+    import { initializeApp }   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getFirestore, collection, query, where, getDocs, updateDoc, Timestamp }
+        from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const firebaseConfig = {
+        apiKey:            "AIzaSyA16eMVtA4ZOIu3ixCg8y8RUh-EAjMev3A",
+        authDomain:        "havuz-44f70.firebaseapp.com",
+        projectId:         "havuz-44f70",
+        storageBucket:     "havuz-44f70.firebasestorage.app",
+        messagingSenderId: "1050766582653",
+        appId:             "1:1050766582653:web:7ddaa5acb3bec5ef122214"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+    const TENANT = 'eekurt';
+
+    const SERVICE_NAMES = {
+        'hair-cut': 'Hair Cut', 'skin-fade': 'Skin Fade',
+        'childrens-hair': "Children's Hair", 'children-skin-fade': "Children's Skin Fade",
+        'shape-up': 'Shape Up', 'beard-trim': 'Beard Trim',
+        'hair-beard': 'Hair & Beard', 'skin-fade-beard': 'Skin Fade & Beard',
+        'eekurt-special': 'EE KURT Special'
+    };
+
+    let currentDocRef = null;
+    let currentBookingData = null;
+    let currentBookingId = '';
+    let currentEmail = '';
+    let barberNameMap = new Map();
+
+    function showState(id) {
+        document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function formatTimestamp(ts) {
+        if (!ts) return 'N/A';
+        const d = ts.toDate();
+        const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const h = d.getHours(), m = d.getMinutes();
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 || 12;
+        const time = `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+        const date = `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+        return { date, time };
+    }
+
+    async function ensureBarbersLoaded() {
+        if (barberNameMap.size > 0) return;
+        const snap = await getDocs(collection(db, `tenants/${TENANT}/barbers`));
+        barberNameMap = new Map(
+            snap.docs.map(d => {
+                const data = d.data() || {};
+                return [d.id, data.name || d.id];
+            })
+        );
+    }
+
+    function getBarberDisplayName(barberId) {
+        if (!barberId) return 'TBC';
+        return barberNameMap.get(barberId) || barberId;
+    }
+
+    async function lookupByParams(id, email) {
+        const snap = await getDocs(query(
+            collection(db, `tenants/${TENANT}/bookings`),
+            where('bookingId', '==', id)
+        ));
+        if (snap.empty) return null;
+        const docSnap = snap.docs[0];
+        const data = docSnap.data();
+        if ((data.clientEmail || '').toLowerCase() !== email.toLowerCase()) return null;
+        if (data.status === 'CANCELLED') return null;
+        return { ref: docSnap.ref, data };
+    }
+
+    function renderBooking(data) {
+        const { date, time } = formatTimestamp(data.startTime);
+        const barberName = getBarberDisplayName(data.barberId);
+        document.getElementById('bookingDetails').innerHTML = `
+            <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">${data.clientName || '—'}</span></div>
+            <div class="detail-row"><span class="detail-label">Date</span><span class="detail-value gold">${date}</span></div>
+            <div class="detail-row"><span class="detail-label">Time</span><span class="detail-value">${time}</span></div>
+            <div class="detail-row"><span class="detail-label">Service</span><span class="detail-value">${SERVICE_NAMES[data.serviceId] || data.serviceId || '—'}</span></div>
+            <div class="detail-row"><span class="detail-label">Barber</span><span class="detail-value">${barberName}</span></div>
+            <div class="detail-row"><span class="detail-label">Booking ID</span><span class="detail-value" style="font-size:0.78rem; color:#888;">${data.bookingId || currentBookingId || '—'}</span></div>
+        `;
+
+        // Policy check: within 24 hours?
+        const apptMs = data.startTime ? data.startTime.toMillis() : 0;
+        const hoursUntil = (apptMs - Date.now()) / 3600000;
+        const policyEl = document.getElementById('policyMsg');
+        if (hoursUntil >= 24) {
+            policyEl.innerHTML = `<div class="policy-ok">✅ Free cancellation — your appointment is more than 24 hours away.</div>`;
+        } else if (hoursUntil > 0) {
+            policyEl.innerHTML = `<div class="policy-warn">⚠️ Your appointment is in less than 24 hours. Late cancellations may not be eligible for a refund.</div>`;
+        } else {
+            policyEl.innerHTML = `<div class="policy-warn">⚠️ This appointment has already passed.</div>`;
+        }
+
+        // Update reschedule link
+        document.getElementById('btnReschedule').href =
+            `reschedule.html?id=${encodeURIComponent(currentBookingId)}&email=${encodeURIComponent(currentEmail)}`;
+    }
+
+    // exposed to onclick handlers
+    window.lookupBooking = async function() {
+        const id    = document.getElementById('inputId').value.trim();
+        const email = document.getElementById('inputEmail').value.trim();
+        if (!id || !email) return;
+        currentBookingId = id;
+        currentEmail = email;
+        document.getElementById('lookupError').style.display = 'none';
+        showState('stateLoading');
+        try {
+            const result = await lookupByParams(id, email);
+            if (!result) { showState('stateNotFound'); return; }
+            currentDocRef = result.ref;
+            currentBookingData = result.data;
+            await ensureBarbersLoaded();
+            renderBooking(result.data);
+            showState('stateFound');
+        } catch(e) {
+            console.error(e);
+            showState('stateNotFound');
+        }
+    };
+
+    window.confirmCancel = async function() {
+        if (!confirm('Are you sure you want to cancel this booking? This cannot be undone.')) return;
+        showState('stateProcessing');
+        try {
+            await updateDoc(currentDocRef, { status: 'CANCELLED', cancelledAt: Timestamp.fromDate(new Date()) });
+            const name = (currentBookingData.clientName || '').split(' ')[0];
+            document.getElementById('successText').textContent =
+                `Your booking has been cancelled${name ? ', ' + name : ''}. We hope to see you again soon.`;
+            showState('stateSuccess');
+        } catch(e) {
+            console.error(e);
+            alert('Something went wrong. Please call us on 020 7833 1525.');
+            showState('stateFound');
+        }
+    };
+
+    // Auto-load from URL params
+    (async function init() {
+        const params = new URLSearchParams(window.location.search);
+        const id    = params.get('id');
+        const email = params.get('email');
+        if (id && email) {
+            currentBookingId = id;
+            currentEmail = email;
+            try {
+                const result = await lookupByParams(id, email);
+                if (!result) { showState('stateNotFound'); return; }
+                currentDocRef = result.ref;
+                currentBookingData = result.data;
+                renderBooking(result.data);
+                showState('stateFound');
+            } catch(e) {
+                showState('stateNotFound');
+            }
+        } else {
+            showState('stateLookup');
+        }
+    })();
+</script>
+
+</body>
+</html>
